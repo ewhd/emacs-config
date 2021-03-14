@@ -1,0 +1,210 @@
+#+TITLE: Emacs configuration
+#+DESCRIPTION: An org-babel based emacs configuration
+#+LANGUAGE: en
+#+PROPERTY: results silent
+
+* Features to add:
+
+** prettify-symbols-mode
+[[https://www.reddit.com/r/emacs/comments/9lpupc/i_use_markdown_rather_than_orgmode_for_my_notes/e79kz56/?utm_source=reddit&utm_medium=web2x&context=3][especially to get rid of ugly code tags]]
+[[https://www.reddit.com/r/emacs/comments/brt0sk/prettifysymbolsmode_is_so_cool/][Check this out]]
+
+** explore markdown-mode
+- Can I make it work the way I want?
+- How does live preview work?
+- Can I mix markdown and org in the same document?
+  - with live preview??
+
+[[https://stackoverflow.com/questions/36183071/how-can-i-preview-markdown-in-emacs-in-real-time/36189456][See here]]
+
+- Actually, I think a lot of what I'm looking for is [[https://stackoverflow.com/questions/16186843/inline-code-in-org-mode][here]]
+
+** monospaced fonts where I need them
+[[https://yoo2080.wordpress.com/2013/05/30/monospace-font-in-tables-and-source-code-blocks-in-org-mode-proportional-font-in-other-parts/][See here]]
+
+*** More possible sources of info:
+https://www.reddit.com/r/emacs/comments/66w75c/monospace_font_for_calendar_in_orgmode/
+https://protesilaos.com/codelog/2020-07-17-emacs-mixed-fonts-org/
+https://emacs.stackexchange.com/questions/32300/monospace-font-for-calendar-buffer-and-tables-in-org-mode-proportional-font-i
+
+** configure basic org mode features
+*** org-agenda
+include this emacs-config.org file
+**** clocking:
+https://www.emacswiki.org/emacs/CategoryTimeTracking
+https://orgmode.org/manual/Clocking-Work-Time.html
+http://doc.norang.ca/org-mode.html#Clocking
+https://www.youtube.com/results?search_query=org+mode+clocking
+
+
+*** org_capture
+**** Templates
+*** 
+** configure org-roam
+*** daily notes in org-roam
+*** templates in org-roam?
+*** exclude "archive" tags in search?
+[[https://github.com/org-roam/org-roam-bibtex#commands][org-roam-bibtex?]]
+** Zettlekasten things:
+*** re-arrange some of my files
+Make index files
+*** differentiate between note types
+- my daily documents are really raw capture, which should befome Reference material
+- I need to build the practice of processing my raw input into bite-sized, permanent notes
+- Can I use an "archive" tag that will exclude a file from regular search??
+** evil-mode
+I want to learn how to use vim
+** buffer-move.el
+https://www.emacswiki.org/emacs/buffer-move.el
+to swap the buffers in the windows
+** exlude
+
+* REMOVE STARTUP WELCOME SCREEN
+The code block below toggle off the welcome startup screen.
+
+#+BEGIN_SRC emacs-lisp
+(custom-set-variables
+  '(inhibit-startup-screen t))
+#+END_SRC
+
+* Appearance
+#+BEGIN_SRC emacs-lisp
+(set-face-attribute 'default nil
+  :family "Liberation Mono"
+  :height 200
+  :weight 'normal
+  :width 'normal
+)
+(setq org-startup-indented t)
+(setq global-visual-line-mode 1)
+(setq visible-bell 1)
+(setq word-wrap t)
+#+END_SRC
+* org-roam
+Installing this is a little tricky, because you have to add sqlite3 to 'exec-path'.
+Let's try these instructions: https://justjensen.co/setting-up-sqlite-on-windows-10/
+Also, for whatever weird reason, sqlite3.exe is included in the tools, not the standard download:
+https://stackoverflow.com/questions/43050795/no-sqlite3-exe-in-sqlite3-download-folder-for-windows-64-bit
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-roam
+      :ensure t
+      :hook
+      (after-init . org-roam-mode)
+      :custom
+      (org-roam-directory "~/Dropbox/omnibus/")
+      (org-roam-index-file "~/Dropbox/omnibus/index.org")
+      :bind (:map org-roam-mode-map
+              (("C-c n l" . org-roam)
+               ("C-c n f" . org-roam-find-file)
+               ("C-c n g" . org-roam-graph)
+	       ("C-c n t" . org-roam-tag-add)
+	       ("C-c n T" . org-roam-tag-delete))
+              :map org-mode-map
+              (("C-c n i" . org-roam-insert))
+              (("C-c n I" . org-roam-insert-immediate))))
+#+END_SRC
+
+* org-roam-server
+This should get the server view working.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-roam-server
+  :ensure t
+  :config
+  (setq org-roam-server-host "127.0.0.1"
+        org-roam-server-port 8080
+        org-roam-server-authenticate nil
+        org-roam-server-export-inline-images t
+        org-roam-server-serve-files nil
+        org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
+        org-roam-server-network-poll t
+        org-roam-server-network-arrows nil
+        org-roam-server-network-label-truncate t
+        org-roam-server-network-label-truncate-length 60
+        org-roam-server-network-label-wrap-length 20))
+#+END_SRC
+
+* dired-sidebar
+#+BEGIN_SRC emacs-lisp
+(use-package dired-sidebar
+  :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
+  :ensure t
+  :commands (dired-sidebar-toggle-sidebar)
+  :init
+  (add-hook 'dired-sidebar-mode-hook
+            (lambda ()
+              (unless (file-remote-p default-directory)
+                (auto-revert-mode))))
+  :config
+  (push 'toggle-window-split dired-sidebar-toggle-hidden-commands)
+  (push 'rotate-windows dired-sidebar-toggle-hidden-commands)
+
+  (setq dired-sidebar-subtree-line-prefix "__")
+  (setq dired-sidebar-theme 'vscode)
+  (setq dired-sidebar-use-term-integration t)
+  (setq dired-sidebar-use-custom-font t)
+)
+#+END_SRC
+
+* deft
+#+BEGIN_SRC emacs-lisp
+(use-package deft
+  :ensure t
+  :config
+  (setq deft-directory "~/Dropbox/omnibus/")
+)
+#+END_SRC
+
+* helm-org-rifle
+#+BEGIN_SRC emacs-lisp
+(use-package helm-org-rifle
+  :ensure t
+)
+#+END_SRC
+
+* helm
+#+BEGIN_SRC emacs-lisp
+(use-package helm
+  :ensure t
+  :config
+  (helm-mode 1)
+  (global-set-key (kbd "M-x") 'helm-M-x)
+  (global-set-key (kbd "C-x C-f") 'helm-find-files)
+)
+#+END_SRC
+
+* markdown-mode
+#+BEGIN_SRC emacs-lisp
+(use-package markdown-mode
+  :ensure t
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown")
+)
+#+END_SRC
+* evil
+#+BEGIN_SRC emacs-lisp
+(use-package evil
+  :ensure t
+  :config
+  (evil-mode 0)
+)
+#+END_SRC
+* markdown-mode
+#+BEGIN_SRC emacs-lisp
+(use-package markdown-mode
+  :ensure t
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown")
+  :custom
+  (markdown-asymmetric-header t)
+  (markdown-split-window-direction 'right)
+  :config
+  (unbind-key "<M-down>" markdown-mode-map)
+  (unbind-key "<M-up>" markdown-mode-map)
+)
+#+END_SRC
