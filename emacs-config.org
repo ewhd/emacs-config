@@ -3,31 +3,22 @@
 #+LANGUAGE: en
 #+PROPERTY: results silent
 
+
 * Features to add:
 
-** prettify-symbols-mode
-[[https://www.reddit.com/r/emacs/comments/9lpupc/i_use_markdown_rather_than_orgmode_for_my_notes/e79kz56/?utm_source=reddit&utm_medium=web2x&context=3][especially to get rid of ugly code tags]]
-[[https://www.reddit.com/r/emacs/comments/brt0sk/prettifysymbolsmode_is_so_cool/][Check this out]]
+** DONE [#A] Making org-mode pretty
+https://lucidmanager.org/productivity/ricing-org-mode/
+- Use different fonts for different parts of text, buffers, or modes
+- Preview images in the text
+- Removes screen clutter
+- Rich text and special characters
+- Replace bullet astrisks with pretty symbols (and lists and TODO symbols)
+- Distraction-free/focussed writing mode (typewriter)
 
-** explore markdown-mode
-- Can I make it work the way I want?
-- How does live preview work?
-- Can I mix markdown and org in the same document?
-  - with live preview??
+** DONE [#A] Replace colored headers in org-mode with different sized headers
+[[https://github.com/jonnay/org-beautify-theme][org-beautify-theme]]
 
-[[https://stackoverflow.com/questions/36183071/how-can-i-preview-markdown-in-emacs-in-real-time/36189456][See here]]
-
-- Actually, I think a lot of what I'm looking for is [[https://stackoverflow.com/questions/16186843/inline-code-in-org-mode][here]]
-
-** monospaced fonts where I need them
-[[https://yoo2080.wordpress.com/2013/05/30/monospace-font-in-tables-and-source-code-blocks-in-org-mode-proportional-font-in-other-parts/][See here]]
-
-*** More possible sources of info:
-https://www.reddit.com/r/emacs/comments/66w75c/monospace_font_for_calendar_in_orgmode/
-https://protesilaos.com/codelog/2020-07-17-emacs-mixed-fonts-org/
-https://emacs.stackexchange.com/questions/32300/monospace-font-for-calendar-buffer-and-tables-in-org-mode-proportional-font-i
-
-** configure basic org mode features
+** [#A] configure basic org mode features
 *** org-agenda
 include this emacs-config.org file
 **** clocking:
@@ -37,54 +28,551 @@ http://doc.norang.ca/org-mode.html#Clocking
 https://www.youtube.com/results?search_query=org+mode+clocking
 
 
-*** org_capture
+*** org-capture
 **** Templates
-*** 
-** configure org-roam
+*** DONE Add TODO version!
+- State "DONE"       from              [2021-10-22 Fri 19:33]
+** [#A] using git with emacs
+Magit, basically
+
+[[http://blog.lujun9972.win/emacs-document/blog/2018/10/19/getting-started-with-magit-(or-what-i-hope-i-could've-read-when-i-first-tried-out-magit)/][Getting started with Magit (Or what I hope I could've read when I first tried out Magit)]]
+
+https://magit.vc/
+https://github.com/magit/magit
+
+[[https://emacs.stackexchange.com/questions/7826/is-there-a-simplified-version-control-system-appropriate-for-non-coders-writing][This]] is a great stackexchange answer that goes into how to use magit at a pretty basic level with very simple language.
+
+For chasing my holy-grail of a functional way to sync and access files across multiple systems, I suspect that using Magit to revert and merge may be the way to go?
+** [#A] migrate to org-roam v2
+https://www.alexeyshmalko.com/migrating-to-org-roam-v2/
+** [#A] some kind of re-do functionality
+https://sachachua.com/dotemacs/#orgbcbdf98
+** [#A] configure org-roam
 *** daily notes in org-roam
 *** templates in org-roam?
 *** exclude "archive" tags in search?
 [[https://github.com/org-roam/org-roam-bibtex#commands][org-roam-bibtex?]]
-** Zettlekasten things:
+*** function to effectively delete a node (file)?
+*** set org-roam-capture-templates to that they come with a link to the relvant index
+** [#A] image handling
+https://www.reddit.com/r/emacs/comments/52q70g/paste_an_image_on_clipboard_to_emacs_org_mode/
+- https://github.com/abo-abo/org-download
+- https://github.com/dfeich/org-screenshot
+
+Found a lead on inserting images from clipboard:
+- https://org-roam.discourse.group/t/zero-to-emacs-and-org-roam-a-step-by-step-guide-on-windows-10/400/72
+- https://github.com/nobiot/Zero-to-Emacs-and-Org-roam/blob/main/115.How-to-enable-insert-image-from-clipboard.md
+** [#A] Auto-save and backups and such
+[[https://github.com/chadbraunduin/backups-mode][backups-mode for emacs]]
+- "
+  Inspiration
+  The inspiration for this came after reading John Siracusa's review of the Document Model new to Mac OS X Lion. This new framework on the Mac allows for the following:
+
+  - All documents are automatically saved. This includes when the user closes the document or quits the application.
+  - Old versions of the document are automatically stored and accessible.
+  - The user has the ability to manually save a verion of the document.
+  - Old versions can be viewed, diffed, and reverted.
+  - Reverting an old version saves the current file as a version and copies the selected version to become the current file.
+  So I set out to emulate these features in emacs. emacs already has its own rudimentary version control system that can be turned on simply by configuring emacs. It can also be configured to keep those backup files tucked away in a central directory. It can also be configured to automatically save (without prompting) your files when you kill the buffer or quit emacs. In the event that emacs crashes, you can also restore your file from an autosave file emacs creates for you. So it has all of that out of the box.
+
+  What it doesn't have (or at least I couldn't find) is the ability to easily find, view, diff, and revert those versioned backup files. That is where backups-mode.el comes into play. While editing any file-based buffer in emacs, you can now do two extra things. You can list all backups and you can explicily save a version. 
+- Disclaimer
+  Using the emacs version control functionality should not be a replacement for a proper version control system such as cvs, svn, git, mercurial, and the like. So if you are developing a project or typing a manuscript, you'll want to use one of those systems. I find this useful for the less important stuff such as blog posts or exploritory programming.
+  "
+
+I am particularly intersted in:
+- Auto-saving (can I do this continusously?)
+- Tucking away backups in a central directory
+- View and revert backups
+
+auto-save vs back-ups in emacs
+- So apparently these are different things!
+  - [[https://newbedev.com/how-do-i-control-how-emacs-makes-backup-files][This page]] has a bunch of good info on configuring both.
+  - [[https://www.emacswiki.org/emacs/AutoSave][This]] is also not bad.
+
+Ok, so I think I just want to change my auto-save settings to:
+- Put auto-saves in a different directory
+- Auto-save every buffer every few seconds
+  - Use [[https://github.com/ChillarAnand/real-auto-save][real-auto-save]]
+- Consider disabling emacs backup files
+  - Only if I'm using Magit?
+- Consider having Emacs auto-save to the original file (rather than the #...# version)
+  - [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Auto-Save-Files.html][auto-save-visited-mode]]
+  - In theory this is 'bad' because you lose redundency (if the auto-save fails, you're not actually saving it yourself, either)
+  - Probably only do this /after/ you have git going, so that you still have version control
+  - A problem arises if you have a file-buffer open on two computers at once. Presumably, if both were running, the active buffer and the inactive buffer would repeatedly overwrite one another, assuming that emacs file lock function didn't kick in.
+- Greater functions for managing files and versions across systems should probably be delegated to Magit
+
+** [#A] Preview images in Helm
+https://lucidmanager.org/productivity/emacs-for-distraction-free-writing/
+"If you use the [[https://lucidmanager.org/productivity/emacs-completion-system/][Helm completion system]], you can preview the image as you select it with helm-follow-mode. When you are in the Helm selection session, toggle follow mode with C-c C-f. As you move the cursor, images will appear in anoter window."
+
+** [#A] Some way to handle archiving?
+https://fuco1.github.io/2017-04-20-Archive-subtrees-under-the-same-hierarchy-as-original-in-the-archive-files.html
+
+[[https://www.reddit.com/r/emacs/comments/akfuqx/comment/ef69b6v/?utm_source=share&utm_medium=web2x&context=3][Apparently]] there is a setting to make org clock tables consider archives, to get the time totals right.
+** [#B] Zettlekasten things:
 *** re-arrange some of my files
 Make index files
 *** differentiate between note types
-- my daily documents are really raw capture, which should befome Reference material
+- my daily documents are really raw capture, which should become Reference material
 - I need to build the practice of processing my raw input into bite-sized, permanent notes
 - Can I use an "archive" tag that will exclude a file from regular search??
-** evil-mode
-I want to learn how to use vim
-** buffer-move.el
-https://www.emacswiki.org/emacs/buffer-move.el
-to swap the buffers in the windows
-** exlude
 
-* REMOVE STARTUP WELCOME SCREEN
+** [#B] buffer-move.el
+https://www.emacswiki.org/emacs/buffer-move.el
+to swap the buffers in the 
+** [#B] replace package.el with straight.el???
+"Straight.el is an alternative package manager that installs packages through Git checkouts instead of downloading tarballs from one of the package archives. Doing so allows installing forked packages, altering local package checkouts, and locking packages to exact versions for reproducable setups."
+- https://jeffkreeftmeijer.com/emacs-straight-use-package
+
+https://github.crookster.org/switching-to-straight.el-from-emacs-26-builtin-package.el/
+
+use-package works with straight.el just like with package.el (since straight is just another package manager)
+
+https://systemcrafters.cc/advanced-package-management/using-straight-el/
+
+
+I think the increased degree of reproducibility is going to be the main selling point for me:
+https://countvajhula.com/2020/12/27/turn-your-emacs-d-into-an-emacs-distribution-with-straight-el/
+
+Here, the person who wrote straight.el has an overview/comparison/pro/con list of different emacs package managers:
+https://github.com/raxod502/straight.el#tldr-1
+
+
+** [#B] Integrate with Google Calendar
+https://orgmode.org/worg/org-tutorials/org-google-sync.html
+- This one is tailored for linux
+https://colekillian.com/posts/org-mode-and-google-calendar/
+https://github.com/myuhe/org-gcal.el
+- This one looks like an out of the box solution?
+- But it is old
+https://cestlaz.github.io/posts/using-emacs-26-gcal/#.WIqBud9vGAk
+- https://github.com/Fuco1/Fuco1.github.io/blob/master/posts/2019-02-02-Org-mode-and-google-calendar-sync.org
+  - This version of the above only fetches and never pushes
+    "The reason is that I use multiple calendars (I basically have a google account at every company I work for plus a personal calendar) and the workflow with events and inviting myself from one calendar to another as attendees is too complex and fragile to trust some automated tool. And I can not afford my calendars to break."
+  - "I'm also using [[https://github.com/Fuco1/org-timeline][org-timeline]] so I add some extra header arguments to the generated file to add a different color to the Google Calendar entries."
+
+The problem with any of these solutions is that I will have to manage syncing, which is always a pain.
+
+** [#B] Graphical agenda view!
+https://github.com/Fuco1/org-timeline
+This looks super cool
+
+** [#B] Allow for tabs at the start of paragraphs
+
+** [#B] Get the keyword selection buffer to display within current window
+https://emacs.stackexchange.com/questions/14817/how-to-control-where-the-org-todo-keywords-buffer-displays
+This one looks like it might be a real rabbit hole, but the answer at the bottom (the one using shackle) looks most promising.
+** [#C] Create websites/blog posts from emacs
+https://lucidmanager.org/productivity/create-websites-with-org-mode-and-hugo/
+
+** [#C] hydra
+doing menus and key combinations for common commands:
+- https://www.reddit.com/r/emacs/comments/8of6tx/tip_how_to_be_a_beast_with_hydra/
+- https://sachachua.com/dotemacs/#org07ac25e
+
+** [#C] prettify-symbols-mode
+[[https://www.reddit.com/r/emacs/comments/9lpupc/i_use_markdown_rather_than_orgmode_for_my_notes/e79kz56/?utm_source=reddit&utm_medium=web2x&context=3][especially to get rid of ugly code tags]]
+[[https://www.reddit.com/r/emacs/comments/brt0sk/prettifysymbolsmode_is_so_cool/][Check this out]]
+
+** [#C] explore markdown-mode
+- Can I make it work the way I want?
+- How does live preview work?
+- Can I mix markdown and org in the same document?
+  - with live preview??
+
+[[https://stackoverflow.com/questions/36183071/how-can-i-preview-markdown-in-emacs-in-real-time/36189456][See here]]
+
+- Actually, I think a lot of what I'm looking for is [[https://stackoverflow.com/questions/16186843/inline-code-in-org-mode][here]]
+
+** [#C] evil-mode
+I want to learn how to use vim
+
+** monospaced fonts where I need them
+[[https://yoo2080.wordpress.com/2013/05/30/monospace-font-in-tables-and-source-code-blocks-in-org-mode-proportional-font-in-other-parts/][See here]]
+
+*** More possible sources of info:
+https://www.reddit.com/r/emacs/comments/66w75c/monospace_font_for_calendar_in_orgmode/
+https://protesilaos.com/codelog/2020-07-17-emacs-mixed-fonts-org/
+https://emacs.stackexchange.com/questions/32300/monospace-font-for-calendar-buffer-and-tables-in-org-mode-proportional-font-i
+
+** [#C] org-fancy-priorities
+https://github.com/harrybournis/org-fancy-priorities
+
+** [#C] Add general encryption with org-crypt
+
+** [#C] Check out poet as an alternative for making emacs pretty
+https://github.com/kunalb/poet
+
+** [#C] Try to find a way to fix the spacing in multiline lists
+This might be easier said than done.
+
+* REMOVE STARTUP WELCOME SCREEN and open default file
 The code block below toggle off the welcome startup screen.
 
 #+BEGIN_SRC emacs-lisp
 (custom-set-variables
-  '(inhibit-startup-screen t))
+  '(inhibit-startup-screen t)
+  '(initial-buffer-choice "~/Dropbox/gtd/gtd.org")
+)
+#+END_SRC
+* Change Default Directory
+https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-for-emacs-27-1-app
+#+BEGIN_SRC emacs-lisp
+(setq default-directory "~/")
+(setq command-line-default-directory "~/")
 #+END_SRC
 
 * Appearance
 #+BEGIN_SRC emacs-lisp
-(set-face-attribute 'default nil
-  :family "Liberation Mono"
-  :height 200
-  :weight 'normal
-  :width 'normal
-)
-(setq org-startup-indented t)
-(setq global-visual-line-mode 1)
-(setq visible-bell 1)
-(setq word-wrap t)
+  ;; (set-face-attribute 'default nil
+  ;;   :family "Liberation Mono"
+  ;;   :height 200
+  ;;   :weight 'normal
+  ;;   :width 'normal
+  ;; )
+  (setq visible-bell 1
+        org-startup-indented t
+        org-pretty-entities t
+        org-hide-emphasis-markers t
+        org-startup-with-inline-images t   ; only displays in the format [[file:path-to-file]], nothing else.
+        org-image-actual-width '(300)
+        inhibit-compacting-font-caches t   ; this is to help org-superstar run quickly with large files
+        )
+  (global-visual-line-mode 1)
 #+END_SRC
-* org-roam
+** mixed-pitch
+
+#+BEGIN_SRC emacs-lisp
+;; Set default, fixed and variabel pitch fonts
+;; Use M-x menu-set-font to view available fonts
+(use-package mixed-pitch
+  :ensure t
+  :hook
+  (text-mode . mixed-pitch-mode)
+  :config
+  (set-face-attribute 'default nil :font "DejaVu Sans Mono" :height 200)
+  (set-face-attribute 'fixed-pitch nil :font "DejaVu Sans Mono")
+  (set-face-attribute 'variable-pitch nil :family "Liberation Sans")
+)
+#+END_SRC
+
+#+RESULTS:
+| mixed-pitch-mode | text-mode-hook-identify |
+** solve problem with proportional fonts on dropdown menus
+This probably isn't actually a problem for me right now, but [[https://lucidmanager.org/productivity/ricing-org-mode/][this guide]] I'm using recommends it so I'm including for the sake of completion.
+
+#+BEGIN_SRC emacs-lisp
+   ;; Required for proportional font
+   (use-package company-posframe
+     :ensure t
+     :config
+     (company-posframe-mode 1))
+#+END_SRC
+** Show hidden emphasis markers
+See [[https://lucidmanager.org/productivity/ricing-org-mode/][here]] and [[https://github.com/awth13/org-appear][here]].
+When you turn on org-hide-emphasis-markers it can be hard to see or change the characters that encode the formatting. org-appear solves tha.
+#+BEGIN_SRC emacs-lisp
+  ;; Show hidden emphasis markers
+  (use-package org-appear
+    :ensure t
+    :hook
+    (org-mode . org-appear-mode)
+    :config
+    (setq org-appear-autolinks t
+          org-appear-autosubmarkers t
+          org-appear-delay .7
+          )
+  )
+#+END_SRC
+*test*
+** org-superstar
+See [[https://lucidmanager.org/productivity/ricing-org-mode/][here]] and [[https://github.com/integral-dw/org-superstar-mode][here]].
+#+BEGIN_SRC emacs-lisp
+  ;; Nice bullets
+  (use-package org-superstar
+      :ensure t
+      :config
+      (setq org-superstar-special-todo-items t)
+      (add-hook 'org-mode-hook (lambda ()
+                                 (org-superstar-mode 1)))
+  )
+#+END_SRC
+* org derivatives
+** Design
+- [[https://www.reddit.com/r/orgmode/comments/i16xti/question_any_problems_assigning_orgroamdirectory/][This]] has some good notes about how org-mode and org-roam directories should relate.
+  - You don't want org-agenda looking at your org-roam dir. It's not optimized to parse lots of small files.
+  - I believe that your cannot run roam backlinks to files outside of roam's designated dir.
+  - Many people have a dir for each, side by side, so roam backlinks will not work with org-roam files.
+  - However, in theory you can assign both to the same dir, then tweak all your org-roam-capture-templates to create files in a org-roam subdir. In theory, this gets you the best of both worlds (assuming you tell org-agenda not to search the roam subdir).
+  - People often create a subdir within their org-roam dir to contain their dailies.
+
+- [[https://www.orgroam.com/manual.html#How-do-I-have-more-than-one-Org_002droam-directory_003f][This]] explains how to set the value of org-roam-directory to be different in different directories.
+
+*** File Structure:
+#+begin_example
+
+org
+|    roam-note1.org
+|    roam-note2.org
+|
+|
+|----gtd
+|    |    gtd.org
+|    |    |    * Big Projects
+|    |    |    * Short Projects
+|    |    |    * Tasks and Appointments
+|    |    inbox.org (for captures)
+|    |    
+|    |----gtd-archive (backup, auto-save, and archive for gtd material)
+|----templates
+|----notes-archive (backup, auto-save, and archive for roam notes)
+|----dailies  
+|    |    date.org
+|    |    date.org
+|----images
+
+#+end_example
+
+*** Work Flow:
+- Text enters the system through either captures (witch get appended to a heading in inbox.org) or through a daily note, which serves as more of a daily workspace for ideas that need forming, especially for thoughts that I am discovering and so don't have any sort of title. Text from a daily note might get moved into a capture once it has a little more clarity.
+  - Daily notes serve as both workspaces for ideas that need forming and as a narrative or documentation of my day as I write to myself to find out what I am thinking.
+    - Text that reaches some form should get refiled, either into the inbox or gtd or some permanent note. In the case of the latter, include a link.
+- Tasks and projects (groups of tasks) go to gtd.org
+- 
+
+Gah, I'm thinking in too much detail already.
+Think about how you think, and how my brain likes to flow through these things over time.
+
+I start with one of 7 things:
+1. An addition to an existing work.
+2. A task; something I need to do, or a bunch of somethings (a project)
+3. An idea, or an inspiration. It may take a while to figure out where it should go, or even what to call it.
+4. A question; a line of inquiry. This too might change and narrow or split in its pursuit.
+5. Notes on a meeting, the events of the day, and/or an important piece of information that I need to retain and access in the future.
+6. An 'original' or synthesized thought; a conclusion, rooted in sources but standing on its own.
+7. Notes on a 'text', or extracts, with bibliographic reference to that text.
+
+It begins as either a dashed off thing, to be removed from my thoughts as soon as possible in order to not interrupt a focus, or as a shaped an growing thing that slowly takes form as I work it in my daily note.
+
+Once it is sufficiently fleshed out and contextualized to stand on its own (that I may find it again, having fully forgotten it, I should not wonder the when, what, or why of it and be vexxed) it should be moved to the appropriate place.
+What I don't know (and do not /yet/ need to know) is the nature of these places. Should they be files? Headings? Directories? Tags?
+For instance, should most all of my tasks, my agenda, reside in my gtd.org as it has? Or should projects get their own roam nodes? That could be sensible if I wish to combine my line of inquiry and synthesis on the subject with its labors. But do I? I suspect not.
+Regardless, I don't need to certify that yet. I am still creating a higher level map of my flows.
+
+So, once a thing is formed, it could be of two types:
+1. A scrap, that stands alone, but essentially lifeless. A passing task, or a snippet of an idea that does not immediately catch my interest, or what have you. Fuel, or bricks, depending on your metaphor.
+2. A question, or a vision to be manifested, or a creative urge. A line of inquiry, or a project. The spark or the ember that brings the rest together.
+
+Then the question is whether this thing will live within my field of vision or get tucked away somewhere, to be reviewed in due time.
+In the first case, excellent. Such a thing will be =active= in some way.
+In the latter, I must have some way of recycling it, of allowing it to sift to the top periodically and be reviewed. However I mark or segregate them, the important bit is the periodicity of it. Should I consider it again in a week? a month? Next quarter or next year?
+These are the =reviews=: weekly, monthly, quarterly, yearly.
+
+How do notes and tasks relate and play together?
+A whole beast will be both a project and a line of inquiry. They will be largely parallel, with links to specific todo items sprinkled in the body of inquiry.
+
+A line of inquiry (LOI) is the burbling ball of thoughts and questions and links and bits of resources. It is both the working space for the act of inquiry and also the index with links to notes on text, fully formed ideas or principles, etc. As my inquiry generates reference material and complete thoughts, they will get spun off and linked to.
+- Roam links (I think) can exist at a specific point in the text, but point to a whole text.
+- As such, an LOI will have many links out but almost not links in.
+- If you find you want to link to a specific bit of the LOI, that's probably a sign that that chunk should be spun out into its own node.
+
+
+
+** org-mode
+#+BEGIN_SRC emacs-lisp
+(use-package org
+  :ensure nil
+  :bind (("C-c l" . org-store-link)
+         ("C-S-v" . scroll-other-window)
+         ("M-V" . scroll-other-window-down)
+        )
+)
+#+END_SRC
+*** org-todo-keywords
+My keyword system begins with TODO, then can progress in either:
+- =REVIEW=: the task needs clarification, to be broken up, or possibly to be cancelled
+- =NEXT=: the task is on deck
+- =STARTED=: the task has been begun but is not finished
+- =WAITING=: the task is waiting for something (requires a note)
+- =CANCELED= / =DONE=
+
+(There is also a separate keyword sequence for projects)
+
+
+
+#+BEGIN_SRC emacs-lisp
+(setq org-todo-keywords
+ '((sequence
+    "TODO(t)"
+    "REVIEW(r)"
+    "NEXT(n)"
+    "STARTED(s!)"
+    "WAITING(w@/!)"
+    "|"
+    "CANCELED(x!)"
+    "DONE(d!)")
+   (sequence
+    "PROJECT - OPEN(o!)"
+    "PROJECT - ON-HOLD(h@/!)"
+    "|"
+    "FINISHED(f!)")))
+(setq org-todo-keyword-faces
+  '(("TODO". "purple")
+    ("REVIEW" . "orange")
+    ("NEXT" . "magenta")
+    ("STARTED" . "pink")
+    ("WAITING" . "blue")
+    ("CANCELED" . "green")
+    ("DONE" . "green")
+    ("PROJECT - OPEN" . (:foreground "red" :weight bold))
+    ("PROJECT - ON-HOLD" . (:foreground "gray" :weight bold))
+    ("FINISHED" . (:foreground "green" :weight bold))))
+#+END_SRC
+*** org-todo-state-tags-triggers
+http://doc.norang.ca/org-mode.html#ToDoStateTriggers
+http://doc.endlessparentheses.com/Var/org-todo-state-tags-triggers.html
+
+Different keywords will add or remove corresponding tags.
+- Moving a task to =TODO=:
+  - Removes =review=, =next=, =started=, and =waiting= tags
+- Moving a task to =REVIEW=:
+  - Adds the =review= tag
+  - Removes =next= and =waiting= tags
+  - May retain the =started= tag
+- Moving a task to =NEXT=:
+  - Adds the =next= tag
+  - Removes =review=, and =waiting= tags
+  - May retain the =started= tag
+- Moving a task to =STARTED=:
+  - Adds the =started= tag
+  - Removes the =review=, =next=, and =waiting= tags
+  - NB: a task, once started, should retain its =started= tag until it is moved to a done state
+  - NB: a started task can wait, but a waiting task, once started, is no longer waiting
+- Moving a task to =WAITING=:
+  - Adds the =waiting= tag
+  - Removes the =next= tag
+  - May retain the =review= or =started= tags
+- Moving a task to =CANCELED= adds the =canceled= tag
+- Moving a task to a todo state removes the =canceled= tag
+- Moving a task to a done state (=CANCELED= or =DONE=) removes all todo tags
+
+Also, assigning any project states assigns the =project= tag, which retains even if it is moved to =FINISHED=, and assigning any other keyword (or no keyword) removes the =project= tag.
+
+Finally, the =next=, =started=, and =project= tags are excluded from inheritance. Consequently, the =review=, =waiting=, and =canceled= tags are inherited.
+#+begin_src emacs-lisp
+(setq org-todo-state-tags-triggers
+;; Triggers for state changes
+      (quote (
+              ;; Move to TODO removes the review, next, started, and waiting tags
+              ("TODO" ("REVIEW") ("NEXT") ("STARTED") ("WAITING"))
+
+              ;; Move to REVIEW adds review tag
+              ("REVIEW" ("REVIEW" . t))
+              ;; Move to REVIEW removes next and waiting tags
+              ("REVIEW" ("NEXT") ("WAITING"))
+
+              ;; Move to NEXT adds next tag
+              ("NEXT" ("NEXT" . t))
+              ;; Move to NEXT removes review and waiting tags
+              ("NEXT" ("REVIEW") ("WAITING"))
+
+              ;; Move to STARTED adds the started tag
+              ("STARTED" ("STARTED" . t))
+              ;; Move to STARTED removes review, next, and waiting tags
+              ("STARTED" ("REVIEW") ("NEXT") ("WAITING"))
+
+              ;; Move to WAITING adds the waiting tag
+              ("WAITING" ("WAITING" . t))
+              ;; Move to WAITING removes the next tag
+              ("WAITING" ("NEXT"))
+
+              ;; Move to canceled adds the canceled tag
+              ("CANCELED" ("CANCELED" . t))
+              
+              ;; Move to any todo state removes the canceled tag
+              (todo ("CANCELED"))
+              ;; Move to any done state removes review, next, started, and waiting tags
+              (done ("REVIEW") ("NEXT") ("STARTED") ("WAITING"))
+
+              ;; Assigning "PROJECT - OPEN", "PROJECT - ON-HOLD", or "FINISHED" states adds the project tag
+              ("PROJECT - OPEN" ("PROJECT" . t))
+              ("PROJECT - ON-HOLD" ("PROJECT" . t))
+              ("FINISHED" ("PROJECT" . t))
+              ;; Assigning any other keyword, or no keyword, removes the project tag
+              ("" ("PROJECT"))
+              ("TODO" ("PROJECT"))
+              ("REVIEW" ("PROJECT"))
+              ("NEXT" ("PROJECT"))
+              ("STARTED" ("PROJECT"))
+              ("WAITING" ("PROJECT"))
+              ("DONE" ("PROJECT"))
+              ("CANCELED" ("PROJECT"))
+             )))
+
+(setq org-tags-exclude-from-inheritance '("NEXT" "STARTED" "PROJECT"))
+#+end_src
+*** org-agenda
+Org-agenda commands can be found [[https://orgmode.org/manual/Agenda-Commands.html][here]].
+**** How to use agenda and general file system thoughts
+So I'm thinking about how I'm going to use org-agenda, and more broadly how I'm going to organize around GTD.
+Now that I've actually looked at the agenda view and poked around a little bit, I note a few things:
+- Timestamps are important. If it isn't dealined or scheduled or what have you, it's not going to show up in the calendar portion of the agenda view.
+- The follow-on to that is using priorities, keywords, and tags. These are what you use to sort out an otherwise undifferentiated list of tasks.
+  - Can I sort by [[https://orgmode.org/manual/Effort-Estimates.html][effort]] as well?
+- The file containing the task is shown, which suggests that maybe I want to keep different kind of stuff in different files. Like, projects, birthdays, repeating tasks, miscellaneous tasks, routine/habits, etc.
+  - Alternatively, maybe I can make the file not display??
+    - Yes, see [[*Customize agenda-view][Customize agenda-view]] below
+  - It actually shows the agenda items "category", which just defaults to the file name, but can be specified [[https://orgmode.org/manual/Categories.html][like so]]: =#+CATEGORY: Thesis=
+- Important to note, that I am currently imagining that my GTD and my org-roam notes exist side-by-side but largely separately, or at least as two distinct systems.
+  - A series of org files will hold all my tasks, schedules, projects, people,   etc.
+  - Then all of my notes and developing thoughts and such will live in the zettelkasten.
+    - *I am not anticipating having and TODO items in the roam files*
+  - The main point of connection will be the index files in roam, which will connect to project trees in GTD (and of course, individual TODOs can link to other items or clusters in roam)
+  - 
+
+**** Org-agenda files
+!!! None of the bits in this code-block seem to be running by default. I have to manually run these lines to find the gtd items or to truncate lines. !!!
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-files '("~/Dropbox/gtd/gtd.org"))
+#+END_SRC emacs-lisp
+**** Customize agenda-view
+Formatting fields in agenda-view:
+- https://lists.gnu.org/archive/html/emacs-orgmode/2010-01/msg00744.html
+- http://doc.endlessparentheses.com/Var/org-agenda-prefix-format.html
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-agenda-mode-hook
+;; Disables word-wrap and enables truncate-line in agenda buffers
+          (lambda ()
+            (visual-line-mode -1)
+            (toggle-truncate-lines 1)))
+
+
+#+END_SRC emacs-lisp
+**** org-capture
+https://orgmode.org/guide/Capture.html
+**** org-capture-templates
+https://orgmode.org/manual/Template-elements.html
+**** Using org-agenda with org-roam
+Normally these don't mix well. Org-agenda checks every in a targeted directory for todo items, and since org-roam creates tons of little files this makes the process very slow, so the usual practice is to segregate all your agenda files in their of directory.
+However, [[https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html][someone has written some code to efficiently let agenda find todo items in roam nodes]].
+
+** org-roam
 Installing this is a little tricky, because you have to add sqlite3 to 'exec-path'.
 Let's try these instructions: https://justjensen.co/setting-up-sqlite-on-windows-10/
 Also, for whatever weird reason, sqlite3.exe is included in the tools, not the standard download:
 https://stackoverflow.com/questions/43050795/no-sqlite3-exe-in-sqlite3-download-folder-for-windows-64-bit
+
+Things I want to change:
+- [ ] Add templates for roam-capture
+  - At the very least:
+    - Resource (for a website, blog, podcast, whatever)
+    - Person (for an author, creator, historical figure, person I know, etc.)
+    - Thought/Idea: for my thoughts/synthesis
+  - These will each have different categories, tags, etc.
+- [ ] Change the way org-roam-find-file displays, so that Title is on the left and Tags are all on the right (maybe show Category too??)
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-roam
@@ -105,7 +593,27 @@ https://stackoverflow.com/questions/43050795/no-sqlite3-exe-in-sqlite3-download-
               (("C-c n I" . org-roam-insert-immediate))))
 #+END_SRC
 
-* org-roam-server
+**** org-roam-capture
+
+**** org-roam-capture-templates
+- Resources:
+  - https://www.orgroam.com/manual.html#The-Templating-System
+  - https://www.reddit.com/r/orgmode/comments/lmlsdr/simple_question_re_orgroam_how_to_access_capture/
+  - [[https://www.orgroam.com/manual.html#The-Templating-System][This]] video explains it all pretty well.
+    - Mentioned around 24 minutes in: you can make a template by editing a file, saving it in a particular place, then referencing it by placing  =(file "path/to/file")= in place of the ="%?"= or whatever string you write to define the template.
+
+#+begin_src emacs-lisp
+(setq org-roam-capture-templates
+      '(("d" "default" plain #'org-roam-capture--get-point "%?"
+         :file-name "%<%Y%m%d%H%M%S>-${slug}"
+         :head "#+title: ${title}"
+         :unnarrowed t)
+))
+#+end_src
+
+**** org-roam-dailies-capture-templates
+https://archive.baty.net/2020/keeping-org-roam-daily-notes-in-a-separate-folder/
+** org-roam-server
 This should get the server view working.
 
 #+BEGIN_SRC emacs-lisp
@@ -174,16 +682,6 @@ This should get the server view working.
 )
 #+END_SRC
 
-* markdown-mode
-#+BEGIN_SRC emacs-lisp
-(use-package markdown-mode
-  :ensure t
-  :mode (("README\\.md\\'" . gfm-mode)
-         ("\\.md\\'" . markdown-mode)
-         ("\\.markdown\\'" . markdown-mode))
-  :init (setq markdown-command "multimarkdown")
-)
-#+END_SRC
 * evil
 #+BEGIN_SRC emacs-lisp
 (use-package evil
@@ -208,3 +706,50 @@ This should get the server view working.
   (unbind-key "<M-up>" markdown-mode-map)
 )
 #+END_SRC
+* olivetti
+"Distraction-free writing means that your computer screen is free of clutter and, just like an old typewriter, only shows the text you are working on. In the article about configuring Emacs, we already removed the menu bar and other on-screen distractions.
+
+[[https://github.com/rnkn/olivetti][Olivetti]] is a simple Emacs minor mode that facilities distraction-free writing. The name Olivetti derives from the famous typewriter brand.
+
+You activate Olivetti mode with M-x olivetti-mode. This minor mode reduces the width of the text to seventy characters and centres the text in the middle of the window. The width of the text is changeable with the M-x olivetti-set-with command or C-c \.
+
+I have written some code that makes Olivetti mode a bit easier to use. This code stores your window configuration when you hit F9 (or whatever key you prefer) and activates Olivetti mode. It also increases the text by two steps to create a nice focussed screen. Finally, typing F9 again restored the previous settings." ~[[https://lucidmanager.org/productivity/ricing-org-mode/][source]]
+
+#+BEGIN_SRC emacs-lisp
+  ;; Distraction-free screen
+  (use-package olivetti
+    :ensure t
+    :init
+    (setq olivetti-body-width .67)
+    :config
+    (defun distraction-free ()
+      "Distraction-free writing environment"
+      (interactive)
+      (if (equal olivetti-mode nil)
+          (progn
+            (window-configuration-to-register 1)
+            (delete-other-windows)
+            (text-scale-increase 2)
+            (olivetti-mode t))
+        (progn
+          (jump-to-register 1)
+          (olivetti-mode 0)
+          (text-scale-decrease 2))))
+;;    :bind
+;;    (("<f9>" . distraction-free)))
+  )
+#+END_SRC
+** 
+* magit
+
+#+begin_src emacs-lisp
+(use-package magit
+  :ensure t
+  :bind (("C-x g" . magit)))
+
+#+end_src
+* FINAL Open ~/.emacs.d/emacs-config.org on startup
+#+BEGIN_SRC emacs-lisp
+(find-file "~/.emacs.d/emacs-config.org")
+#+END_SRC
+ 
