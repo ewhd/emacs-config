@@ -787,7 +787,7 @@ sflsdflkjh
 ** magit
 
 See [[https://emacs.stackexchange.com/questions/293/what-should-shouldnt-i-do-when-keeping-emacs-and-emacs-d-in-version-control][here]] for thoughts on keeping emacs stuff in version control.
-
+test change
 #+begin_src emacs-lisp
 (use-package magit
   :ensure t
