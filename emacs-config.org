@@ -740,7 +740,53 @@ I have written some code that makes Olivetti mode a bit easier to use. This code
   )
 #+END_SRC
 ** 
-* magit
+* Backups, Auto-Save, and Version Control
+You do in fact still want to use emacs' backups alongside a VC like git, for reasons stated in [[https://stackoverflow.com/a/151946][the comments to this stackoverflow answer]]:
+    "The backups are for when you are editing something not under version control - like a config file or something quick and dirty that you haven't gotten around to putting into version control yet. Then, when you haven't been doing what you ought to, the editor saves your neck."
+** Auto-save and Backup
+[[https://emacs.stackexchange.com/a/37210][This]] will configure things to save both backup and auto-save files to an emacs-backups directory relative to the file you are visiting:
+sflsdflkjh
+#+begin_src emacs-lisp
+(let ((dir "emacs-backups"))
+  (setq backup-directory-alist `((".*" . ,dir)))
+
+;  (setq auto-save-file-name-transforms `((".*" "emacs-autosaves" t)))  
+;; The previous line fails to move auto-saves to a different folder.
+;; It also causes auto-save to fail with the following error:
+;; Error (auto-save): Auto-saving gtd.org: Opening output file: Permission denied, c:/#!Users!Ethan!Dropbox!gtd!gtd.org#
+;; If you're getting that error you will need to reset the var's value AND close and re-open the other buffer
+;; (it seems to effect this buffer fine) 
+
+
+;  (setq auto-save-file-name-transforms 
+;        `(("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
+;           ,(concat temporary-file-directory "\\2") t)))
+;; The previous line just resets the var to the default value
+)
+
+
+
+; from https://stackoverflow.com/questions/151945/how-do-i-control-how-emacs-makes-backup-files
+;(defvar --backup-subdir "emacs-backups")
+;(if (not (file-exists-p --backup-subdir))
+;        (make-directory --backup-subdir t))
+;(setq backup-directory-alist `(("." . ,--backup-subdir)))
+
+(setq make-backup-files t               ; backup of a file the first time it is saved.
+      backup-by-copying t               ; don't clobber symlinks
+      version-control t                 ; version numbers for backup files
+      delete-old-versions t             ; delete excess backup files silently
+      delete-by-moving-to-trash t
+      kept-old-versions 6               ; oldest versions to keep when a new numbered backup is made (default: 2)
+      kept-new-versions 9               ; newest versions to keep when a new numbered backup is made (default: 2)
+      auto-save-default t               ; auto-save every buffer that visits a file
+      auto-save-timeout 20              ; number of seconds idle time before auto-save (default: 30)
+      auto-save-interval 200            ; number of keystrokes between auto-saves (default: 300)
+      )
+#+end_src
+** magit
+
+See [[https://emacs.stackexchange.com/questions/293/what-should-shouldnt-i-do-when-keeping-emacs-and-emacs-d-in-version-control][here]] for thoughts on keeping emacs stuff in version control.
 
 #+begin_src emacs-lisp
 (use-package magit

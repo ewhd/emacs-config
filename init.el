@@ -23,7 +23,7 @@
 ;; file.
 ;; The rest is for internal use.
 ;; 
-;;
+;; test
 
 (unless package-archive-contents
   (package-refresh-contents))

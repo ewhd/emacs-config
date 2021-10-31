@@ -1,0 +1,12 @@
+# gitignore for ~/.emacs.d
+# it ignores everyting except itself, 
+
+*
+!*/
+
+# track this file
+!.gitignore
+
+# track important config files
+!emacs-config.org
+!init.el
