@@ -571,10 +571,31 @@ Normally these don't mix well. Org-agenda checks every in a targeted directory f
 However, [[https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html][someone has written some code to efficiently let agenda find todo items in roam nodes]].
 
 ** org-roam
-Installing this is a little tricky, because you have to add sqlite3 to 'exec-path'.
-Let's try these instructions: https://justjensen.co/setting-up-sqlite-on-windows-10/
-Also, for whatever weird reason, sqlite3.exe is included in the tools, not the standard download:
-https://stackoverflow.com/questions/43050795/no-sqlite3-exe-in-sqlite3-download-folder-for-windows-64-bit
+- <2020-02-27 Thu>
+  - Installing this is a little tricky, because you have to add sqlite3 to 'exec-path'.
+  - Let's try these instructions: https://justjensen.co/setting-up-sqlite-on-windows-10/
+  - Also, for whatever weird reason, sqlite3.exe is included in the tools, not the standard download:
+  - https://stackoverflow.com/questions/43050795/no-sqlite3-exe-in-sqlite3-download-folder-for-windows-64-bit
+
+- <2021-11-02 Tue>
+  - After upgrading to org-roam v2, I was getting this error: =M-x-execute-command: No EmacSQL SQLite binary available, aborting org-roam v2= even though I had sqlite and sqlite3 and all that installed from the last time I got this working
+    - When I did this in February I almost sure used [[https://web.archive.org/web/20200629071835/https://org-roam.readthedocs.io/en/master/installation/][this]] resource, as when I look at the old =org-roam-db.el= file it has been modified per instructions. HOWEVER, the new version of that file for v2 is built differently, and from looking at it should be able to handle =emacsql-sqlite=, =emacsql-libsqlite3=, or =emacsql-sqlite3=, so, no idea why it doesn't work.
+      - However, in reading the comments in the new =org-roam-db.el= it says sqlite3 "has the advantage that you likely don't need a compiler"
+  - I installed Mingw-w64 builds as recommended [[https://github.com/skeeto/emacsql/issues/55#issuecomment-515704368][here]], and it seems to have successfully built the db?
+  - However, roam doesn't appear to work:
+    - None of the key-combinations for roam commands which are set in my config work, though the commands are runnable through M-x
+    - Running the migration wizard creates a backup and then gives a timeout error
+    - The migration wizard sometimes gives a "selecting deleted buffer" error
+    - The =org-roam-db-sync= command would kind of alternate between succeeding and returning a "selecting deleted buffer" error as well.
+  - Aaaand, now it's working. No idea why. I deleted and forced emacs to recreate the db and the deleted the .bak to allow it to retry the migration wizard, and one time I tried the wizard it just started chugging through all those files. Then I synced the db again and hey presto: =org-roam-node-find= works now.
+    - Those key-combinations still aren't bound, though. Let's try reloading the init.el file -> nope, still no good. I wonder if it's something wrong with how org-roam v2 plays with use-package?
+      - Ah, ="C-c n i"= was successfully bound. The difference is that it was a single binding under =:bind (:map org-mode-map ("C-c n i" . org-roam-node-insert))= while the rest were multiple bindings in a list as in =:bind (:map org-roam-mode-map (("C-c n l" . org-roam-buffer-toggle)...("C-c n f" #'org-roam-node-find))=, so something is off with the parens or something.
+      - Well, I messed around with the parens and then realized it was probably the obvious thing: =org-roam-mode-map= is either deprecated or called differently -> yup, I commented out the =:map= bits so that =:bind= bit just took a list of bindings and it works fine now.
+        - I'm betting this has to do with how the nature of =org-roam-mode= has changed from v1 to v2.
+  - However, I'm still not seeing backlinks...and when I run =org-roam-db-sync= I get that alternating =Selecting deleted buffer= error again.
+    - I'm also still getting these timeout errors in other places. For instance, I was just running =load-file= to reload this config and like clockwork it would hold up and time out, and then when I ran the same thing again it would work. What's up with that???
+
+    - Backlinks are working now! I think I just wasn't looking at them in the right place, lol. I'm going to bed. 
 
 Things I want to change:
 - [ ] Add templates for roam-capture
@@ -586,22 +607,29 @@ Things I want to change:
 - [ ] Change the way org-roam-find-file displays, so that Title is on the left and Tags are all on the right (maybe show Category too??)
 
 #+BEGIN_SRC emacs-lisp
-(use-package org-roam
-      :ensure t
-      :hook
-      (after-init . org-roam-mode)
-      :custom
-      (org-roam-directory "~/Dropbox/omnibus/")
-      (org-roam-index-file "~/Dropbox/omnibus/index.org")
-      :bind (:map org-roam-mode-map
-              (("C-c n l" . org-roam)
-               ("C-c n f" . org-roam-find-file)
-               ("C-c n g" . org-roam-graph)
-	       ("C-c n t" . org-roam-tag-add)
-	       ("C-c n T" . org-roam-tag-delete))
-              :map org-mode-map
-              (("C-c n i" . org-roam-insert))
-              (("C-c n I" . org-roam-insert-immediate))))
+  (use-package org-roam
+        :ensure t
+        :init
+        (setq org-roam-v2-ack t)
+        :hook
+        (after-init . org-roam-mode)
+        :custom
+        (org-roam-directory "~/Dropbox/omnibus/")
+        ;(org-roam-completion everywhere t)
+        :bind (;:map org-roam-mode-map
+                ("C-c n l" . org-roam-buffer-toggle)
+                ("C-c n f" . org-roam-node-find)
+                ("C-c n g" . org-roam-graph)
+                ("C-c n t" . org-roam-tag-add)
+                ("C-c n T" . org-roam-tag-delete)
+                ;:map org-mode-map
+                ("C-c n i" . org-roam-node-insert))
+         :config
+         (org-roam-setup)
+
+         )
+
+  
 #+END_SRC
 
 **** org-roam-capture
@@ -615,34 +643,50 @@ Things I want to change:
 
 #+begin_src emacs-lisp
 (setq org-roam-capture-templates
-      '(("d" "default" plain #'org-roam-capture--get-point "%?"
-         :file-name "%<%Y%m%d%H%M%S>-${slug}"
-         :head "#+title: ${title}"
-         :unnarrowed t)
-))
+       '(("d" "default" plain "%?"
+          :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+          :unnarrowed t)))
 #+end_src
 
 **** org-roam-dailies-capture-templates
 https://archive.baty.net/2020/keeping-org-roam-daily-notes-in-a-separate-folder/
+
+**** Set directory to appear in completion in org-roam-node-find
+From [[https://org-roam.discourse.group/t/org-roam-major-redesign/1198/220][here]]:
+"[Subdirectories] can no longer be used as tags in V2, but they can be made appear in completion in org-roam-node-find etc. by setting this variable:
+#+begin_src emacs-lisp
+(setq org-roam-node-display-template
+  "${title:80}  ${file:9} ${tags:20}")
+#+end_src
+
+<2021-11-02 Tue>
+- Added this feature. It basically appears to work, which is good enough for now.
 ** org-roam-server
 This should get the server view working.
 
+<2021-11-02 Tue>
+- org-roam-server deprecated for org-roam v2.
+- [[https://github.com/org-roam/org-roam-ui][org-roam-ui]] is the new package.
+
 #+BEGIN_SRC emacs-lisp
-(use-package org-roam-server
-  :ensure t
-  :config
-  (setq org-roam-server-host "127.0.0.1"
-        org-roam-server-port 8080
-        org-roam-server-authenticate nil
-        org-roam-server-export-inline-images t
-        org-roam-server-serve-files nil
-        org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
-        org-roam-server-network-poll t
-        org-roam-server-network-arrows nil
-        org-roam-server-network-label-truncate t
-        org-roam-server-network-label-truncate-length 60
-        org-roam-server-network-label-wrap-length 20))
+;(use-package org-roam-server
+;  :ensure t
+;  :config
+;  (setq org-roam-server-host "127.0.0.1"
+;        org-roam-server-port 8080
+;        org-roam-server-authenticate nil
+;        org-roam-server-export-inline-images t
+;        org-roam-server-serve-files nil
+;        org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
+;        org-roam-server-network-poll t
+;        org-roam-server-network-arrows nil
+;        org-roam-server-network-label-truncate t
+;        org-roam-server-network-label-truncate-length 60
+;        org-roam-server-network-label-wrap-length 20))
 #+END_SRC
+** org-roam-ui
+https://github.com/org-roam/org-roam-ui
+
 
 * dired-sidebar
 #+BEGIN_SRC emacs-lisp
