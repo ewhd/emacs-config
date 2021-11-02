@@ -32,7 +32,9 @@ https://www.youtube.com/results?search_query=org+mode+clocking
 **** Templates
 *** DONE Add TODO version!
 - State "DONE"       from              [2021-10-22 Fri 19:33]
-** [#A] using git with emacs
+** DONE [#A] using git with emacs
+- State "DONE"       from "PROJECT - ON-HOLD" [2021-10-31 Sun 01:19]
+- State "FINISHED"   from              [2021-10-31 Sun 01:19]
 Magit, basically
 
 [[http://blog.lujun9972.win/emacs-document/blog/2018/10/19/getting-started-with-magit-(or-what-i-hope-i-could've-read-when-i-first-tried-out-magit)/][Getting started with Magit (Or what I hope I could've read when I first tried out Magit)]]
@@ -45,6 +47,15 @@ https://github.com/magit/magit
 For chasing my holy-grail of a functional way to sync and access files across multiple systems, I suspect that using Magit to revert and merge may be the way to go?
 ** [#A] migrate to org-roam v2
 https://www.alexeyshmalko.com/migrating-to-org-roam-v2/
+
+Checking out [[https://emacs.stackexchange.com/questions/293/what-should-shouldnt-i-do-when-keeping-emacs-and-emacs-d-in-version-control][this]]:
+- Supposedly I need to use quelpa? And quelpa-use-package?
+  - For that, check [[https://emacs.stackexchange.com/questions/62036/installing-quelpa-use-package-from-use-package][this]] out.
+
+The guy in [[https://www.youtube.com/watch?v=FRTaXVcQLNc][thus video]] recommends completely removing org-roam from you .emacs.d folder (saving it as a backup, of course, in case you want to revert)
+- He reported being unable to install v2 until v1 was removed, though he was using straight.el and not package.el
+
+
 ** [#A] some kind of re-do functionality
 https://sachachua.com/dotemacs/#orgbcbdf98
 ** [#A] configure org-roam
