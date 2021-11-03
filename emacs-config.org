@@ -310,6 +310,18 @@ See [[https://lucidmanager.org/productivity/ricing-org-mode/][here]] and [[https
                                  (org-superstar-mode 1)))
   )
 #+END_SRC
+** org-src Behavior
+<2021-11-02 Tue>
+- This started because emacs was doing weird auto-tab things when I was writing code blocks, and a quick search turned up [[https://github.com/syl20bnr/spacemacs/issues/13255#issuecomment-592998372][this]].
+  - tl;dr: =(setq org-src-preserve-indentation t)=, but I'm'a try the solver's whole little setup.
+#+begin_src emacs-lisp
+  ;; src block indentation / editing / syntax highlighting
+  (setq org-src-fontify-natively t
+        org-src-window-setup 'current-window ;; edit in current window
+        org-src-strip-leading-and-trailing-blank-lines t
+        org-src-preserve-indentation t ;; do not put two spaces on the left
+        org-src-tab-acts-natively t)
+#+end_src
 * org derivatives
 ** Design
 - [[https://www.reddit.com/r/orgmode/comments/i16xti/question_any_problems_assigning_orgroamdirectory/][This]] has some good notes about how org-mode and org-roam directories should relate.
@@ -570,6 +582,32 @@ https://orgmode.org/manual/Template-elements.html
 Normally these don't mix well. Org-agenda checks every in a targeted directory for todo items, and since org-roam creates tons of little files this makes the process very slow, so the usual practice is to segregate all your agenda files in their of directory.
 However, [[https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html][someone has written some code to efficiently let agenda find todo items in roam nodes]].
 
+** Org-mode Timestamping
+<2021-11-02 Tue>
+- This is all to set up a =#+modified= header that will automatically update every time the org file is saved
+  - [[https://www.reddit.com/r/orgmode/comments/hierqz/any_one_figure_it_out_how_to_update_last_modified/][This]] led me [[https://github.com/skx/dotfiles/blob/master/.emacs.d/init.md#org-mode-timestamping][here]]. Also, [[https://org-roam.discourse.group/t/update-a-field-last-modified-at-save/321/2][this]] looks like a different way to accomplish the same.
+  - Ha! Too clever by half. The function is run every time I save /this/ document too! Which, uh, messes with things. So let's try to exempt this file, yeah?
+  - Well, I finally had to actually write some lisp. Just some conditional statements, but wow. I've never encountered so logically literal a thing in my life.
+
+    #+begin_src emacs-lisp
+(defun ewhd/update-org-modified-property ()
+  "If a file contains a #+modified' property update it to contain
+  the current date/time"
+  (interactive)
+  (save-excursion
+    (widen)
+    (goto-char (point-min))
+    (when (re-search-forward "^#\\+modified:[[:blank:]]*" (point-max) t)
+      (progn
+        (kill-line)
+        (insert (format-time-string "%Y-%m-%d-T%H%M"))))))
+
+(defun ewhd-org-mode-before-save-hook ()
+  (when (and (eq major-mode 'org-mode) (eq nil (equal "emacs-config.org" (buffer-name))))
+    (ewhd/update-org-modified-property)))
+
+(add-hook 'before-save-hook #'ewhd-org-mode-before-save-hook)
+    #+end_src
 ** org-roam
 - <2020-02-27 Thu>
   - Installing this is a little tricky, because you have to add sqlite3 to 'exec-path'.
@@ -594,8 +632,8 @@ However, [[https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5
         - I'm betting this has to do with how the nature of =org-roam-mode= has changed from v1 to v2.
   - However, I'm still not seeing backlinks...and when I run =org-roam-db-sync= I get that alternating =Selecting deleted buffer= error again.
     - I'm also still getting these timeout errors in other places. For instance, I was just running =load-file= to reload this config and like clockwork it would hold up and time out, and then when I ran the same thing again it would work. What's up with that???
-
-    - Backlinks are working now! I think I just wasn't looking at them in the right place, lol. I'm going to bed. 
+    - Backlinks are working now! I think I just wasn't looking at them in the right place, lol. I'm going to bed.
+  - *Next time you do this, [[https://github.com/nobiot/emacsql-sqlite.exe][try using this]] to get SQLite working*
 
 Things I want to change:
 - [ ] Add templates for roam-capture
@@ -614,7 +652,9 @@ Things I want to change:
         :hook
         (after-init . org-roam-mode)
         :custom
-        (org-roam-directory "~/Dropbox/omnibus/")
+        (org-roam-directory "~/Dropbox/org/")
+	    (org-id-method 'ts)  ;; changes org-roam default id method form uuid to a timestamp
+	    (org-id-ts-format "%Y-%m-%d-T%H%M.%S.%2N")  ;; formats the timestamp method to create a unique but also human readable id
         ;(org-roam-completion everywhere t)
         :bind (;:map org-roam-mode-map
                 ("C-c n l" . org-roam-buffer-toggle)
@@ -627,9 +667,7 @@ Things I want to change:
          :config
          (org-roam-setup)
 
-         )
-
-  
+         )  
 #+END_SRC
 
 **** org-roam-capture
@@ -640,12 +678,38 @@ Things I want to change:
   - https://www.reddit.com/r/orgmode/comments/lmlsdr/simple_question_re_orgroam_how_to_access_capture/
   - [[https://www.orgroam.com/manual.html#The-Templating-System][This]] video explains it all pretty well.
     - Mentioned around 24 minutes in: you can make a template by editing a file, saving it in a particular place, then referencing it by placing  =(file "path/to/file")= in place of the ="%?"= or whatever string you write to define the template.
+<2021-11-02 Tue>
+- For v2, some things change a little bit
+- I want to shorten the title string, probably by cutting down to just Y/m/d/H, and maybe even cutting off hour, I haven't decided
+- I also want to customize the ID format, specifically making it shorter and more human readable. I think this will be done within the templates.
+  - Can I just use a timestamp /as/ the ID? If it goes down to the second? I'm not going to be making multiple nodes in a second am I?
+  - [[https://org-roam.discourse.group/t/v2-set-id-to-a-timestamp/1492/2][This whole thread]] has some good info.
+  - [[https://org-roam.discourse.group/t/update-a-field-last-modified-at-save/321][This one too]], which has details about adding a =LAST_MODIFIED= element to the header which auto-updates whenever the file is saved.
+  - Apparently as of org 9.5, =org-id-ts-format= should make timestamp ID much easier ([[https://org-roam.discourse.group/t/v2-set-id-to-a-timestamp/1492/3][here]]) (for more, see [[https://www.mail-archive.com/emacs-orgmode@gnu.org/msg139900.html][here]])
+  - I got a lot of the cool header and ID formatting from [[https://org-roam.discourse.group/t/how-to-auto-generate-org-id-following-org-roam-find-file-immediate/1412/7][here]].
 
 #+begin_src emacs-lisp
 (setq org-roam-capture-templates
-       '(("d" "default" plain "%?"
-          :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
-          :unnarrowed t)))
+         '(
+;	   ("d" "default" plain "%?"
+;            :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org" "#+title: ${title}\n")
+;	    :unnarrowed t)
+           ("t" "test" plain "%?"
+	    :target (file+head "%<%Y%m%d%H>-${slug}.org"
+			       "#+title: ${title}\n#+created: %<%Y%m%d%H%M%S>")
+            :unnarrowed t)
+	   ("b" "better" plain "%?"
+	    :target (file+head "%<%Y%m%dT%H%M>-${slug}.org"
+			       "#+title: ${title}\n#+created: %<%Y-%m-%d-T%H%M>\n#+modified: <>\n#+ROAM_TAGS: \n#+ROAM_ALIAS: \n")
+            :unnarrowed t)
+	   ("z" "zeta" plain "\n%?"
+	    :target (file+head "%<%Y%m%dT%H%M>-${slug}.org"
+			       "#+title:    ${title}
+#+created:  %<%Y-%m-%d-T%H%M>
+#+modified: <>
+#+filetags: \n\n")
+            :unnarrowed t)))
+
 #+end_src
 
 **** org-roam-dailies-capture-templates
