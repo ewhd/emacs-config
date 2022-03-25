@@ -5,235 +5,6 @@
 
 test more
 
-* Features to add:
-
-** DONE [#A] Making org-mode pretty
-https://lucidmanager.org/productivity/ricing-org-mode/
-- Use different fonts for different parts of text, buffers, or modes
-- Preview images in the text
-- Removes screen clutter
-- Rich text and special characters
-- Replace bullet astrisks with pretty symbols (and lists and TODO symbols)
-- Distraction-free/focussed writing mode (typewriter)
-
-** DONE [#A] Replace colored headers in org-mode with different sized headers
-[[https://github.com/jonnay/org-beautify-theme][org-beautify-theme]]
-
-** [#A] configure basic org mode features
-*** org-agenda
-include this emacs-config.org file
-**** clocking:
-https://www.emacswiki.org/emacs/CategoryTimeTracking
-https://orgmode.org/manual/Clocking-Work-Time.html
-http://doc.norang.ca/org-mode.html#Clocking
-https://www.youtube.com/results?search_query=org+mode+clocking
-
-
-*** org-capture
-**** Templates
-*** DONE Add TODO version!
-- State "DONE"       from              [2021-10-22 Fri 19:33]
-** DONE [#A] using git with emacs
-- State "DONE"       from "PROJECT - ON-HOLD" [2021-10-31 Sun 01:19]
-- State "FINISHED"   from              [2021-10-31 Sun 01:19]
-Magit, basically
-
-[[http://blog.lujun9972.win/emacs-document/blog/2018/10/19/getting-started-with-magit-(or-what-i-hope-i-could've-read-when-i-first-tried-out-magit)/][Getting started with Magit (Or what I hope I could've read when I first tried out Magit)]]
-
-https://magit.vc/
-https://github.com/magit/magit
-
-[[https://emacs.stackexchange.com/questions/7826/is-there-a-simplified-version-control-system-appropriate-for-non-coders-writing][This]] is a great stackexchange answer that goes into how to use magit at a pretty basic level with very simple language.
-
-For chasing my holy-grail of a functional way to sync and access files across multiple systems, I suspect that using Magit to revert and merge may be the way to go?
-** [#A] migrate to org-roam v2
-https://www.alexeyshmalko.com/migrating-to-org-roam-v2/
-
-Checking out [[https://emacs.stackexchange.com/questions/293/what-should-shouldnt-i-do-when-keeping-emacs-and-emacs-d-in-version-control][this]]:
-- Supposedly I need to use quelpa? And quelpa-use-package?
-  - For that, check [[https://emacs.stackexchange.com/questions/62036/installing-quelpa-use-package-from-use-package][this]] out.
-
-The guy in [[https://www.youtube.com/watch?v=FRTaXVcQLNc][thus video]] recommends completely removing org-roam from you .emacs.d folder (saving it as a backup, of course, in case you want to revert)
-- He reported being unable to install v2 until v1 was removed, though he was using straight.el and not package.el
-
-
-** [#A] some kind of re-do functionality
-https://sachachua.com/dotemacs/#orgbcbdf98
-** [#A] configure org-roam
-*** daily notes in org-roam
-*** templates in org-roam?
-*** exclude "archive" tags in search?
-[[https://github.com/org-roam/org-roam-bibtex#commands][org-roam-bibtex?]]
-*** function to effectively delete a node (file)?
-*** set org-roam-capture-templates to that they come with a link to the relvant index
-** [#A] image handling
-https://www.reddit.com/r/emacs/comments/52q70g/paste_an_image_on_clipboard_to_emacs_org_mode/
-- https://github.com/abo-abo/org-download
-- https://github.com/dfeich/org-screenshot
-
-Found a lead on inserting images from clipboard:
-- https://org-roam.discourse.group/t/zero-to-emacs-and-org-roam-a-step-by-step-guide-on-windows-10/400/72
-- https://github.com/nobiot/Zero-to-Emacs-and-Org-roam/blob/main/115.How-to-enable-insert-image-from-clipboard.md
-** [#A] Auto-save and backups and such
-[[https://github.com/chadbraunduin/backups-mode][backups-mode for emacs]]
-- "
-  Inspiration
-  The inspiration for this came after reading John Siracusa's review of the Document Model new to Mac OS X Lion. This new framework on the Mac allows for the following:
-
-  - All documents are automatically saved. This includes when the user closes the document or quits the application.
-  - Old versions of the document are automatically stored and accessible.
-  - The user has the ability to manually save a verion of the document.
-  - Old versions can be viewed, diffed, and reverted.
-  - Reverting an old version saves the current file as a version and copies the selected version to become the current file.
-  So I set out to emulate these features in emacs. emacs already has its own rudimentary version control system that can be turned on simply by configuring emacs. It can also be configured to keep those backup files tucked away in a central directory. It can also be configured to automatically save (without prompting) your files when you kill the buffer or quit emacs. In the event that emacs crashes, you can also restore your file from an autosave file emacs creates for you. So it has all of that out of the box.
-
-  What it doesn't have (or at least I couldn't find) is the ability to easily find, view, diff, and revert those versioned backup files. That is where backups-mode.el comes into play. While editing any file-based buffer in emacs, you can now do two extra things. You can list all backups and you can explicily save a version. 
-- Disclaimer
-  Using the emacs version control functionality should not be a replacement for a proper version control system such as cvs, svn, git, mercurial, and the like. So if you are developing a project or typing a manuscript, you'll want to use one of those systems. I find this useful for the less important stuff such as blog posts or exploritory programming.
-  "
-
-I am particularly intersted in:
-- Auto-saving (can I do this continusously?)
-- Tucking away backups in a central directory
-- View and revert backups
-
-auto-save vs back-ups in emacs
-- So apparently these are different things!
-  - [[https://newbedev.com/how-do-i-control-how-emacs-makes-backup-files][This page]] has a bunch of good info on configuring both.
-  - [[https://www.emacswiki.org/emacs/AutoSave][This]] is also not bad.
-
-Ok, so I think I just want to change my auto-save settings to:
-- Put auto-saves in a different directory
-- Auto-save every buffer every few seconds
-  - Use [[https://github.com/ChillarAnand/real-auto-save][real-auto-save]]
-- Consider disabling emacs backup files
-  - Only if I'm using Magit?
-- Consider having Emacs auto-save to the original file (rather than the #...# version)
-  - [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Auto-Save-Files.html][auto-save-visited-mode]]
-  - In theory this is 'bad' because you lose redundency (if the auto-save fails, you're not actually saving it yourself, either)
-  - Probably only do this /after/ you have git going, so that you still have version control
-  - A problem arises if you have a file-buffer open on two computers at once. Presumably, if both were running, the active buffer and the inactive buffer would repeatedly overwrite one another, assuming that emacs file lock function didn't kick in.
-- Greater functions for managing files and versions across systems should probably be delegated to Magit
-
-** [#A] Preview images in Helm
-https://lucidmanager.org/productivity/emacs-for-distraction-free-writing/
-"If you use the [[https://lucidmanager.org/productivity/emacs-completion-system/][Helm completion system]], you can preview the image as you select it with helm-follow-mode. When you are in the Helm selection session, toggle follow mode with C-c C-f. As you move the cursor, images will appear in anoter window."
-
-** [#A] Some way to handle archiving?
-https://fuco1.github.io/2017-04-20-Archive-subtrees-under-the-same-hierarchy-as-original-in-the-archive-files.html
-
-[[https://www.reddit.com/r/emacs/comments/akfuqx/comment/ef69b6v/?utm_source=share&utm_medium=web2x&context=3][Apparently]] there is a setting to make org clock tables consider archives, to get the time totals right.
-** [#B] Zettlekasten things:
-*** re-arrange some of my files
-Make index files
-*** differentiate between note types
-- my daily documents are really raw capture, which should become Reference material
-- I need to build the practice of processing my raw input into bite-sized, permanent notes
-- Can I use an "archive" tag that will exclude a file from regular search??
-
-** [#B] buffer-move.el
-https://www.emacswiki.org/emacs/buffer-move.el
-to swap the buffers in the 
-** [#B] replace package.el with straight.el???
-"Straight.el is an alternative package manager that installs packages through Git checkouts instead of downloading tarballs from one of the package archives. Doing so allows installing forked packages, altering local package checkouts, and locking packages to exact versions for reproducable setups."
-- https://jeffkreeftmeijer.com/emacs-straight-use-package
-
-https://github.crookster.org/switching-to-straight.el-from-emacs-26-builtin-package.el/
-
-use-package works with straight.el just like with package.el (since straight is just another package manager)
-
-https://systemcrafters.cc/advanced-package-management/using-straight-el/
-
-
-I think the increased degree of reproducibility is going to be the main selling point for me:
-https://countvajhula.com/2020/12/27/turn-your-emacs-d-into-an-emacs-distribution-with-straight-el/
-
-Here, the person who wrote straight.el has an overview/comparison/pro/con list of different emacs package managers:
-https://github.com/raxod502/straight.el#tldr-1
-
-
-** [#B] Integrate with Google Calendar
-https://orgmode.org/worg/org-tutorials/org-google-sync.html
-- This one is tailored for linux
-https://colekillian.com/posts/org-mode-and-google-calendar/
-https://github.com/myuhe/org-gcal.el
-- This one looks like an out of the box solution?
-- But it is old
-https://cestlaz.github.io/posts/using-emacs-26-gcal/#.WIqBud9vGAk
-- https://github.com/Fuco1/Fuco1.github.io/blob/master/posts/2019-02-02-Org-mode-and-google-calendar-sync.org
-  - This version of the above only fetches and never pushes
-    "The reason is that I use multiple calendars (I basically have a google account at every company I work for plus a personal calendar) and the workflow with events and inviting myself from one calendar to another as attendees is too complex and fragile to trust some automated tool. And I can not afford my calendars to break."
-  - "I'm also using [[https://github.com/Fuco1/org-timeline][org-timeline]] so I add some extra header arguments to the generated file to add a different color to the Google Calendar entries."
-
-The problem with any of these solutions is that I will have to manage syncing, which is always a pain.
-
-** [#B] Graphical agenda view!
-https://github.com/Fuco1/org-timeline
-This looks super cool
-
-** [#B] Allow for tabs at the start of paragraphs
-
-** [#B] Get the keyword selection buffer to display within current window
-https://emacs.stackexchange.com/questions/14817/how-to-control-where-the-org-todo-keywords-buffer-displays
-This one looks like it might be a real rabbit hole, but the answer at the bottom (the one using shackle) looks most promising.
-** [#C] Create websites/blog posts from emacs
-https://lucidmanager.org/productivity/create-websites-with-org-mode-and-hugo/
-
-** [#C] hydra
-doing menus and key combinations for common commands:
-- https://www.reddit.com/r/emacs/comments/8of6tx/tip_how_to_be_a_beast_with_hydra/
-- https://sachachua.com/dotemacs/#org07ac25e
-
-** [#C] prettify-symbols-mode
-[[https://www.reddit.com/r/emacs/comments/9lpupc/i_use_markdown_rather_than_orgmode_for_my_notes/e79kz56/?utm_source=reddit&utm_medium=web2x&context=3][especially to get rid of ugly code tags]]
-[[https://www.reddit.com/r/emacs/comments/brt0sk/prettifysymbolsmode_is_so_cool/][Check this out]]
-
-** [#C] explore markdown-mode
-- Can I make it work the way I want?
-- How does live preview work?
-- Can I mix markdown and org in the same document?
-  - with live preview??
-
-[[https://stackoverflow.com/questions/36183071/how-can-i-preview-markdown-in-emacs-in-real-time/36189456][See here]]
-
-- Actually, I think a lot of what I'm looking for is [[https://stackoverflow.com/questions/16186843/inline-code-in-org-mode][here]]
-
-** [#C] evil-mode
-I want to learn how to use vim
-
-** monospaced fonts where I need them
-[[https://yoo2080.wordpress.com/2013/05/30/monospace-font-in-tables-and-source-code-blocks-in-org-mode-proportional-font-in-other-parts/][See here]]
-
-*** More possible sources of info:
-https://www.reddit.com/r/emacs/comments/66w75c/monospace_font_for_calendar_in_orgmode/
-https://protesilaos.com/codelog/2020-07-17-emacs-mixed-fonts-org/
-https://emacs.stackexchange.com/questions/32300/monospace-font-for-calendar-buffer-and-tables-in-org-mode-proportional-font-i
-
-** [#C] org-fancy-priorities
-https://github.com/harrybournis/org-fancy-priorities
-
-** [#C] Add general encryption with org-crypt
-
-** [#C] Check out poet as an alternative for making emacs pretty
-https://github.com/kunalb/poet
-
-** [#C] Try to find a way to fix the spacing in multiline lists
-This might be easier said than done.
-
-** org-roam-bibtex
-https://www.youtube.com/watch?v=Wy9WvF5gWYg
-
-** Spaced Repetition
-https://news.ycombinator.com/item?id=23724881
-https://github.com/louietan/anki-editor
-https://ag91.github.io/blog/2020/09/04/the-poor-org-user-spaced-repetition/
-https://org-roam.discourse.group/t/any-use-of-spaced-repetition-incremental-reading/652/3
-https://orgmode.org/worg/org-contrib/org-drill.html
-
-** adaptive-wrap
-I've already installed it, but I want to add it to =use-package= and make it default.
-
-I've already made a [[*adaptive-wrap][section]] for it.
 
 * REMOVE STARTUP WELCOME SCREEN and open default file
 The code block below toggle off the welcome startup screen.
@@ -679,8 +450,9 @@ https://orgmode.org/guide/Capture.html
 (global-set-key "\C-cc" 'org-capture)
 
 (setq org-capture-templates
-      '(("t" "Todo [inbox]" entry (file+headline "~/Dropbox/org/gtd/inbox.org" "Tasks") "* TODO %i%?")
-	      ("c")
+      '(("t" "Todo [gtd]" entry (file "~/Dropbox/org/gtd/gtd.org") "* TODO %i%?")
+	      ("i" "Todo [inbox]" entry (file+headline "~/Dropbox/org/gtd/inbox.org" "Tasks") "* TODO %i%?")
+	      ("c" "Capture [inbox]" entry (file+headline "~/Dropbox/org/gtd/inbox.org" "Capture") "* %i%?")
         ("T" "Tickler" entry (file+headline "~/Dropbox/org/gtd/tickler.org" "Tickler") "* %i%? \n %U")))
 
 #+END_SRC
@@ -750,7 +522,7 @@ Formatting fields in agenda-view:
 **** Configure org-agenda-follow-mode
 
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-start-with-follow-mode t)
+(setq org-agenda-start-with-follow-mode nil)
 #+END_SRC
 
 **** Using org-agenda with org-roam
@@ -784,6 +556,14 @@ However, [[https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5
     #+end_src
 *** org-columns-default-format
 
+#+begin_src emacs-list
+(setq org-columns-default-format-for-agenda "%25ITEM %4TODO %1PRIORITY %4Effort(Estim){:}  %4CLOCKSUM(Clock) %20TAGS")
+#+end_src
+*** Global effort estimates
+#+begin_src emacs-lisp
+(customize-set-variable 'org-global-properties
+                        '(("Effort_ALL" . "0:00 0:07 0:15 0:30 0:45 1:00 1:30 2:00 2:30 3:00")))
+#+end_src
 ** org-roam
 *** org-roam init and basic settings
 - [2020-02-27 Thu]
