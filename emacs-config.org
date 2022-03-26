@@ -3,7 +3,7 @@
 #+LANGUAGE: en
 #+PROPERTY: results silent
 
-test more - haha
+test more - lol
 
 
 * REMOVE STARTUP WELCOME SCREEN and open default file
