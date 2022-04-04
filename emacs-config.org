@@ -3,9 +3,6 @@
 #+LANGUAGE: en
 #+PROPERTY: results silent
 
-test more - haha
-
-
 * REMOVE STARTUP WELCOME SCREEN and open default file
 The code block below toggle off the welcome startup screen.
 
@@ -556,7 +553,7 @@ However, [[https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5
     #+end_src
 *** org-columns-default-format
 
-#+begin_src emacs-list
+#+begin_src emacs-lisp
 (setq org-columns-default-format-for-agenda "%25ITEM %4TODO %1PRIORITY %4Effort(Estim){:}  %4CLOCKSUM(Clock) %20TAGS")
 #+end_src
 *** Global effort estimates
