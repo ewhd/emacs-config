@@ -3,6 +3,7 @@
 #+LANGUAGE: en
 #+PROPERTY: results silent
 
+
 * REMOVE STARTUP WELCOME SCREEN and open default file
 The code block below toggle off the welcome startup screen.
 
