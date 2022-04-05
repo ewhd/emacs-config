@@ -324,10 +324,10 @@ My keyword system begins with TODO, then can progress in either:
 (setq org-todo-keywords
  '((sequence
     "TODO(t)"
-    "REVIEW(r)"
     "NEXT(n)"
     "STARTED(s!)"
     "WAITING(w@/!)"
+    "REVIEW(r)"
     "HOLD(h@/!)"
     "|"
     "CANCELED(x!)"
@@ -339,10 +339,10 @@ My keyword system begins with TODO, then can progress in either:
     "FINISHED(f!)")))
 (setq org-todo-keyword-faces
   '(("TODO". "purple")
-    ("REVIEW" . "orange")
     ("NEXT" . "magenta")
     ("STARTED" . "pink")
     ("WAITING" . "blue")
+    ("REVIEW" . "orange")
     ("HOLD" . "cyan")
     ("CANCELED" . "green")
     ("DONE" . "green")
@@ -497,7 +497,7 @@ Org-agenda commands can be found [[https://orgmode.org/manual/Agenda-Commands.ht
 #+BEGIN_SRC emacs-lisp
 ;; (setq org-agenda-files (list "~/Dropbox/org/gtd/gtd.org" "~/Dropbox/org/gtd/people.org"))
 #+END_SRC emacs-lisp
-**** Customize agenda-view
+**** Word wrapping in agenda buffers
 Formatting fields in agenda-view:
 - https://lists.gnu.org/archive/html/emacs-orgmode/2010-01/msg00744.html
 - http://doc.endlessparentheses.com/Var/org-agenda-prefix-format.html
@@ -511,6 +511,20 @@ Formatting fields in agenda-view:
 
 
 #+END_SRC emacs-lisp
+**** Customize agenda-view
+From [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org][here]] -- modified.
+#+begin_src emacs-lisp
+(setq ;spacemacs-theme-org-agenda-height nil
+      org-agenda-time-grid '((daily today require-timed) (600 900 1200 1500 1800 2100)
+ "......" "----------------------" nil)
+      org-agenda-skip-scheduled-if-done t
+      org-agenda-skip-deadline-if-done t
+      org-agenda-include-deadlines t
+      org-agenda-include-diary t
+      org-agenda-block-separator 9472
+      org-agenda-compact-blocks nil
+      org-agenda-start-with-log-mode nil)
+#+end_src
 **** Set agenda to open in new frame
 [[https://www.reddit.com/r/orgmode/comments/kwko93/comment/gj536oq/?utm_source=share&utm_medium=web2x&context=3][Source]].
 #+BEGIN_SRC emacs-lisp
@@ -526,6 +540,69 @@ Formatting fields in agenda-view:
 **** Using org-agenda with org-roam
 Normally these don't mix well. Org-agenda checks every in a targeted directory for todo items, and since org-roam creates tons of little files this makes the process very slow, so the usual practice is to segregate all your agenda files in their of directory.
 However, [[https://d12frosted.io/posts/2021-01-16-task-management-with-roam-vol5.html][someone has written some code to efficiently let agenda find todo items in roam nodes]].
+**** org-super-agenda
+https://github.com/alphapapa/org-super-agenda
+https://github.com/alphapapa/org-super-agenda/blob/master/examples.org
+https://emacs.christianbaeuerlein.com/my-org-config.html#org1dc75dd
+https://config.daviwil.com/workflow
+
+
+From [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org][here]] -- modified
+#+begin_src emacs-lisp
+(use-package org-super-agenda
+    :after org
+    :ensure t
+    :config
+    (org-super-agenda-mode)
+    (setq org-agenda-custom-commands
+          '(("z" "Super view"
+             ((agenda "" ((org-agenda-span 'day)
+                          (org-super-agenda-groups
+                           '((:name "Today"
+                                    :time-grid t
+                                    :date today
+                                    :todo "TODAY"
+                                    :scheduled today
+                                    :order 1)))))
+              (alltodo "" ((org-agenda-overriding-header "")
+                           (org-super-agenda-groups
+                            '((:name "Next"
+                                     :todo "NEXT"
+                                     :order 4)
+                              (:name "Important"
+                                     :tag "Important"
+                                     :priority "A"
+                                     :order 5)
+                              (:name "Today"
+                                     :deadline today
+				     :scheduled today
+                                     :order 3)
+                              (:name "Due Soon"
+                                     :deadline future
+                                     :order 9)
+                              (:name "Overdue"
+                                     :deadline past
+                                     :order 1)
+			      (:name "Behind Schedule"
+				     :scheduled past
+				     :order 2)
+			      (:name "Started"
+				     :todo "STARTED"
+			             :order 6)
+                              (:name "Waiting"
+                                     :todo "WAITING"
+                                     :order 8)
+			      (:name "Review"
+				     :todo "REVIEW"
+				     :order 7)
+                              (:name "trivial"
+                                     :priority "C"
+                                     :order 90)
+			      (:discard (:tag "PROJECT"))
+                              ))))))))
+          )
+#+end_src
+
 *** org-mode Timestamping
 [2021-11-02 Tue]
 - This is all to set up a =#+modified= header that will automatically update every time the org file is saved
@@ -641,7 +718,7 @@ Things I want to change:
   - Can I just use a timestamp /as/ the ID? If it goes down to the second? I'm not going to be making multiple nodes in a second am I?
   - [[https://org-roam.discourse.group/t/v2-set-id-to-a-timestamp/1492/2][This whole thread]] has some good info.
   - [[https://org-roam.discourse.group/t/update-a-field-last-modified-at-save/321][This one too]], which has details about adding a =LAST_MODIFIED= element to the header which auto-updates whenever the fil
-  - Apparently as of org 9.5, =org-id-ts-format= should make timestamp ID much easier ([[https://org-roam.discourse.group/t/v2-set-id-to-a-timestamp/1492/3][here]]) (for more, see [[https://www.mail-archiv
+  - Apparently as of org 9.5, =org-id-ts-format= should make timestamp ID much easier ([[https://org-roam.discourse.group/t/v2-set-id-to-a-timestamp/1492/3][here]])
   - I got a lot of the cool header and ID formatting from [[https://org-roam.discourse.group/t/how-to-auto-generate-org-id-following-org-roam-find-file-immediate/1412/7][here]].
 
 #+begin_src emacs-lisp
@@ -671,7 +748,7 @@ Things I want to change:
 - [2021-11-03 Wed]
   - Just pulled default settings from [[https://www.orgroam.com/manual.html#Configuration][the manual]], then modified the template to match my defaults as set in [[*org-roam-capture-templates][org-roam-capture-templates]].
     - This was finicky, and after a bunch of false starts I figured out how to just load templates from files. [[https://github.com/org-roam/org-roam/issues/1845][This thread]] helped me, but especially th
-      - Other resources that I tried but couldn't get to work were [[https://www.reddit.com/r/orgmode/comments/c26qja/capture_template_based_in_a_file/][here]] and [[https://helpdeskheadesk.net/help-desk-h
+      - Other resources that I tried but couldn't get to work were [[https://www.reddit.com/r/orgmode/comments/c26qja/capture_template_based_in_a_file/][here]].
       - Furthermore, and this has been bothering me for a while, is I see a lot of current posts where roam users are calling things like =(function org-roam--capture-get-point)= (from [[https://gist.github.com/nobiot/6f7845800a2ecd8c12163b5e270779af#file-init-el-L294][nobiot's init.el]]) or =#'org-roam-capture--get-point= (from [[https://org-roam.discourse.group/t/daily-task-management-with-org-agenda-and-org-roam-dailies/989][here]]) in their capture templates, and I can't figure out for the life of me what they do, or why they have slightly differently positioned " =-= " in them. But that's a mystery for another day.
 
 
