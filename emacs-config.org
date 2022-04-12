@@ -213,6 +213,20 @@ See [[https://emacs.stackexchange.com/a/14590][here]] and [[https://stackoverflo
 
 (setq split-window-preferred-function 'my-split-window-sensibly)
 #+END_SRC
+
+** moom
+https://github.com/takaxp/moom
+
+When I use moom-toggle-frame-maximized, it messes up the fixed-pitch fonts for menu bars, calendars, and the like. For now, just re-run the code in [[*mixed-pitch][mixed-pitch]].
+
+#+begin_src emacs-lisp
+(use-package moom
+  :after org
+  :ensure t
+  :config
+  (moom-mode 1)
+)
+#+end_src
 * org derivatives
 ** Design
 - [[https://www.reddit.com/r/orgmode/comments/i16xti/question_any_problems_assigning_orgroamdirectory/][This]] has some good notes about how org-mode and org-roam directories should relate.
