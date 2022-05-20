@@ -43,7 +43,7 @@ https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-fo
 
 #+END_SRC
 ** mixed-pitch
-
+Check out [[https://zzamboni.org/post/beautifying-org-mode-in-emacs/][this]], and maybe integrate it?
 #+BEGIN_SRC emacs-lisp
 ;; Set default, fixed and variabel pitch fonts
 ;; Use M-x menu-set-font to view available fonts
@@ -53,8 +53,8 @@ https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-fo
   (text-mode . mixed-pitch-mode)
   :config
   (set-face-attribute 'default nil :font "DejaVu Sans Mono" :height 200)
-  (set-face-attribute 'fixed-pitch nil :font "DejaVu Sans Mono")
-  (set-face-attribute 'variable-pitch nil :family "Liberation Sans")
+  (set-face-attribute 'fixed-pitch nil :font "DejaVu Sans Mono" :height 200)
+  (set-face-attribute 'variable-pitch nil :family "Liberation Sans" :height 200)
 )
 #+END_SRC
 
@@ -217,7 +217,7 @@ See [[https://emacs.stackexchange.com/a/14590][here]] and [[https://stackoverflo
 ** moom
 https://github.com/takaxp/moom
 
-When I use moom-toggle-frame-maximized, it messes up the fixed-pitch fonts for menu bars, calendars, and the like. For now, just re-run the code in [[*mixed-pitch][mixed-pitch]].
+When I use moom-mode, it messes up the fixed-pitch fonts for menu bars, calendars, and the like. For now, just re-run the code in [[*mixed-pitch][mixed-pitch]].
 
 #+begin_src emacs-lisp
 (use-package moom
@@ -647,7 +647,7 @@ From [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org][h
 *** org-columns-default-format
 
 #+begin_src emacs-lisp
-(setq org-columns-default-format-for-agenda "%25ITEM %4TODO %1PRIORITY %4Effort(Estim){:}  %4CLOCKSUM(Clock) %20TAGS")
+(setq org-columns-default-format-for-agenda "%25ITEM %4TODO %1PRIORITY %4Effort(Estim){:}  %4CLOCKSUM(Clock) %20ALLTAGS")
 #+end_src
 *** Global effort estimates
 #+begin_src emacs-lisp
