@@ -943,6 +943,7 @@ https://github.com/takaxp/org-tree-slide
   :ensure t
   :config
   (evil-mode 0)
+  (evil-disable-insert-state-bindings t) 
 )
 #+END_SRC
 * markdown-mode
