@@ -22,47 +22,67 @@ https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-fo
 
 * Appearance
 #+BEGIN_SRC emacs-lisp
-  ;; (set-face-attribute 'default nil
-  ;;   :family "Liberation Mono"
-  ;;   :height 200
-  ;;   :weight 'normal
-  ;;   :width 'normal
-  ;; )
-  (setq visible-bell 1
-        org-startup-indented t
-        org-pretty-entities t
-        org-hide-emphasis-markers t
-        org-startup-with-inline-images t   ; only displays in the format [[file:path-to-file]], nothing else.
-        org-image-actual-width '(300)
-        inhibit-compacting-font-caches t   ; this is to help org-superstar run quickly with large files
-        )
-  (global-visual-line-mode 1)
+(setq visible-bell 1
+      org-startup-indented t
+      org-pretty-entities t
+      org-hide-emphasis-markers t
+      org-startup-with-inline-images t   ; only displays in the format [[file:path-to-file]], nothing else.
+      org-image-actual-width '(300)
+      inhibit-compacting-font-caches t   ; this is to help org-superstar run quickly with large files
+      )
+(global-visual-line-mode 1)
 
-  ;; save/restore opened files and windows config
-  (desktop-save-mode 1) ; 0 for off
+(global-hl-line-mode 1)                  ; highlight current line
+
+(tool-bar-mode -1)                       ; hide the toolbar by default (the one with the silly icons)
+
+;; (org-startup-folded 'fold)                ; fold drawers (maybe everything?) on org-mode startup
+
+(setq help-window-select t)                   ; Focus new help windows when opened)
+;; save/restore opened files and windows config
+
+(setq scroll-conservatively 101)              ; Avoid recentering when scrolling far
+(setq scroll-margin 2)                        ; Add a margin when scrolling vertically
+(delete-selection-mode 1)               ; Replace region when inserting text
+
+(desktop-save-mode 1) ; 0 for off
+
 
 #+END_SRC
 ** mixed-pitch
 Check out [[https://zzamboni.org/post/beautifying-org-mode-in-emacs/][this]], and maybe integrate it?
+
+[[https://emacsredux.com/blog/2021/12/22/check-if-a-font-is-available-with-emacs-lisp/][This page]] talks about how to check for a font's availability before trying to use it.
+
 #+BEGIN_SRC emacs-lisp
 ;; Set default, fixed and variabel pitch fonts
 ;; Use M-x menu-set-font to view available fonts
+(custom-theme-set-faces
+   'user
+   '(default ((t (:family "FiraCode Nerd Font" :height 150 :weight thin))))
+   '(fixed-pitch ((t (:family "FiraCode Nerd Font" :height 1.0 :weight thin))))
+   '(variable-pitch ((t (:family "DejaVu Sans" :height 1.5 :weight thin))))
+)
+
 (use-package mixed-pitch
   :ensure t
   :hook
   (text-mode . mixed-pitch-mode)
-  :config
-  (set-face-attribute 'default nil :font "DejaVu Sans Mono" :height 200)
-  (set-face-attribute 'fixed-pitch nil :font "DejaVu Sans Mono" :height 200)
-  (set-face-attribute 'variable-pitch nil :family "Liberation Sans" :height 200)
+;;   :config
+;;   (set-face-attribute 'default nil :family "FiraCode Nerd Font" :height 160)
+;;   (set-face-attribute 'fixed-pitch nil :family "FiraCode Nerd Font" :height 1.0)
+;;   (set-face-attribute 'variable-pitch nil :family "DejaVu Sans" :height 1.5)
 )
+
+
 #+END_SRC
+
 
 #+RESULTS:
 | mixed-pitch-mode | text-mode-hook-identify |
 ** solve problem with proportional fonts on dropdown menus
 This probably isn't actually a problem for me right now, but [[https://lucidmanager.org/productivity/ricing-org-mode/][this guide]] I'm using recommends it so I'm including for the sake of completion.
-
+# 
 #+BEGIN_SRC emacs-lisp
    ;; Required for proportional font
    (use-package company-posframe
@@ -135,8 +155,8 @@ See [[https://lucidmanager.org/productivity/ricing-org-mode/][here]] and [[https
 ** show-paren-mode
 #+begin_src emacs-lisp
 (show-paren-mode t)
-(setq show-paren-when-point-inside-paren t)
-(setq show-paren-style 'expression)
+(setq show-paren-when-point-inside-paren nil)
+(setq show-paren-style 'mixed)
 #+end_src
 ** electric-pair-mode
 #+begin_src emacs-lisp
@@ -226,6 +246,61 @@ When I use moom-mode, it messes up the fixed-pitch fonts for menu bars, calendar
   :config
   (moom-mode 1)
 )
+#+end_src
+** Themes:
+*** gruvbox-theme
+Use the [[https://github.com/Greduan/emacs-theme-gruvbox][gruvbox theme]].
+
+This has been superceded by [[*doom-themes][doom-themes]].
+#+begin_src emacs-lisp
+;(use-package gruvbox-theme
+;  :ensure t
+;  :config
+;  (load-theme 'gruvbox-dark-medium t)
+;  )
+#+end_src
+*** doom-themes
+From [[https://github.com/doomemacs/themes][here]].
+
+!!! Ok, there's something weird going on where the modeline and the theme are messed up until I reload the theme.
+Nevermind, I think I just had a gui custom line in init that loaded a different theme, and that was causing conflict.
+
+#+begin_src emacs-lisp
+(use-package doom-themes
+  :ensure t
+  :config
+  ;; Global settings (defaults)
+  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+  (load-theme 'doom-gruvbox t)
+
+  ;; Enable flashing mode-line on errors
+  (doom-themes-visual-bell-config)
+  ;; Enable custom neotree theme (all-the-icons must be installed!)
+  (doom-themes-neotree-config)
+  ;; or for treemacs users
+  (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
+  (doom-themes-treemacs-config)
+  ;; Corrects (and improves) org-mode's native fontification.
+  (doom-themes-org-config))
+#+end_src
+** doom-modeline
+See [[https://github.com/seagle0128/doom-modeline][source]].
+
+For example of customizations, see [[https://github.com/angrybacon/dotemacs/blob/master/dotemacs.org#mode-line][here]].
+
+#+begin_src emacs-lisp
+;; Install via `M-x package-install RET all-the-icons RET`
+(use-package all-the-icons
+  :ensure t
+  :if (display-graphic-p)
+)
+
+(use-package doom-modeline
+  :ensure t
+  :init (doom-modeline-mode 1)
+)
+
 #+end_src
 * org derivatives
 ** Design
@@ -654,6 +729,23 @@ From [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org][h
 (customize-set-variable 'org-global-properties
                         '(("Effort_ALL" . "0:00 0:07 0:15 0:30 0:45 1:00 1:30 2:00 2:30 3:00")))
 #+end_src
+*** org-refile
+See [[https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html][here]].
+
+#+begin_src emacs-lisp
+;; Set list of legitimate refile targets
+(setq org-refile-target-list (list "~/Dropbox/org/gtd/gtd.org" "~/Dropbox/org/gtd/inbox.org"))
+
+;; org-refile will allow refiling to any refile target, up to 1 level of headings deep
+(setq org-refile-targets '(( org-refile-target-list :maxlevel . 1)))
+
+;; allow refiling to the top (file) level, rather than just to headings (which is the defaults)
+(setq org-refile-use-outline-path 'file)
+
+;; correct for helm weirdness resulting from setting org-refile-use-outline-path which only allows the top level file to be displayed and not its headings. This fixes that.
+(setq org-outline-path-complete-in-steps nil)
+#+end_src
+
 ** org-roam
 *** org-roam init and basic settings
 - [2020-02-27 Thu]
@@ -886,8 +978,6 @@ https://github.com/takaxp/org-tree-slide
   :ensure t
 )
 #+end_src
-
-
 * dired-sidebar
 #+BEGIN_SRC emacs-lisp
 (use-package dired-sidebar
@@ -938,14 +1028,79 @@ https://github.com/takaxp/org-tree-slide
 #+END_SRC
 
 * evil
+
+Ok, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this out
+For interfacing with emacs keybindings, see [[https://github.com/noctuid/evil-guide#use-some-emacs-keybindings][this part of the guide]].
+
+What do I want from evil mode?
+- I want to disable insert mode and instead revert to emacs keybindings.
+- However, I want to retain some useful bindings from vim:
+  - =^N= and =^P= for evil-complete-next/previous is gold
+  - I might copy over =^Y=, since evil-copy-from-above sounds useful. I've never like emacs yank system and I'll probably be doing most of my copy/pasting in evil mode now.
+  - I want some kind of indicator of what mode I'm in (emacs vs vim insert/normal/visual, etc).
+  - Vim normal mode needs to allow <tab> to fold/unfold org headers!
+  - C-j in insert mode should go to the end of the line and then insert a newline (equivalent to 'o' in normal mode). It should do this in vim, also.
+  - 'o' in normal mode (and C-j as described above) should default to M-<enter> when working in an org list
+  - But other than that, it should be mostly like emacs, and vim's insert mode should also behave more like emacs 
+
 #+BEGIN_SRC emacs-lisp
+
+(setq evil-disable-insert-state-bindings t) 
 (use-package evil
   :ensure t
   :config
   (evil-mode 0)
-  (evil-disable-insert-state-bindings t) 
+  
 )
 #+END_SRC
+
+** evil-mode indicator
+From [[https://www.reddit.com/r/emacs/comments/gqc9fm/comment/fyx5i8c/?utm_source=share&utm_medium=web2x&context=3][here]], which has a link to an older version [[http://muublog.blogspot.com/2015/12/evil-mode-hack-for-colorful-mode-line.html][here]].
+
+Also, your cursor changes from a block to a bar when you switch from normal to insert modes.
+
+If you want to change the behavior of highlight-line (=hl-line-mode=), start [[https://stackoverflow.com/questions/40567535/disable-highlight-line-when-in-visual-mode-evil-mode][here]].  And [[https://www.reddit.com/r/emacs/comments/t7doal/i_bet_you_use_hllinemode_do_you_know_how_it_works/][here's]] some really nerdy ramblings on =hl-line-mode= which I haven't read. And [[https://www.reddit.com/r/emacs/comments/4ugor6/how_to_change_highlight_line_color/][here]] is direction on how to change =hl-line-face=.
+(test)
+#+begin_src emacs-lisp
+(defface my-evil-state-emacs-face
+  '((t (:background "Green" :foreground "Blue")))
+  "Evil Mode Emacs State Face")
+
+(defface my-evil-state-insert-face
+  '((t (:background "Red" :foreground "White")))
+  "Evil Mode Insert State Face")
+
+(defface my-evil-state-normal-face
+  '((t (:background "DodgerBlue1" :foreground "White")))
+  "Evil Mode Normal Stace Face")
+
+(defface my-evil-state-visual-face
+  '((t (:background "Purple" :foreground "White")))
+  "Evil Mode Normal Stace Face")
+
+;; Override defun from evil-core.el
+(defun evil-generate-mode-line-tag (&optional state)
+  "Generate the evil mode-line tag for STATE."
+  (let ((tag (evil-state-property state :tag t)))
+    ;; prepare mode-line: add tooltip
+    (when (functionp tag)
+(setq tag (funcall tag)))
+    (if (stringp tag)
+  (propertize tag
+	      'face (cond
+		     ((string= "normal" state)
+		      'my-evil-state-normal-face)
+		     ((string= "insert" state)
+		      'my-evil-state-insert-face)
+		     ((string= "visual" state)
+		      'my-evil-state-visual-face)
+		     ((string= "emacs" state)
+		      'my-evil-state-emacs-face))
+	      'help-echo (evil-state-property state :name)
+	      'mouse-face 'mode-line-highlight)
+tag)))
+
+#+end_src
 * markdown-mode
 #+BEGIN_SRC emacs-lisp
 (use-package markdown-mode
