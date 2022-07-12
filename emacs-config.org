@@ -247,6 +247,19 @@ When I use moom-mode, it messes up the fixed-pitch fonts for menu bars, calendar
 ;  (moom-mode 1)
 ;)
 #+end_src
+
+** company-mode
+Autocompletion, as per [[https://lucidmanager.org/productivity/emacs-completion-system/][here]].
+
+#+begin_src emacs-lisp
+(use-package company
+  :ensure t
+  :config
+  (setq company-idle-delay 0
+        company-minimum-prefix-length 4
+        company-selection-wrap-around t))
+(global-company-mode)
+#+end_src
 ** Themes:
 *** gruvbox-theme
 Use the [[https://github.com/Greduan/emacs-theme-gruvbox][gruvbox theme]].
@@ -1041,8 +1054,6 @@ https://github.com/takaxp/org-tree-slide
 #+END_SRC
 
 * evil
-
-try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this out
 For interfacing with emacs keybindings, see [[https://github.com/noctuid/evil-guide#use-some-emacs-keybindings][this part of the guide]].
 
 What do I want from evil mode?
