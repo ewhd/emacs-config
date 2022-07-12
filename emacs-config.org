@@ -240,12 +240,12 @@ https://github.com/takaxp/moom
 When I use moom-mode, it messes up the fixed-pitch fonts for menu bars, calendars, and the like. For now, just re-run the code in [[*mixed-pitch][mixed-pitch]].
 
 #+begin_src emacs-lisp
-(use-package moom
-  :after org
-  :ensure t
-  :config
-  (moom-mode 1)
-)
+;(use-package moom
+;  :after org
+;  :ensure t
+;  :config
+;  (moom-mode 1)
+;)
 #+end_src
 ** Themes:
 *** gruvbox-theme
@@ -253,54 +253,56 @@ Use the [[https://github.com/Greduan/emacs-theme-gruvbox][gruvbox theme]].
 
 This has been superceded by [[*doom-themes][doom-themes]].
 #+begin_src emacs-lisp
-;(use-package gruvbox-theme
-;  :ensure t
-;  :config
-;  (load-theme 'gruvbox-dark-medium t)
-;  )
+(use-package gruvbox-theme
+  :ensure t
+  :config
+  (load-theme 'gruvbox-dark-medium t)
+  )
 #+end_src
 *** doom-themes
 From [[https://github.com/doomemacs/themes][here]].
 
 !!! Ok, there's something weird going on where the modeline and the theme are messed up until I reload the theme.
-Nevermind, I think I just had a gui custom line in init that loaded a different theme, and that was causing conflict.
+Nevermind, I think I just had a gui custom line in linit that loaded a different theme, and that was causing conflict.
 
 #+begin_src emacs-lisp
-(use-package doom-themes
-  :ensure t
-  :config
-  ;; Global settings (defaults)
-  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-        doom-themes-enable-italic t) ; if nil, italics is universally disabled
-  (load-theme 'doom-gruvbox t)
-
-  ;; Enable flashing mode-line on errors
-  (doom-themes-visual-bell-config)
-  ;; Enable custom neotree theme (all-the-icons must be installed!)
-  (doom-themes-neotree-config)
-  ;; or for treemacs users
-  (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
-  (doom-themes-treemacs-config)
-  ;; Corrects (and improves) org-mode's native fontification.
-  (doom-themes-org-config))
+;(use-package doom-themes
+;  :ensure t
+;  :config
+;  ;; Global settings (defaults)
+;  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+;        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+;  (load-theme 'doom-gruvbox t)
+;
+;  ;; Enable flashing mode-line on errors
+;  (doom-themes-visual-bell-config)
+;  ;; Enable custom neotree theme (all-the-icons must be installed!)
+;  (doom-themes-neotree-config)
+;  ;; or for treemacs users
+;  (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
+;  (doom-themes-treemacs-config)
+;  ;; Corrects (and improves) org-mode's native fontification.
+;  (doom-themes-org-config))
 #+end_src
 ** doom-modeline
 See [[https://github.com/seagle0128/doom-modeline][source]].
 
 For example of customizations, see [[https://github.com/angrybacon/dotemacs/blob/master/dotemacs.org#mode-line][here]].
 
+This keeps causing an interesting but problematic fatal error, so I have uninstalled it.
+
 #+begin_src emacs-lisp
-;; Install via `M-x package-install RET all-the-icons RET`
-(use-package all-the-icons
-  :ensure t
-  :if (display-graphic-p)
-)
+; Install via `M-x all-the-icons-install-fonts`
+;(use-package all-the-icons
+;  :ensure t
+;  :if (display-graphic-p)
+;)
 
-(use-package doom-modeline
-  :ensure t
-  :init (doom-modeline-mode 1)
-)
-
+;(use-package doom-modeline
+;  :ensure t
+;  :init (doom-modeline-mode nil)
+;)
+;(doom-modeline-mode 1)
 #+end_src
 * org derivatives
 ** Design
@@ -1021,15 +1023,26 @@ https://github.com/takaxp/org-tree-slide
 (use-package helm
   :ensure t
   :config
+  (require 'helm-config)
+;  (helm-mode 1)
+;  (global-set-key (kbd "M-x") 'helm-M-x)
+;  (global-set-key (kbd "C-x C-f") 'helm-find-files)
+  :init
   (helm-mode 1)
-  (global-set-key (kbd "M-x") 'helm-M-x)
-  (global-set-key (kbd "C-x C-f") 'helm-find-files)
-)
+  :bind
+  (("M-x"     . helm-M-x) ;; Evaluate functions
+   ("C-x C-f" . helm-find-files) ;; Open or create files
+   ("C-x b"   . helm-mini) ;; Select buffers
+   ("C-x C-r" . helm-recentf) ;; Select recently saved files
+   ("C-c i"   . helm-imenu) ;; Select document heading
+   ("M-y"     . helm-show-kill-ring) ;; Show the kill ring
+   )
+  )
 #+END_SRC
 
 * evil
 
-Ok, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this out
+try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this outOk, let's try this out
 For interfacing with emacs keybindings, see [[https://github.com/noctuid/evil-guide#use-some-emacs-keybindings][this part of the guide]].
 
 What do I want from evil mode?
