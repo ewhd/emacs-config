@@ -59,7 +59,7 @@
  '(org-global-properties
    '(("Effort_ALL" . "0:00 0:07 0:15 0:30 0:45 1:00 1:30 2:00 2:30 3:00")))
  '(package-selected-packages
-   '(doom-themes org-tree-slide adaptive-wrap highlight-parentheses magit olivetti org-superstar org-appear company-posframe mixed-pitch org-beautify-theme evil markdown-mode helm-org-rifle use-package)))
+   '(undo-tree doom-themes org-tree-slide adaptive-wrap highlight-parentheses magit olivetti org-superstar org-appear company-posframe mixed-pitch org-beautify-theme evil markdown-mode helm-org-rifle use-package)))
 (put 'narrow-to-region 'disabled nil)
 (put 'narrow-to-page 'disabled nil)
 
@@ -72,3 +72,5 @@
  '(default ((t (:family "FiraCode Nerd Font" :height 150 :weight thin))))
  '(fixed-pitch ((t (:family "FiraCode Nerd Font" :height 1.0 :weight thin))))
  '(variable-pitch ((t (:family "DejaVu Sans" :height 1.5 :weight thin)))))
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)

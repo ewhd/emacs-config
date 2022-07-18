@@ -47,8 +47,9 @@ https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-fo
 
 (desktop-save-mode 1) ; 0 for off
 
-
 #+END_SRC
+
+
 ** mixed-pitch
 Check out [[https://zzamboni.org/post/beautifying-org-mode-in-emacs/][this]], and maybe integrate it?
 
@@ -1218,6 +1219,18 @@ test change
   :bind (("C-x g" . magit)))
 
 #+end_src
+* undo-tree
+Exact config pulled from [[https://sachachua.com/dotemacs/index.html#orgc32cd3c][Sacha Chua's config]].
+
+#+begin_src emacs-lisp
+(use-package undo-tree
+  :diminish undo-tree-mode
+  :config
+  (progn
+    (global-undo-tree-mode)
+    (setq undo-tree-visualizer-timestamps t)
+    (setq undo-tree-visualizer-diff t)))
+#+end_src
 * xah-check-parens-balance
 - [2021-11-03 Wed]
   - From [[http://ergoemacs.org/emacs/emacs_check_parens_balance.html][here]]. Solves the problems I was having with other paren checkers that would confuse <> with ().
@@ -1288,6 +1301,42 @@ Version 2018-07-03"
                 (goto-char (aref (car $stack) 1))
                 (message "Mismtach found. The char %s has no matching pair." $stack))
             (print "All brackets/quotes match.")))))))
+#+end_src
+* xah-toggle-letter-case
+From [[http://xahlee.info/emacs/emacs/modernization_upcase-word.html][here]].
+
+#+begin_src emacs-lisp
+(defun xah-toggle-letter-case ()
+  "Toggle the letter case of current word or text selection.
+always cycle in this order: Init Caps, ALL CAPS, all lower.
+
+URL `http://xahlee.info/emacs/emacs/modernization_upcase-word.html'
+Version 2020-06-26"
+  (interactive)
+  (let (
+        (deactivate-mark nil)
+        $p1 $p2)
+    (if (use-region-p)
+        (setq $p1 (region-beginning) $p2 (region-end))
+      (save-excursion
+        (skip-chars-backward "[:alpha:]")
+        (setq $p1 (point))
+        (skip-chars-forward "[:alpha:]")
+        (setq $p2 (point))))
+    (when (not (eq last-command this-command))
+      (put this-command 'state 0))
+    (cond
+     ((equal 0 (get this-command 'state))
+      (upcase-initials-region $p1 $p2)
+      (put this-command 'state 1))
+     ((equal 1 (get this-command 'state))
+      (upcase-region $p1 $p2)
+      (put this-command 'state 2))
+     ((equal 2 (get this-command 'state))
+      (downcase-region $p1 $p2)
+      (put this-command 'state 0)))))
+
+(global-set-key (kbd "M-c") 'xah-toggle-letter-case)
 #+end_src
 * FINAL Open ~/.emacs.d/emacs-config.org on startup
 #+BEGIN_SRC emacs-lisp
