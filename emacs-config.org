@@ -1068,6 +1068,9 @@ What do I want from evil mode?
   - 'o' in normal mode (and C-j as described above) should default to M-<enter> when working in an org list
   - But other than that, it should be mostly like emacs, and vim's insert mode should also behave more like emacs 
 
+
+=my-toggle-evil-mode= function comes from [[http://makble.com/how-to-toggle-evil-mode-in-emacs][here]].
+
 #+BEGIN_SRC emacs-lisp
 
 (setq evil-disable-insert-state-bindings t) 
@@ -1075,8 +1078,30 @@ What do I want from evil mode?
   :ensure t
   :config
   (evil-mode 0)
-  
 )
+
+
+
+(defun my-toggle-evil-mode ()
+  (interactive)
+  (if (bound-and-true-p evil-local-mode)
+    (progn
+      ; go emacs
+      (evil-mode (or -1 1))
+      (set-variable 'cursor-type 'bar)
+    )
+    (progn
+      ; go evil
+      (evil-mode (or 1 1))
+      (set-variable 'cursor-type 'box)
+    )
+  )
+)
+ 
+(define-key evil-normal-state-map (kbd "M-u") 'my-toggle-evil-mode)
+(global-set-key (kbd "M-u") 'my-toggle-evil-mode)
+;these last two lines break the evil-mode mode-line indicator (see below) when in "emacs" mode
+
 #+END_SRC
 
 ** evil-mode indicator
@@ -1165,6 +1190,115 @@ You activate Olivetti mode with M-x olivetti-mode. This minor mode reduces the w
 (add-hook 'olivetti-mode-on-hook (lambda () (olivetti-set-width 80)))
 #+END_SRC
 ** 
+* meow-mode
+
+
+#+begin_src emacs-lisp
+
+
+(defun meow-setup ()
+  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+  (meow-motion-overwrite-define-key
+   '("j" . meow-next)
+   '("k" . meow-prev)
+   '("<escape>" . ignore))
+  (meow-leader-define-key
+   ;; SPC j/k will run the original command in MOTION state.
+   '("j" . "H-j")
+   '("k" . "H-k")
+   ;; Use SPC (0-9) for digit arguments.
+   '("1" . meow-digit-argument)
+   '("2" . meow-digit-argument)
+   '("3" . meow-digit-argument)
+   '("4" . meow-digit-argument)
+   '("5" . meow-digit-argument)
+   '("6" . meow-digit-argument)
+   '("7" . meow-digit-argument)
+   '("8" . meow-digit-argument)
+   '("9" . meow-digit-argument)
+   '("0" . meow-digit-argument)
+   '("/" . meow-keypad-describe-key)
+   '("?" . meow-cheatsheet))
+  (meow-normal-define-key
+   '("0" . meow-expand-0)
+   '("9" . meow-expand-9)
+   '("8" . meow-expand-8)
+   '("7" . meow-expand-7)
+   '("6" . meow-expand-6)
+   '("5" . meow-expand-5)
+   '("4" . meow-expand-4)
+   '("3" . meow-expand-3)
+   '("2" . meow-expand-2)
+   '("1" . meow-expand-1)
+   '("-" . negative-argument)
+   '(";" . meow-reverse)
+   '("," . meow-inner-of-thing)
+   '("." . meow-bounds-of-thing)
+   '("[" . meow-beginning-of-thing)
+   '("]" . meow-end-of-thing)
+   '("a" . meow-append)
+   '("A" . meow-open-below)
+   '("b" . meow-back-word)
+   '("B" . meow-back-symbol)
+   '("c" . meow-change)
+   '("d" . meow-delete)
+   '("D" . meow-backward-delete)
+   '("e" . meow-next-word)
+   '("E" . meow-next-symbol)
+   '("f" . meow-find)
+   '("g" . meow-cancel-selection)
+   '("G" . meow-grab)
+   '("h" . meow-left)
+   '("H" . meow-left-expand)
+   '("i" . meow-insert)
+   '("I" . meow-open-above)
+   '("j" . meow-next)
+   '("J" . meow-next-expand)
+   '("k" . meow-prev)
+   '("K" . meow-prev-expand)
+   '("l" . meow-right)
+   '("L" . meow-right-expand)
+   '("m" . meow-join)
+   '("n" . meow-search)
+   '("o" . meow-block)
+   '("O" . meow-to-block)
+   '("p" . meow-yank)
+   '("q" . meow-quit)
+   '("Q" . meow-goto-line)
+   '("r" . meow-replace)
+   '("R" . meow-swap-grab)
+   '("s" . meow-kill)
+   '("t" . meow-till)
+   '("u" . meow-undo)
+   '("U" . meow-undo-in-selection)
+   '("v" . meow-visit)
+   '("w" . meow-mark-word)
+   '("W" . meow-mark-symbol)
+   '("x" . meow-line)
+   '("X" . meow-goto-line)
+   '("y" . meow-save)
+   '("Y" . meow-sync-grab)
+   '("z" . meow-pop-selection)
+   '("'" . repeat)
+   '("<escape>" . ignore)))
+(require 'meow)
+(meow-setup)
+(meow-global-mode t)
+#+end_src
+* boon-mode
+
+
+#+begin_src emacs-lisp
+;(define-key boon-command-map (kbd "i") 'next-line)
+;(define-key boon-command-map (kbd "o") 'previous-line)
+;(define-key boon-command-map (kbd "I") 'forward-paragraph)
+;(define-key boon-command-map (kbd "O") 'backward-paragraph)
+;(define-key boon-command-map (kbd "K") 'boon-smarter-downward)
+;(define-key boon-command-map (kbd "L") 'boon-smarter-upward)
+;(define-key boon-command-map (kbd "C-k") 'scroll-up-line)
+;(define-key boon-command-map (kbd "C-l") 'scroll-down-line)
+
+#+end_src
 * Backups, Auto-Save, and Version Control
 You do in fact still want to use emacs' backups alongside a VC like git, for reasons stated in [[https://stackoverflow.com/a/151946][the comments to this stackoverflow answer]]:
     "The backups are for when you are editing something not under version control - like a config file or something quick and dirty that you haven't gotten around to putting into version control yet. Then, when you haven't been doing what you ought to, the editor saves your neck."
@@ -1220,14 +1354,17 @@ test change
 
 #+end_src
 * undo-tree
-Exact config pulled from [[https://sachachua.com/dotemacs/index.html#orgc32cd3c][Sacha Chua's config]].
+Config pulled from [[https://sachachua.com/dotemacs/index.html#orgc32cd3c][Sacha Chua's config]] and [[https://www.reddit.com/r/emacs/comments/n1pibp/comment/gwei7fw/?utm_source=share&utm_medium=web2x&context=3][this reddit comment]].
 
 #+begin_src emacs-lisp
 (use-package undo-tree
+  :ensure t
+  :after evil
   :diminish undo-tree-mode
   :config
   (progn
-    (global-undo-tree-mode)
+    (evil-set-undo-system 'undo-tree)
+    (global-undo-tree-mode t)
     (setq undo-tree-visualizer-timestamps t)
     (setq undo-tree-visualizer-diff t)))
 #+end_src
