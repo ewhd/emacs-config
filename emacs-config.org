@@ -68,7 +68,7 @@ Check out [[https://zzamboni.org/post/beautifying-org-mode-in-emacs/][this]], an
 (use-package mixed-pitch
   :ensure t
   :hook
-  (text-mode . mixed-pitch-mode)
+  ;(text-mode . mixed-pitch-mode)
 ;;   :config
 ;;   (set-face-attribute 'default nil :family "FiraCode Nerd Font" :height 160)
 ;;   (set-face-attribute 'fixed-pitch nil :family "FiraCode Nerd Font" :height 1.0)
@@ -79,8 +79,6 @@ Check out [[https://zzamboni.org/post/beautifying-org-mode-in-emacs/][this]], an
 #+END_SRC
 
 
-#+RESULTS:
-| mixed-pitch-mode | text-mode-hook-identify |
 ** solve problem with proportional fonts on dropdown menus
 This probably isn't actually a problem for me right now, but [[https://lucidmanager.org/productivity/ricing-org-mode/][this guide]] I'm using recommends it so I'm including for the sake of completion.
 # 
@@ -304,23 +302,23 @@ See [[https://github.com/seagle0128/doom-modeline][source]].
 For example of customizations, see [[https://github.com/angrybacon/dotemacs/blob/master/dotemacs.org#mode-line][here]].
 
 This keeps causing an interesting but problematic fatal error, so I have uninstalled it.
-
+  
 #+begin_src emacs-lisp
-; Install via `M-x all-the-icons-install-fonts`
-;(use-package all-the-icons
-;  :ensure t
-;  :if (display-graphic-p)
-;)
 
 ;(use-package doom-modeline
 ;  :ensure t
 ;  :init (doom-modeline-mode nil)
-;)
-;(doom-modeline-mode 1)
+;  :hook (after-init . doom-modeline-mode)
+;  )
+#+end_src
+** mood-line
+
+
+#+begin_src emacs-lisp
+
 #+end_src
 * org derivatives
-** Design
-- [[https://www.reddit.com/r/orgmode/comments/i16xti/question_any_problems_assigning_orgroamdirectory/][This]] has some good notes about how org-mode and org-roam directories should relate.
+** Design- [[https://www.reddit.com/r/orgmode/comments/i16xti/question_any_problems_assigning_orgroamdirectory/][This]] has some good notes about how org-mode and org-roam directories should relate.
   - You don't want org-agenda looking at your org-roam dir. It's not optimized to parse lots of small files.
   - I believe that your cannot run roam backlinks to files outside of roam's designated dir.
   - Many people have a dir for each, side by side, so roam backlinks will not work with org-roam files.
@@ -1219,6 +1217,9 @@ You activate Olivetti mode with M-x olivetti-mode. This minor mode reduces the w
    '("0" . meow-digit-argument)
    '("/" . meow-keypad-describe-key)
    '("?" . meow-cheatsheet))
+  (meow-define-keys
+   'insert
+   '("C-i" . meow-insert-exit))
   (meow-normal-define-key
    '("0" . meow-expand-0)
    '("9" . meow-expand-9)
@@ -1280,6 +1281,7 @@ You activate Olivetti mode with M-x olivetti-mode. This minor mode reduces the w
    '("Y" . meow-sync-grab)
    '("z" . meow-pop-selection)
    '("'" . repeat)
+   '("M-r" . undo-tree-redo)
    '("<escape>" . ignore)))
 (require 'meow)
 (meow-setup)
