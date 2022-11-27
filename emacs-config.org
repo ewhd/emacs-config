@@ -47,6 +47,8 @@ https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-fo
 
 (desktop-save-mode 1) ; 0 for off
 
+(setq sentence-end-double-space nil)
+
 #+END_SRC
 
 
@@ -67,7 +69,7 @@ Check out [[https://zzamboni.org/post/beautifying-org-mode-in-emacs/][this]], an
 
 (use-package mixed-pitch
   :ensure t
-  :hook
+  ;:hook
   ;(text-mode . mixed-pitch-mode)
 ;;   :config
 ;;   (set-face-attribute 'default nil :family "FiraCode Nerd Font" :height 160)
