@@ -319,6 +319,36 @@ This keeps causing an interesting but problematic fatal error, so I have uninsta
 #+begin_src emacs-lisp
 
 #+end_src
+** which-key
+From [[https://www.youtube.com/watch?v=mBPQI71XaXU][here]].
+And mostly [[https://dev.to/deciduously/how-i-emacs-and-so-can-you-packages-m9p][here]].
+Documentation [[https://github.com/justbur/emacs-which-key#initial-setup][here]]
+#+begin_src emacs-lisp
+(use-package which-key
+  :ensure t
+  :init
+  (which-key-mode)
+  :config
+  (which-key-setup-side-window-bottom)
+  (setq which-key-sort-order 'which-key-key-order)
+  ;; Allow C-h to trigger which-key before it is done automatically
+  (setq which-key-show-early-on-C-h t)
+  ;; make sure which-key doesn't show normally but refreshes quickly after it is
+  ;; triggered.
+  (setq which-key-idle-delay 10)
+  (setq which-key-idle-secondary-delay 0.05)
+  :bind (("C-h m" . which-key-show-top-level))
+  :diminish which-key-mode)
+
+#+end_src
+** minimap
+For some reasons, this does not work in an org document.
+Which is very sad, but I'm keeping it here anyway.
+#+begin_src emacs-lisp
+(use-package minimap
+  :ensure nil
+  )
+#+end_src
 * org derivatives
 ** Design- [[https://www.reddit.com/r/orgmode/comments/i16xti/question_any_problems_assigning_orgroamdirectory/][This]] has some good notes about how org-mode and org-roam directories should relate.
   - You don't want org-agenda looking at your org-roam dir. It's not optimized to parse lots of small files.
@@ -596,12 +626,9 @@ Org-agenda commands can be found [[https://orgmode.org/manual/Agenda-Commands.ht
     - I leave the defective code block here, with it's content commented out, for posterity/curiosity's sake.
 
 #+begin_src emacs-lisp
-(setq org-agenda-files (list "~/Dropbox/org/gtd/gtd.org" "~/Dropbox/org/gtd/people.org"))
+(setq org-agenda-files (list "~/Dropbox/org/gtd/gtd.org" "~/Dropbox/org/gtd/people.org" "~/Dropbox/org/gtd/cfgtd.org"))
 #+end_src
 
-#+BEGIN_SRC emacs-lisp
-;; (setq org-agenda-files (list "~/Dropbox/org/gtd/gtd.org" "~/Dropbox/org/gtd/people.org"))
-#+END_SRC emacs-lisp
 **** Word wrapping in agenda buffers
 Formatting fields in agenda-view:
 - https://lists.gnu.org/archive/html/emacs-orgmode/2010-01/msg00744.html
