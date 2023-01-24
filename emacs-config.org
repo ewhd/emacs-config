@@ -49,6 +49,17 @@ https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-fo
 
 (setq sentence-end-double-space nil)
 
+;; Automatically revert files which have been changed on disk, unless the buffer contains unsaved changes
+(global-auto-revert-mode 1)
+
+;; Revert Dired and other buffers
+(setq global-auto-revert-non-file-buffers t)
+
+;; Don't revert Buffer Menu (makes it unusable)
+;; https://github.com/syl20bnr/spacemacs/issues/7661
+;; https://www.reddit.com/r/emacs/comments/t01efg/comment/iat14ob/?utm_source=share&utm_medium=web2x&context=3
+(add-to-list 'global-auto-revert-ignore-modes 'Buffer-menu-mode)
+
 #+END_SRC
 
 
@@ -249,18 +260,7 @@ When I use moom-mode, it messes up the fixed-pitch fonts for menu bars, calendar
 ;)
 #+end_src
 
-** company-mode
-Autocompletion, as per [[https://lucidmanager.org/productivity/emacs-completion-system/][here]].
 
-#+begin_src emacs-lisp
-(use-package company
-  :ensure t
-  :config
-  (setq company-idle-delay 0
-        company-minimum-prefix-length 4
-        company-selection-wrap-around t))
-(global-company-mode)
-#+end_src
 ** Themes:
 *** gruvbox-theme
 Use the [[https://github.com/Greduan/emacs-theme-gruvbox][gruvbox theme]].
@@ -349,6 +349,105 @@ Which is very sad, but I'm keeping it here anyway.
   :ensure nil
   )
 #+end_src
+** eglot
+eglot is a language service provider. It gives information on things like syntax.
+#+begin_src emacs-lisp
+
+#+end_src
+* Completion Tools
+See [[https://www.youtube.com/watch?v=Vx0bSKF4y78&t=6s][this video]].
+And [[https://lucidmanager.org/productivity/emacs-completion-system/][this page]].
+** company-mode
+Autocompletion, as per [[https://lucidmanager.org/productivity/emacs-completion-system/][here]].
+C:\Use
+#+begin_src emacs-lisp
+(use-package company
+  :ensure t
+  :config
+  (setq company-idle-delay 0
+        company-minimum-prefix-length 4
+        company-selection-wrap-around t)
+  :bind(:map company-active-map
+           ("<return>" . nil)
+           ("RET" . nil)
+           ("C-<return>" . company-complete-selection))
+  )
+
+(global-company-mode)
+#+end_src
+** helm-org-rifle
+#+BEGIN_SRC emacs-lisp
+(use-package helm-org-rifle
+  :ensure t
+)
+#+END_SRC
+
+** helm
+#+BEGIN_SRC emacs-lisp
+(use-package helm
+  :ensure t
+  :config
+  (require 'helm-config)
+;  (helm-mode 1)
+;  (global-set-key (kbd "M-x") 'helm-M-x)
+;  (global-set-key (kbd "C-x C-f") 'helm-find-files)
+  :init
+  (helm-mode 1)
+  :bind
+  (("M-x"     . helm-M-x) ;; Evaluate functions
+   ("C-x C-f" . helm-find-files) ;; Open or create files
+   ("C-x b"   . helm-mini) ;; Select buffers
+   ("C-x C-r" . helm-recentf) ;; Select recently saved files
+   ("C-c i"   . helm-imenu) ;; Select document heading
+   ("M-y"     . helm-show-kill-ring) ;; Show the kill ring
+   )
+  )
+#+END_SRC
+
+** corfu
+Pulled directly from [[https://github.com/Gavinok/emacs.d/blob/main/init.el][here]].
+custo
+#+begin_src emacs-lisp
+;(use-package corfu
+;  :ensure t
+;  ;; Optional customizations
+;  :custom
+;  (corfu-cycle t)                 ; Allows cycling through candidates
+;  (corfu-auto t)                  ; Enable auto completion
+;  (corfu-auto-prefix 2)
+;  (corfu-auto-delay 0.0)
+;  (corfu-echo-documentation 0.25) ; Enable documentation for completions
+;  (corfu-preview-current 'insert) ; Do not preview current candidate
+;  (corfu-preselect-first nil)
+;  (corfu-on-exact-match nil)      ; Don't auto expand tempel snippets
+;
+;  ;; Optionally use TAB for cycling, default is 'corfu-complete'.
+;  :bind (:map corfu-map
+;              ("M-SPC" . corfu-insert-separator)
+;              ("TAB"     . corfu-next)
+;              ([tab]     . corfu-next)
+;              ("S-TAB"   . corfu-previous)
+;              ([backtab] . corfu-previous)
+;              ("S-<return>" . corfu-insert)
+;              ("RET"     . nil) ;; leave my enter alone!
+;              )
+;
+;  :init
+;  (global-corfu-mode)
+;  (corfu-history-mode)
+;  :config
+;  (setq tab-always-indent 'complete)
+;  (add-hook 'eshell-mode-hook
+;            (lambda () (setq-local corfu-quit-at-boundary t
+;                              corfu-quit-no-match t
+;                              corfu-auto nil)
+;              (corfu-mode))))
+
+#+end_src
+test
+
+
+
 * org derivatives
 ** Design- [[https://www.reddit.com/r/orgmode/comments/i16xti/question_any_problems_assigning_orgroamdirectory/][This]] has some good notes about how org-mode and org-roam directories should relate.
   - You don't want org-agenda looking at your org-roam dir. It's not optimized to parse lots of small files.
@@ -870,7 +969,7 @@ Things I want to change:
   - [[https://org-roam.discourse.group/t/update-a-field-last-modified-at-save/321][This one too]], which has details about adding a =LAST_MODIFIED= element to the header which auto-updates whenever the fil
   - Apparently as of org 9.5, =org-id-ts-format= should make timestamp ID much easier ([[https://org-roam.discourse.group/t/v2-set-id-to-a-timestamp/1492/3][here]])
   - I got a lot of the cool header and ID formatting from [[https://org-roam.discourse.group/t/how-to-auto-generate-org-id-following-org-roam-find-file-immediate/1412/7][here]].
-
+hello
 #+begin_src emacs-lisp
 (setq org-roam-capture-templates
          '(
@@ -1052,34 +1151,6 @@ https://github.com/takaxp/org-tree-slide
 )
 #+END_SRC
 
-* helm-org-rifle
-#+BEGIN_SRC emacs-lisp
-(use-package helm-org-rifle
-  :ensure t
-)
-#+END_SRC
-
-* helm
-#+BEGIN_SRC emacs-lisp
-(use-package helm
-  :ensure t
-  :config
-  (require 'helm-config)
-;  (helm-mode 1)
-;  (global-set-key (kbd "M-x") 'helm-M-x)
-;  (global-set-key (kbd "C-x C-f") 'helm-find-files)
-  :init
-  (helm-mode 1)
-  :bind
-  (("M-x"     . helm-M-x) ;; Evaluate functions
-   ("C-x C-f" . helm-find-files) ;; Open or create files
-   ("C-x b"   . helm-mini) ;; Select buffers
-   ("C-x C-r" . helm-recentf) ;; Select recently saved files
-   ("C-c i"   . helm-imenu) ;; Select document heading
-   ("M-y"     . helm-show-kill-ring) ;; Show the kill ring
-   )
-  )
-#+END_SRC
 
 * evil
 For interfacing with emacs keybindings, see [[https://github.com/noctuid/evil-guide#use-some-emacs-keybindings][this part of the guide]].
@@ -1102,7 +1173,7 @@ What do I want from evil mode?
 
 (setq evil-disable-insert-state-bindings t) 
 (use-package evil
-  :ensure t
+  :ensure nil
   :config
   (evil-mode 0)
 )
@@ -1215,6 +1286,8 @@ You activate Olivetti mode with M-x olivetti-mode. This minor mode reduces the w
 )
 
 (add-hook 'olivetti-mode-on-hook (lambda () (olivetti-set-width 80)))
+
+(add-hook 'text-mode-hook 'olivetti-mode)
 #+END_SRC
 ** 
 * meow-mode
@@ -1314,7 +1387,7 @@ You activate Olivetti mode with M-x olivetti-mode. This minor mode reduces the w
    '("<escape>" . ignore)))
 (require 'meow)
 (meow-setup)
-(meow-global-mode t)
+(meow-global-mode nil)
 #+end_src
 * boon-mode
 
