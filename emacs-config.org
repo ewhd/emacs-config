@@ -730,9 +730,7 @@ Org-agenda commands can be found [[https://orgmode.org/manual/Agenda-Commands.ht
 #+end_src
 
 **** Word wrapping in agenda buffers
-Formatting fields in agenda-view:
-- https://lists.gnu.org/archive/html/emacs-orgmode/2010-01/msg00744.html
-- http://doc.endlessparentheses.com/Var/org-agenda-prefix-format.html
+
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-agenda-mode-hook
@@ -743,6 +741,45 @@ Formatting fields in agenda-view:
 
 
 #+END_SRC emacs-lisp
+
+**** Truncating fields in agenda view
+Formatting fields in agenda-view:
+- https://lists.gnu.org/archive/html/emacs-orgmode/2010-01/msg00744.html
+- http://doc.endlessparentheses.com/Var/org-agenda-prefix-format.html
+
+#+begin_src emacs-lisp
+(defvar my-org-agenda-list-category t)
+(defun my-org-agenda-toggle-list-category ()
+  "Toggles whether category/file name appears or not at the left
+  of entries in agenda listings. Useful to unclutter listings."
+  (interactive)
+  (if my-org-agenda-list-category
+      (progn 
+        (setq my-org-agenda-list-category nil)
+        (setq org-agenda-prefix-format
+              '((agenda  . "  %-12:c%?-12t% s")
+                (timeline  . "  % s")
+                (todo  . "  %-12:c")
+                (tags  . "  %-12:c")
+                (search . "  %-12:c")))
+        )
+    (setq my-org-agenda-list-category t)
+    (setq org-agenda-prefix-format
+          '((agenda  . "  %?-12t% s")
+            (timeline  . "  % s")
+            (todo  . "  ")
+            (tags  . "  ")
+            (search . "  ")))
+    )
+  (org-agenda-redo))
+
+(add-hook 
+ 'org-mode-hook
+ (lambda ()
+   (define-key org-agenda-keymap   "L" 'my-org-agenda-toggle-list-category)
+   (define-key org-agenda-mode-map "L" 'my-org-agenda-toggle-list-category)
+   ))
+#+end_src
 **** Customize agenda-view
 From [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org][here]] -- modified.
 #+begin_src emacs-lisp
