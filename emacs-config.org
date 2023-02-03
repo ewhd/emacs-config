@@ -22,47 +22,79 @@ https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-fo
 
 * Appearance
 #+BEGIN_SRC emacs-lisp
-  ;; (set-face-attribute 'default nil
-  ;;   :family "Liberation Mono"
-  ;;   :height 200
-  ;;   :weight 'normal
-  ;;   :width 'normal
-  ;; )
-  (setq visible-bell 1
-        org-startup-indented t
-        org-pretty-entities t
-        org-hide-emphasis-markers t
-        org-startup-with-inline-images t   ; only displays in the format [[file:path-to-file]], nothing else.
-        org-image-actual-width '(300)
-        inhibit-compacting-font-caches t   ; this is to help org-superstar run quickly with large files
-        )
-  (global-visual-line-mode 1)
+(setq visible-bell 1
+      org-startup-indented t
+      org-pretty-entities t
+      org-hide-emphasis-markers t
+      org-startup-with-inline-images t   ; only displays in the format [[file:path-to-file]], nothing else.
+      org-image-actual-width '(300)
+      inhibit-compacting-font-caches t   ; this is to help org-superstar run quickly with large files
+      )
+(global-visual-line-mode 1)
 
-  ;; save/restore opened files and windows config
-  (desktop-save-mode 1) ; 0 for off
+(global-hl-line-mode 1)                  ; highlight current line
+
+(tool-bar-mode -1)                       ; hide the toolbar by default (the one with the silly icons)
+
+;; (org-startup-folded 'fold)                ; fold drawers (maybe everything?) on org-mode startup
+
+(setq help-window-select t)                   ; Focus new help windows when opened)
+;; save/restore opened files and windows config
+
+(setq scroll-conservatively 101)              ; Avoid recentering when scrolling far
+(setq scroll-margin 2)                        ; Add a margin when scrolling vertically
+(delete-selection-mode 1)               ; Replace region when inserting text
+
+(desktop-save-mode 1) ; 0 for off
+
+(setq sentence-end-double-space nil)
+
+;; Automatically revert files which have been changed on disk, unless the buffer contains unsaved changes
+(global-auto-revert-mode 1)
+
+;; Revert Dired and other buffers
+(setq global-auto-revert-non-file-buffers t)
+
+;; Don't revert Buffer Menu (makes it unusable)
+;; https://github.com/syl20bnr/spacemacs/issues/7661
+;; https://www.reddit.com/r/emacs/comments/t01efg/comment/iat14ob/?utm_source=share&utm_medium=web2x&context=3
+(add-to-list 'global-auto-revert-ignore-modes 'Buffer-menu-mode)
 
 #+END_SRC
+
+
 ** mixed-pitch
 Check out [[https://zzamboni.org/post/beautifying-org-mode-in-emacs/][this]], and maybe integrate it?
+
+[[https://emacsredux.com/blog/2021/12/22/check-if-a-font-is-available-with-emacs-lisp/][This page]] talks about how to check for a font's availability before trying to use it.
+
 #+BEGIN_SRC emacs-lisp
 ;; Set default, fixed and variabel pitch fonts
 ;; Use M-x menu-set-font to view available fonts
+(custom-theme-set-faces
+   'user
+   '(default ((t (:family "FiraCode Nerd Font" :height 150 :weight thin))))
+   '(fixed-pitch ((t (:family "FiraCode Nerd Font" :height 1.0 :weight thin))))
+   '(variable-pitch ((t (:family "DejaVu Sans" :height 1.5 :weight thin))))
+)
+
 (use-package mixed-pitch
   :ensure t
-  :hook
-  (text-mode . mixed-pitch-mode)
-  :config
-  (set-face-attribute 'default nil :font "DejaVu Sans Mono" :height 200)
-  (set-face-attribute 'fixed-pitch nil :font "DejaVu Sans Mono" :height 200)
-  (set-face-attribute 'variable-pitch nil :family "Liberation Sans" :height 200)
+  ;:hook
+  ;(text-mode . mixed-pitch-mode)
+;;   :config
+;;   (set-face-attribute 'default nil :family "FiraCode Nerd Font" :height 160)
+;;   (set-face-attribute 'fixed-pitch nil :family "FiraCode Nerd Font" :height 1.0)
+;;   (set-face-attribute 'variable-pitch nil :family "DejaVu Sans" :height 1.5)
 )
+
+
 #+END_SRC
 
-#+RESULTS:
-| mixed-pitch-mode | text-mode-hook-identify |
+
 ** solve problem with proportional fonts on dropdown menus
 This probably isn't actually a problem for me right now, but [[https://lucidmanager.org/productivity/ricing-org-mode/][this guide]] I'm using recommends it so I'm including for the sake of completion.
-
+# 
 #+BEGIN_SRC emacs-lisp
    ;; Required for proportional font
    (use-package company-posframe
@@ -135,8 +167,8 @@ See [[https://lucidmanager.org/productivity/ricing-org-mode/][here]] and [[https
 ** show-paren-mode
 #+begin_src emacs-lisp
 (show-paren-mode t)
-(setq show-paren-when-point-inside-paren t)
-(setq show-paren-style 'expression)
+(setq show-paren-when-point-inside-paren nil)
+(setq show-paren-style 'mixed)
 #+end_src
 ** electric-pair-mode
 #+begin_src emacs-lisp
@@ -220,13 +252,202 @@ https://github.com/takaxp/moom
 When I use moom-mode, it messes up the fixed-pitch fonts for menu bars, calendars, and the like. For now, just re-run the code in [[*mixed-pitch][mixed-pitch]].
 
 #+begin_src emacs-lisp
-(use-package moom
-  :after org
+;(use-package moom
+;  :after org
+;  :ensure t
+;  :config
+;  (moom-mode 1)
+;)
+#+end_src
+
+
+** Themes:
+*** gruvbox-theme
+Use the [[https://github.com/Greduan/emacs-theme-gruvbox][gruvbox theme]].
+
+This has been superceded by [[*doom-themes][doom-themes]].
+#+begin_src emacs-lisp
+(use-package gruvbox-theme
   :ensure t
   :config
-  (moom-mode 1)
-)
+  (load-theme 'gruvbox-dark-medium t)
+  )
 #+end_src
+*** doom-themes
+From [[https://github.com/doomemacs/themes][here]].
+
+!!! Ok, there's something weird going on where the modeline and the theme are messed up until I reload the theme.
+Nevermind, I think I just had a gui custom line in linit that loaded a different theme, and that was causing conflict.
+
+#+begin_src emacs-lisp
+;(use-package doom-themes
+;  :ensure t
+;  :config
+;  ;; Global settings (defaults)
+;  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
+;        doom-themes-enable-italic t) ; if nil, italics is universally disabled
+;  (load-theme 'doom-gruvbox t)
+;
+;  ;; Enable flashing mode-line on errors
+;  (doom-themes-visual-bell-config)
+;  ;; Enable custom neotree theme (all-the-icons must be installed!)
+;  (doom-themes-neotree-config)
+;  ;; or for treemacs users
+;  (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
+;  (doom-themes-treemacs-config)
+;  ;; Corrects (and improves) org-mode's native fontification.
+;  (doom-themes-org-config))
+#+end_src
+** doom-modeline
+See [[https://github.com/seagle0128/doom-modeline][source]].
+
+For example of customizations, see [[https://github.com/angrybacon/dotemacs/blob/master/dotemacs.org#mode-line][here]].
+
+This keeps causing an interesting but problematic fatal error, so I have uninstalled it.
+  
+#+begin_src emacs-lisp
+
+;(use-package doom-modeline
+;  :ensure t
+;  :init (doom-modeline-mode nil)
+;  :hook (after-init . doom-modeline-mode)
+;  )
+#+end_src
+** mood-line
+
+
+#+begin_src emacs-lisp
+
+#+end_src
+** which-key
+From [[https://www.youtube.com/watch?v=mBPQI71XaXU][here]].
+And mostly [[https://dev.to/deciduously/how-i-emacs-and-so-can-you-packages-m9p][here]].
+Documentation [[https://github.com/justbur/emacs-which-key#initial-setup][here]]
+#+begin_src emacs-lisp
+(use-package which-key
+  :ensure t
+  :init
+  (which-key-mode)
+  :config
+  (which-key-setup-side-window-bottom)
+  (setq which-key-sort-order 'which-key-key-order)
+  ;; Allow C-h to trigger which-key before it is done automatically
+  (setq which-key-show-early-on-C-h t)
+  ;; make sure which-key doesn't show normally but refreshes quickly after it is
+  ;; triggered.
+  (setq which-key-idle-delay 10)
+  (setq which-key-idle-secondary-delay 0.05)
+  :bind (("C-h m" . which-key-show-top-level))
+  :diminish which-key-mode)
+
+#+end_src
+** minimap
+For some reasons, this does not work in an org document.
+Which is very sad, but I'm keeping it here anyway.
+#+begin_src emacs-lisp
+(use-package minimap
+  :ensure nil
+  )
+#+end_src
+** eglot
+eglot is a language service provider. It gives information on things like syntax.
+#+begin_src emacs-lisp
+
+#+end_src
+* Completion Tools
+See [[https://www.youtube.com/watch?v=Vx0bSKF4y78&t=6s][this video]].
+And [[https://lucidmanager.org/productivity/emacs-completion-system/][this page]].
+** company-mode
+Autocompletion, as per [[https://lucidmanager.org/productivity/emacs-completion-system/][here]].
+C:\Use
+#+begin_src emacs-lisp
+(use-package company
+  :ensure t
+  :config
+  (setq company-idle-delay 0
+        company-minimum-prefix-length 4
+        company-selection-wrap-around t)
+  :bind(:map company-active-map
+           ("<return>" . nil)
+           ("RET" . nil)
+           ("C-<return>" . company-complete-selection))
+  )
+
+(global-company-mode)
+#+end_src
+** helm-org-rifle
+#+BEGIN_SRC emacs-lisp
+(use-package helm-org-rifle
+  :ensure t
+)
+#+END_SRC
+
+** helm
+#+BEGIN_SRC emacs-lisp
+(use-package helm
+  :ensure t
+  :config
+  (require 'helm-config)
+;  (helm-mode 1)
+;  (global-set-key (kbd "M-x") 'helm-M-x)
+;  (global-set-key (kbd "C-x C-f") 'helm-find-files)
+  :init
+  (helm-mode 1)
+  :bind
+  (("M-x"     . helm-M-x) ;; Evaluate functions
+   ("C-x C-f" . helm-find-files) ;; Open or create files
+   ("C-x b"   . helm-mini) ;; Select buffers
+   ("C-x C-r" . helm-recentf) ;; Select recently saved files
+   ("C-c i"   . helm-imenu) ;; Select document heading
+   ("M-y"     . helm-show-kill-ring) ;; Show the kill ring
+   )
+  )
+#+END_SRC
+
+** corfu
+Pulled directly from [[https://github.com/Gavinok/emacs.d/blob/main/init.el][here]].
+custo
+#+begin_src emacs-lisp
+;(use-package corfu
+;  :ensure t
+;  ;; Optional customizations
+;  :custom
+;  (corfu-cycle t)                 ; Allows cycling through candidates
+;  (corfu-auto t)                  ; Enable auto completion
+;  (corfu-auto-prefix 2)
+;  (corfu-auto-delay 0.0)
+;  (corfu-echo-documentation 0.25) ; Enable documentation for completions
+;  (corfu-preview-current 'insert) ; Do not preview current candidate
+;  (corfu-preselect-first nil)
+;  (corfu-on-exact-match nil)      ; Don't auto expand tempel snippets
+;
+;  ;; Optionally use TAB for cycling, default is 'corfu-complete'.
+;  :bind (:map corfu-map
+;              ("M-SPC" . corfu-insert-separator)
+;              ("TAB"     . corfu-next)
+;              ([tab]     . corfu-next)
+;              ("S-TAB"   . corfu-previous)
+;              ([backtab] . corfu-previous)
+;              ("S-<return>" . corfu-insert)
+;              ("RET"     . nil) ;; leave my enter alone!
+;              )
+;
+;  :init
+;  (global-corfu-mode)
+;  (corfu-history-mode)
+;  :config
+;  (setq tab-always-indent 'complete)
+;  (add-hook 'eshell-mode-hook
+;            (lambda () (setq-local corfu-quit-at-boundary t
+;                              corfu-quit-no-match t
+;                              corfu-auto nil)
+;              (corfu-mode))))
+
+#+end_src
+
+
+
+
 * org derivatives
 ** Design
 - [[https://www.reddit.com/r/orgmode/comments/i16xti/question_any_problems_assigning_orgroamdirectory/][This]] has some good notes about how org-mode and org-roam directories should relate.
@@ -505,12 +726,9 @@ Org-agenda commands can be found [[https://orgmode.org/manual/Agenda-Commands.ht
     - I leave the defective code block here, with it's content commented out, for posterity/curiosity's sake.
 
 #+begin_src emacs-lisp
-(setq org-agenda-files (list "~/Dropbox/org/gtd/gtd.org" "~/Dropbox/org/gtd/people.org"))
+(setq org-agenda-files (list "~/Dropbox/org/gtd/gtd.org" "~/Dropbox/org/gtd/people.org" "~/Dropbox/org/gtd/cfgtd.org"))
 #+end_src
 
-#+BEGIN_SRC emacs-lisp
-;; (setq org-agenda-files (list "~/Dropbox/org/gtd/gtd.org" "~/Dropbox/org/gtd/people.org"))
-#+END_SRC emacs-lisp
 **** Word wrapping in agenda buffers
 Formatting fields in agenda-view:
 - https://lists.gnu.org/archive/html/emacs-orgmode/2010-01/msg00744.html
@@ -654,6 +872,23 @@ From [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org][h
 (customize-set-variable 'org-global-properties
                         '(("Effort_ALL" . "0:00 0:07 0:15 0:30 0:45 1:00 1:30 2:00 2:30 3:00")))
 #+end_src
+*** org-refile
+See [[https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html][here]].
+
+#+begin_src emacs-lisp
+;; Set list of legitimate refile targets
+(setq org-refile-target-list (list "~/Dropbox/org/gtd/gtd.org" "~/Dropbox/org/gtd/inbox.org"))
+
+;; org-refile will allow refiling to any refile target, up to 1 level of headings deep
+(setq org-refile-targets '(( org-refile-target-list :maxlevel . 1)))
+
+;; allow refiling to the top (file) level, rather than just to headings (which is the defaults)
+(setq org-refile-use-outline-path 'file)
+
+;; correct for helm weirdness resulting from setting org-refile-use-outline-path which only allows the top level file to be displayed and not its headings. This fixes that.
+(setq org-outline-path-complete-in-steps nil)
+#+end_src
+
 ** org-roam
 *** org-roam init and basic settings
 - [2020-02-27 Thu]
@@ -735,7 +970,7 @@ Things I want to change:
   - [[https://org-roam.discourse.group/t/update-a-field-last-modified-at-save/321][This one too]], which has details about adding a =LAST_MODIFIED= element to the header which auto-updates whenever the fil
   - Apparently as of org 9.5, =org-id-ts-format= should make timestamp ID much easier ([[https://org-roam.discourse.group/t/v2-set-id-to-a-timestamp/1492/3][here]])
   - I got a lot of the cool header and ID formatting from [[https://org-roam.discourse.group/t/how-to-auto-generate-org-id-following-org-roam-find-file-immediate/1412/7][here]].
-
+hello
 #+begin_src emacs-lisp
 (setq org-roam-capture-templates
          '(
@@ -886,8 +1121,6 @@ https://github.com/takaxp/org-tree-slide
   :ensure t
 )
 #+end_src
-
-
 * dired-sidebar
 #+BEGIN_SRC emacs-lisp
 (use-package dired-sidebar
@@ -919,33 +1152,104 @@ https://github.com/takaxp/org-tree-slide
 )
 #+END_SRC
 
-* helm-org-rifle
-#+BEGIN_SRC emacs-lisp
-(use-package helm-org-rifle
-  :ensure t
-)
-#+END_SRC
-
-* helm
-#+BEGIN_SRC emacs-lisp
-(use-package helm
-  :ensure t
-  :config
-  (helm-mode 1)
-  (global-set-key (kbd "M-x") 'helm-M-x)
-  (global-set-key (kbd "C-x C-f") 'helm-find-files)
-)
-#+END_SRC
 
 * evil
+For interfacing with emacs keybindings, see [[https://github.com/noctuid/evil-guide#use-some-emacs-keybindings][this part of the guide]].
+
+What do I want from evil mode?
+- I want to disable insert mode and instead revert to emacs keybindings.
+- However, I want to retain some useful bindings from vim:
+  - =^N= and =^P= for evil-complete-next/previous is gold
+  - I might copy over =^Y=, since evil-copy-from-above sounds useful. I've never like emacs yank system and I'll probably be doing most of my copy/pasting in evil mode now.
+  - I want some kind of indicator of what mode I'm in (emacs vs vim insert/normal/visual, etc).
+  - Vim normal mode needs to allow <tab> to fold/unfold org headers!
+  - C-j in insert mode should go to the end of the line and then insert a newline (equivalent to 'o' in normal mode). It should do this in vim, also.
+  - 'o' in normal mode (and C-j as described above) should default to M-<enter> when working in an org list
+  - But other than that, it should be mostly like emacs, and vim's insert mode should also behave more like emacs 
+
+
+=my-toggle-evil-mode= function comes from [[http://makble.com/how-to-toggle-evil-mode-in-emacs][here]].
+
 #+BEGIN_SRC emacs-lisp
+
+(setq evil-disable-insert-state-bindings t) 
 (use-package evil
-  :ensure t
+  :ensure nil
   :config
   (evil-mode 0)
-  (evil-disable-insert-state-bindings t) 
 )
+
+
+
+(defun my-toggle-evil-mode ()
+  (interactive)
+  (if (bound-and-true-p evil-local-mode)
+    (progn
+      ; go emacs
+      (evil-mode (or -1 1))
+      (set-variable 'cursor-type 'bar)
+    )
+    (progn
+      ; go evil
+      (evil-mode (or 1 1))
+      (set-variable 'cursor-type 'box)
+    )
+  )
+)
+ 
+(define-key evil-normal-state-map (kbd "M-u") 'my-toggle-evil-mode)
+(global-set-key (kbd "M-u") 'my-toggle-evil-mode)
+;these last two lines break the evil-mode mode-line indicator (see below) when in "emacs" mode
+
 #+END_SRC
+
+** evil-mode indicator
+From [[https://www.reddit.com/r/emacs/comments/gqc9fm/comment/fyx5i8c/?utm_source=share&utm_medium=web2x&context=3][here]], which has a link to an older version [[http://muublog.blogspot.com/2015/12/evil-mode-hack-for-colorful-mode-line.html][here]].
+
+Also, your cursor changes from a block to a bar when you switch from normal to insert modes.
+
+If you want to change the behavior of highlight-line (=hl-line-mode=), start [[https://stackoverflow.com/questions/40567535/disable-highlight-line-when-in-visual-mode-evil-mode][here]].  And [[https://www.reddit.com/r/emacs/comments/t7doal/i_bet_you_use_hllinemode_do_you_know_how_it_works/][here's]] some really nerdy ramblings on =hl-line-mode= which I haven't read. And [[https://www.reddit.com/r/emacs/comments/4ugor6/how_to_change_highlight_line_color/][here]] is direction on how to change =hl-line-face=.
+(test)
+#+begin_src emacs-lisp
+(defface my-evil-state-emacs-face
+  '((t (:background "Green" :foreground "Blue")))
+  "Evil Mode Emacs State Face")
+
+(defface my-evil-state-insert-face
+  '((t (:background "Red" :foreground "White")))
+  "Evil Mode Insert State Face")
+
+(defface my-evil-state-normal-face
+  '((t (:background "DodgerBlue1" :foreground "White")))
+  "Evil Mode Normal Stace Face")
+
+(defface my-evil-state-visual-face
+  '((t (:background "Purple" :foreground "White")))
+  "Evil Mode Normal Stace Face")
+
+;; Override defun from evil-core.el
+(defun evil-generate-mode-line-tag (&optional state)
+  "Generate the evil mode-line tag for STATE."
+  (let ((tag (evil-state-property state :tag t)))
+    ;; prepare mode-line: add tooltip
+    (when (functionp tag)
+(setq tag (funcall tag)))
+    (if (stringp tag)
+  (propertize tag
+	      'face (cond
+		     ((string= "normal" state)
+		      'my-evil-state-normal-face)
+		     ((string= "insert" state)
+		      'my-evil-state-insert-face)
+		     ((string= "visual" state)
+		      'my-evil-state-visual-face)
+		     ((string= "emacs" state)
+		      'my-evil-state-emacs-face))
+	      'help-echo (evil-state-property state :name)
+	      'mouse-face 'mode-line-highlight)
+tag)))
+
+#+end_src
 * markdown-mode
 #+BEGIN_SRC emacs-lisp
 (use-package markdown-mode
@@ -983,8 +1287,123 @@ You activate Olivetti mode with M-x olivetti-mode. This minor mode reduces the w
 )
 
 (add-hook 'olivetti-mode-on-hook (lambda () (olivetti-set-width 80)))
+
+(add-hook 'text-mode-hook 'olivetti-mode)
 #+END_SRC
 ** 
+* meow-mode
+
+
+#+begin_src emacs-lisp
+
+
+(defun meow-setup ()
+  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
+  (meow-motion-overwrite-define-key
+   '("j" . meow-next)
+   '("k" . meow-prev)
+   '("<escape>" . ignore))
+  (meow-leader-define-key
+   ;; SPC j/k will run the original command in MOTION state.
+   '("j" . "H-j")
+   '("k" . "H-k")
+   ;; Use SPC (0-9) for digit arguments.
+   '("1" . meow-digit-argument)
+   '("2" . meow-digit-argument)
+   '("3" . meow-digit-argument)
+   '("4" . meow-digit-argument)
+   '("5" . meow-digit-argument)
+   '("6" . meow-digit-argument)
+   '("7" . meow-digit-argument)
+   '("8" . meow-digit-argument)
+   '("9" . meow-digit-argument)
+   '("0" . meow-digit-argument)
+   '("/" . meow-keypad-describe-key)
+   '("?" . meow-cheatsheet))
+  (meow-define-keys
+   'insert
+   '("C-i" . meow-insert-exit))
+  (meow-normal-define-key
+   '("0" . meow-expand-0)
+   '("9" . meow-expand-9)
+   '("8" . meow-expand-8)
+   '("7" . meow-expand-7)
+   '("6" . meow-expand-6)
+   '("5" . meow-expand-5)
+   '("4" . meow-expand-4)
+   '("3" . meow-expand-3)
+   '("2" . meow-expand-2)
+   '("1" . meow-expand-1)
+   '("-" . negative-argument)
+   '(";" . meow-reverse)
+   '("," . meow-inner-of-thing)
+   '("." . meow-bounds-of-thing)
+   '("[" . meow-beginning-of-thing)
+   '("]" . meow-end-of-thing)
+   '("a" . meow-append)
+   '("A" . meow-open-below)
+   '("b" . meow-back-word)
+   '("B" . meow-back-symbol)
+   '("c" . meow-change)
+   '("d" . meow-delete)
+   '("D" . meow-backward-delete)
+   '("e" . meow-next-word)
+   '("E" . meow-next-symbol)
+   '("f" . meow-find)
+   '("g" . meow-cancel-selection)
+   '("G" . meow-grab)
+   '("h" . meow-left)
+   '("H" . meow-left-expand)
+   '("i" . meow-insert)
+   '("I" . meow-open-above)
+   '("j" . meow-next)
+   '("J" . meow-next-expand)
+   '("k" . meow-prev)
+   '("K" . meow-prev-expand)
+   '("l" . meow-right)
+   '("L" . meow-right-expand)
+   '("m" . meow-join)
+   '("n" . meow-search)
+   '("o" . meow-block)
+   '("O" . meow-to-block)
+   '("p" . meow-yank)
+   '("q" . meow-quit)
+   '("Q" . meow-goto-line)
+   '("r" . meow-replace)
+   '("R" . meow-swap-grab)
+   '("s" . meow-kill)
+   '("t" . meow-till)
+   '("u" . meow-undo)
+   '("U" . meow-undo-in-selection)
+   '("v" . meow-visit)
+   '("w" . meow-mark-word)
+   '("W" . meow-mark-symbol)
+   '("x" . meow-line)
+   '("X" . meow-goto-line)
+   '("y" . meow-save)
+   '("Y" . meow-sync-grab)
+   '("z" . meow-pop-selection)
+   '("'" . repeat)
+   '("M-r" . undo-tree-redo)
+   '("<escape>" . ignore)))
+(require 'meow)
+(meow-setup)
+(meow-global-mode nil)
+#+end_src
+* boon-mode
+
+
+#+begin_src emacs-lisp
+;(define-key boon-command-map (kbd "i") 'next-line)
+;(define-key boon-command-map (kbd "o") 'previous-line)
+;(define-key boon-command-map (kbd "I") 'forward-paragraph)
+;(define-key boon-command-map (kbd "O") 'backward-paragraph)
+;(define-key boon-command-map (kbd "K") 'boon-smarter-downward)
+;(define-key boon-command-map (kbd "L") 'boon-smarter-upward)
+;(define-key boon-command-map (kbd "C-k") 'scroll-up-line)
+;(define-key boon-command-map (kbd "C-l") 'scroll-down-line)
+
+#+end_src
 * Backups, Auto-Save, and Version Control
 You do in fact still want to use emacs' backups alongside a VC like git, for reasons stated in [[https://stackoverflow.com/a/151946][the comments to this stackoverflow answer]]:
     "The backups are for when you are editing something not under version control - like a config file or something quick and dirty that you haven't gotten around to putting into version control yet. Then, when you haven't been doing what you ought to, the editor saves your neck."
@@ -1038,6 +1457,21 @@ test change
   :ensure t
   :bind (("C-x g" . magit)))
 
+#+end_src
+* undo-tree
+Config pulled from [[https://sachachua.com/dotemacs/index.html#orgc32cd3c][Sacha Chua's config]] and [[https://www.reddit.com/r/emacs/comments/n1pibp/comment/gwei7fw/?utm_source=share&utm_medium=web2x&context=3][this reddit comment]].
+
+#+begin_src emacs-lisp
+(use-package undo-tree
+  :ensure t
+  :after evil
+  :diminish undo-tree-mode
+  :config
+  (progn
+    (evil-set-undo-system 'undo-tree)
+    (global-undo-tree-mode t)
+    (setq undo-tree-visualizer-timestamps t)
+    (setq undo-tree-visualizer-diff t)))
 #+end_src
 * xah-check-parens-balance
 - [2021-11-03 Wed]
@@ -1109,6 +1543,42 @@ Version 2018-07-03"
                 (goto-char (aref (car $stack) 1))
                 (message "Mismtach found. The char %s has no matching pair." $stack))
             (print "All brackets/quotes match.")))))))
+#+end_src
+* xah-toggle-letter-case
+From [[http://xahlee.info/emacs/emacs/modernization_upcase-word.html][here]].
+
+#+begin_src emacs-lisp
+(defun xah-toggle-letter-case ()
+  "Toggle the letter case of current word or text selection.
+always cycle in this order: Init Caps, ALL CAPS, all lower.
+
+URL `http://xahlee.info/emacs/emacs/modernization_upcase-word.html'
+Version 2020-06-26"
+  (interactive)
+  (let (
+        (deactivate-mark nil)
+        $p1 $p2)
+    (if (use-region-p)
+        (setq $p1 (region-beginning) $p2 (region-end))
+      (save-excursion
+        (skip-chars-backward "[:alpha:]")
+        (setq $p1 (point))
+        (skip-chars-forward "[:alpha:]")
+        (setq $p2 (point))))
+    (when (not (eq last-command this-command))
+      (put this-command 'state 0))
+    (cond
+     ((equal 0 (get this-command 'state))
+      (upcase-initials-region $p1 $p2)
+      (put this-command 'state 1))
+     ((equal 1 (get this-command 'state))
+      (upcase-region $p1 $p2)
+      (put this-command 'state 2))
+     ((equal 2 (get this-command 'state))
+      (downcase-region $p1 $p2)
+      (put this-command 'state 0)))))
+
+(global-set-key (kbd "M-c") 'xah-toggle-letter-case)
 #+end_src
 * FINAL Open ~/.emacs.d/emacs-config.org on startup
 #+BEGIN_SRC emacs-lisp

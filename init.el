@@ -51,21 +51,26 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(custom-enabled-themes '(tango-dark))
  '(custom-safe-themes
-   '("9685cefcb4efd32520b899a34925c476e7920725c8d1f660e7336f37d6d95764" default))
+   '("e3daa8f18440301f3e54f2093fe15f4fe951986a8628e98dcd781efbec7a46f2" "02f57ef0a20b7f61adce51445b68b2a7e832648ce2e7efb19d217b6454c1b644" "467dc6fdebcf92f4d3e2a2016145ba15841987c71fbe675dcfe34ac47ffb9195" "9685cefcb4efd32520b899a34925c476e7920725c8d1f660e7336f37d6d95764" default))
  '(inhibit-startup-screen t)
  '(initial-buffer-choice "~/Dropbox/gtd/gtd.org")
  '(line-spacing 0.0)
  '(org-global-properties
    '(("Effort_ALL" . "0:00 0:07 0:15 0:30 0:45 1:00 1:30 2:00 2:30 3:00")))
  '(package-selected-packages
-   '(moom-font moom org-tree-slide adaptive-wrap highlight-parentheses magit olivetti org-superstar org-appear company-posframe mixed-pitch org-beautify-theme evil markdown-mode helm-org-rifle use-package)))
+   '(minimap which-key transpose-frame simple-modeline boon god-mode meow undo-tree doom-themes org-tree-slide adaptive-wrap highlight-parentheses magit olivetti org-superstar org-appear company-posframe mixed-pitch org-beautify-theme evil markdown-mode helm-org-rifle use-package)))
+(put 'narrow-to-region 'disabled nil)
+(put 'narrow-to-page 'disabled nil)
+
+
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- )
-(put 'narrow-to-region 'disabled nil)
-(put 'narrow-to-page 'disabled nil)
+ '(default ((t (:family "FiraCode Nerd Font" :height 150 :weight thin))))
+ '(fixed-pitch ((t (:family "FiraCode Nerd Font" :height 1.0 :weight thin))))
+ '(variable-pitch ((t (:family "DejaVu Sans" :height 1.5 :weight thin)))))
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
