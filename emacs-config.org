@@ -444,12 +444,13 @@ custo
 ;              (corfu-mode))))
 
 #+end_src
-test
+
 
 
 
 * org derivatives
-** Design- [[https://www.reddit.com/r/orgmode/comments/i16xti/question_any_problems_assigning_orgroamdirectory/][This]] has some good notes about how org-mode and org-roam directories should relate.
+** Design
+- [[https://www.reddit.com/r/orgmode/comments/i16xti/question_any_problems_assigning_orgroamdirectory/][This]] has some good notes about how org-mode and org-roam directories should relate.
   - You don't want org-agenda looking at your org-roam dir. It's not optimized to parse lots of small files.
   - I believe that your cannot run roam backlinks to files outside of roam's designated dir.
   - Many people have a dir for each, side by side, so roam backlinks will not work with org-roam files.
