@@ -71,22 +71,15 @@ Check out [[https://zzamboni.org/post/beautifying-org-mode-in-emacs/][this]], an
 #+BEGIN_SRC emacs-lisp
 ;; Set default, fixed and variabel pitch fonts
 ;; Use M-x menu-set-font to view available fonts
-(custom-theme-set-faces
-   'user
-   '(default ((t (:family "FiraCode Nerd Font" :height 150 :weight thin))))
-   '(fixed-pitch ((t (:family "FiraCode Nerd Font" :height 1.0 :weight thin))))
-   '(variable-pitch ((t (:family "DejaVu Sans" :height 1.5 :weight thin))))
-)
+;;(custom-theme-set-faces
+;;   'user
+;;   '(default ((t (:family "FiraCode Nerd Font" :height 150 :weight thin))))
+;;   '(fixed-pitch ((t (:family "FiraCode Nerd Font" :height 1.0 :weight thin))))
+;;   '(variable-pitch ((t (:family "DejaVu Sans" :height 1.0 :weight thin))))
+;;)
 
-(use-package mixed-pitch
-  :ensure t
-  ;:hook
-  ;(text-mode . mixed-pitch-mode)
-;;   :config
-;;   (set-face-attribute 'default nil :family "FiraCode Nerd Font" :height 160)
-;;   (set-face-attribute 'fixed-pitch nil :family "FiraCode Nerd Font" :height 1.0)
-;;   (set-face-attribute 'variable-pitch nil :family "DejaVu Sans" :height 1.5)
-)
+(add-to-list 'default-frame-alist
+             '(font . "DejaVu Sans Mono-15"))
 
 
 #+END_SRC
@@ -97,10 +90,10 @@ This probably isn't actually a problem for me right now, but [[https://lucidmana
 # 
 #+BEGIN_SRC emacs-lisp
    ;; Required for proportional font
-   (use-package company-posframe
-     :ensure t
-     :config
-     (company-posframe-mode 1))
+;;   (use-package company-posframe
+;;     :ensure t
+;;     :config
+;;     (company-posframe-mode 1))
 #+END_SRC
 ** Show hidden emphasis markers
 See [[https://lucidmanager.org/productivity/ricing-org-mode/][here]] and [[https://github.com/awth13/org-appear][here]].
