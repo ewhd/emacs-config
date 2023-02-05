@@ -1027,13 +1027,14 @@ https://github.com/takaxp/org-tree-slide
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
-  :init (cond
-	 ((string-equal system-type "windows-nt") ; Microsoft Windows
-	  (progn
-	    (setq markdown-command "C:/Utils/Console/libMultiMarkdown6.6.0/bin/multimarkdown.exe")))
-	 ((string-equal system-type "gnu/linux") ; linux
-	  (progn
-	    (setq markdown-command "multimarkdown"))))
+  :init
+        (cond
+         ((string-equal system-type "windows-nt") ; Microsoft Windows
+          (progn
+            (setq markdown-command "C:/Utils/Console/libMultiMarkdown6.6.0/bin/multimarkdown.exe")))
+         ((string-equal system-type "gnu/linux") ; linux
+          (progn
+            (setq markdown-command "multimarkdown"))))
   :custom
   (markdown-asymmetric-header t)
   (markdown-split-window-direction 'right)
@@ -1045,6 +1046,7 @@ https://github.com/takaxp/org-tree-slide
 ;; grip-mode for markdown preview (GitHub Readme Instant Preview)
 ;; https://github.com/joeyespo/grip
 ;; I had to add grip to my PATH in windows (C:\Users\ewhd\AppData\Local\Programs\Python\Python311\Lib\site-packages\grip)
+;; However, I can't get my access token to work -- nevermind, I just had to put the name and token in settings.py in single quotes
 (use-package grip-mode
   :ensure t
   :bind (:map markdown-mode-command-map
@@ -1055,8 +1057,10 @@ https://github.com/takaxp/org-tree-slide
 
   ;; Use embedded webkit to preview
   ;; This requires GNU/Emacs version higher than 26 and built with the `--with-xwidgets` option.
-  ;(setq grip-preview-use-webkit t)
-
+					;(setq grip-preview-use-webkit t)
+  ;; When nil, update the preview after file saves only, instead of also
+  ;; after every text change
+  (setq grip-update-after-change nil)
   
   )
 #+END_SRC
