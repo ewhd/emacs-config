@@ -60,41 +60,13 @@ https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-fo
 ;; https://www.reddit.com/r/emacs/comments/t01efg/comment/iat14ob/?utm_source=share&utm_medium=web2x&context=3
 (add-to-list 'global-auto-revert-ignore-modes 'Buffer-menu-mode)
 
-#+END_SRC
-
-
-** mixed-pitch
-Check out [[https://zzamboni.org/post/beautifying-org-mode-in-emacs/][this]], and maybe integrate it?
-
-[[https://emacsredux.com/blog/2021/12/22/check-if-a-font-is-available-with-emacs-lisp/][This page]] talks about how to check for a font's availability before trying to use it.
-
-#+BEGIN_SRC emacs-lisp
-;; Set default, fixed and variabel pitch fonts
-;; Use M-x menu-set-font to view available fonts
-;;(custom-theme-set-faces
-;;   'user
-;;   '(default ((t (:family "FiraCode Nerd Font" :height 150 :weight thin))))
-;;   '(fixed-pitch ((t (:family "FiraCode Nerd Font" :height 1.0 :weight thin))))
-;;   '(variable-pitch ((t (:family "DejaVu Sans" :height 1.0 :weight thin))))
-;;)
 
 (add-to-list 'default-frame-alist
              '(font . "DejaVu Sans Mono-15"))
 
-
 #+END_SRC
 
 
-** solve problem with proportional fonts on dropdown menus
-This probably isn't actually a problem for me right now, but [[https://lucidmanager.org/productivity/ricing-org-mode/][this guide]] I'm using recommends it so I'm including for the sake of completion.
-# 
-#+BEGIN_SRC emacs-lisp
-   ;; Required for proportional font
-;;   (use-package company-posframe
-;;     :ensure t
-;;     :config
-;;     (company-posframe-mode 1))
-#+END_SRC
 ** Show hidden emphasis markers
 See [[https://lucidmanager.org/productivity/ricing-org-mode/][here]] and [[https://github.com/awth13/org-appear][here]].
 When you turn on org-hide-emphasis-markers it can be hard to see or change the characters that encode the formatting. org-appear solves tha.
@@ -135,27 +107,6 @@ See [[https://lucidmanager.org/productivity/ricing-org-mode/][here]] and [[https
         org-src-strip-leading-and-trailing-blank-lines t
         org-src-preserve-indentation t ;; do not put two spaces on the left
         org-src-tab-acts-natively t)
-#+end_src
-** highlight-parentheses
-- [2021-11-03 Wed]
-  - Found from [[https://emacs.stackexchange.com/a/27037][here]].
-  - WARNING: open quotation marks appear to break this!
-  - Also matches different delimeters with one another. Instead I added [[*xah-check-parens-balance][xah-check-parens-balance]], which handles all this much better.
-#+begin_src emacs-lisp
-;(use-package highlight-parentheses
-;   :ensure t
-;   :pin melpa
-;   :config 
-;   (setq hl-paren-background-colors '("orangered4"))
-;   (setq hl-paren-colors '("black")))
-;
-;(define-globalized-minor-mode global-highlight-parentheses-mode
-;  highlight-parentheses-mode
-;  (lambda ()
-;    (highlight-parentheses-mode t)))
-;(global-highlight-parentheses-mode 0)
-;
-;(highlight-parentheses-mode 1)
 #+end_src
 ** show-paren-mode
 #+begin_src emacs-lisp
@@ -239,20 +190,6 @@ See [[https://emacs.stackexchange.com/a/14590][here]] and [[https://stackoverflo
 (setq split-window-preferred-function 'my-split-window-sensibly)
 #+END_SRC
 
-** moom
-https://github.com/takaxp/moom
-
-When I use moom-mode, it messes up the fixed-pitch fonts for menu bars, calendars, and the like. For now, just re-run the code in [[*mixed-pitch][mixed-pitch]].
-
-#+begin_src emacs-lisp
-;(use-package moom
-;  :after org
-;  :ensure t
-;  :config
-;  (moom-mode 1)
-;)
-#+end_src
-
 
 ** Themes:
 *** gruvbox-theme
@@ -265,52 +202,6 @@ This has been superceded by [[*doom-themes][doom-themes]].
   :config
   (load-theme 'gruvbox-dark-medium t)
   )
-#+end_src
-*** doom-themes
-From [[https://github.com/doomemacs/themes][here]].
-
-!!! Ok, there's something weird going on where the modeline and the theme are messed up until I reload the theme.
-Nevermind, I think I just had a gui custom line in linit that loaded a different theme, and that was causing conflict.
-
-#+begin_src emacs-lisp
-;(use-package doom-themes
-;  :ensure t
-;  :config
-;  ;; Global settings (defaults)
-;  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-;        doom-themes-enable-italic t) ; if nil, italics is universally disabled
-;  (load-theme 'doom-gruvbox t)
-;
-;  ;; Enable flashing mode-line on errors
-;  (doom-themes-visual-bell-config)
-;  ;; Enable custom neotree theme (all-the-icons must be installed!)
-;  (doom-themes-neotree-config)
-;  ;; or for treemacs users
-;  (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
-;  (doom-themes-treemacs-config)
-;  ;; Corrects (and improves) org-mode's native fontification.
-;  (doom-themes-org-config))
-#+end_src
-** doom-modeline
-See [[https://github.com/seagle0128/doom-modeline][source]].
-
-For example of customizations, see [[https://github.com/angrybacon/dotemacs/blob/master/dotemacs.org#mode-line][here]].
-
-This keeps causing an interesting but problematic fatal error, so I have uninstalled it.
-  
-#+begin_src emacs-lisp
-
-;(use-package doom-modeline
-;  :ensure t
-;  :init (doom-modeline-mode nil)
-;  :hook (after-init . doom-modeline-mode)
-;  )
-#+end_src
-** mood-line
-
-
-#+begin_src emacs-lisp
-
 #+end_src
 ** which-key
 From [[https://www.youtube.com/watch?v=mBPQI71XaXU][here]].
@@ -363,9 +254,7 @@ And [[https://lucidmanager.org/productivity/emacs-completion-system/][this page]
   :ensure t
   :config
   (require 'helm-config)
-;  (helm-mode 1)
-;  (global-set-key (kbd "M-x") 'helm-M-x)
-;  (global-set-key (kbd "C-x C-f") 'helm-find-files)
+
   :init
   (helm-mode 1)
   :bind
