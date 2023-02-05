@@ -1019,7 +1019,47 @@ https://github.com/takaxp/org-tree-slide
 #+END_SRC
 
 
+* God-mode
+https://github.com/emacsorphanage/god-mode
 
+#+BEGIN_SRC emacs-lisp
+(use-package god-mode
+  :ensure t
+  :config
+  (global-set-key (kbd "C-z") 'god-mode-all)
+  (global-set-key (kbd "<escape>") 'god-mode-all)
+  (setq god-exempt-major-modes nil)
+  (setq god-exempt-predicates nil)
+  (setq god-mode-enable-function-key-translation nil)
+;  (require 'god-mode)
+  )
+
+
+;; https://emacs.stackexchange.com/questions/33660/making-it-clearer-im-in-god-mode
+
+;; Update cursor
+(defun my-god-mode-update-cursor ()
+    (setq cursor-type (if (or god-local-mode buffer-read-only)
+                        'box
+                        'bar)))
+(add-hook 'god-mode-enabled-hook #'my-god-mode-update-cursor)
+(add-hook 'god-mode-disabled-hook #'my-god-mode-update-cursor)
+
+
+;; Update mode-line
+(defun my-god-mode-enabled-modeline () 
+;;     (set-face-background 'mode-line "#949392")
+;;     (set-face-foreground 'mode-line "#0a2832")
+    (set-face-background 'mode-line "#0a2832")
+    (set-face-foreground 'mode-line "#93d44a")
+)
+(defun my-god-mode-disabled-modeline () 
+    (set-face-background 'mode-line "#0a2832")
+    (set-face-foreground 'mode-line "#fa8b1b")
+)
+(add-hook 'god-mode-enabled-hook #'my-god-mode-enabled-modeline)
+(add-hook 'god-mode-disabled-hook #'my-god-mode-disabled-modeline)
+#+END_SRC
 * markdown-mode
 #+BEGIN_SRC emacs-lisp
 (use-package markdown-mode
@@ -1041,7 +1081,7 @@ https://github.com/takaxp/org-tree-slide
   :config
   (unbind-key "<M-down>" markdown-mode-map)
   (unbind-key "<M-up>" markdown-mode-map)
-  )
+  )  
 
 ;; grip-mode for markdown preview (GitHub Readme Instant Preview)
 ;; https://github.com/joeyespo/grip
