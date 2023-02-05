@@ -350,24 +350,6 @@ eglot is a language service provider. It gives information on things like syntax
 * Completion Tools
 See [[https://www.youtube.com/watch?v=Vx0bSKF4y78&t=6s][this video]].
 And [[https://lucidmanager.org/productivity/emacs-completion-system/][this page]].
-** company-mode
-Autocompletion, as per [[https://lucidmanager.org/productivity/emacs-completion-system/][here]].
-C:\Use
-#+begin_src emacs-lisp
-;;(use-package company
-;;  :ensure t
-;;  :config
-;;  (setq company-idle-delay 0
-;;        company-minimum-prefix-length 4
-;;        company-selection-wrap-around t)
-;;  :bind(:map company-active-map
-;;           ("<return>" . nil)
-;;           ("RET" . nil)
-;;           ("C-<return>" . company-complete-selection))
-;;  )
-;;
-;; (global-company-mode)
-#+end_src
 ** helm-org-rifle
 #+BEGIN_SRC emacs-lisp
 (use-package helm-org-rifle
@@ -399,7 +381,10 @@ C:\Use
 
 ** corfu
 Pulled directly from [[https://github.com/Gavinok/emacs.d/blob/main/init.el][here]].
-custo
+Explained [[https://www.youtube.com/watch?v=Vx0bSKF4y78&t=568s][here]].
+
+This really only works with code, and I don't really edit code in emacs yet, so I've commented it out for now until I return to it.
+
 #+begin_src emacs-lisp
 ;(use-package corfu
 ;  :ensure t
@@ -1145,103 +1130,7 @@ https://github.com/takaxp/org-tree-slide
 #+END_SRC
 
 
-* evil
-For interfacing with emacs keybindings, see [[https://github.com/noctuid/evil-guide#use-some-emacs-keybindings][this part of the guide]].
 
-What do I want from evil mode?
-- I want to disable insert mode and instead revert to emacs keybindings.
-- However, I want to retain some useful bindings from vim:
-  - =^N= and =^P= for evil-complete-next/previous is gold
-  - I might copy over =^Y=, since evil-copy-from-above sounds useful. I've never like emacs yank system and I'll probably be doing most of my copy/pasting in evil mode now.
-  - I want some kind of indicator of what mode I'm in (emacs vs vim insert/normal/visual, etc).
-  - Vim normal mode needs to allow <tab> to fold/unfold org headers!
-  - C-j in insert mode should go to the end of the line and then insert a newline (equivalent to 'o' in normal mode). It should do this in vim, also.
-  - 'o' in normal mode (and C-j as described above) should default to M-<enter> when working in an org list
-  - But other than that, it should be mostly like emacs, and vim's insert mode should also behave more like emacs 
-
-
-=my-toggle-evil-mode= function comes from [[http://makble.com/how-to-toggle-evil-mode-in-emacs][here]].
-
-#+BEGIN_SRC emacs-lisp
-
-;; (setq evil-disable-insert-state-bindings t) 
-;; (use-package evil
-;;   :ensure nil
-;;   :config
-;;   (evil-mode 0)
-;; )
-;; 
-;; 
-;; 
-;; (defun my-toggle-evil-mode ()
-;;   (interactive)
-;;   (if (bound-and-true-p evil-local-mode)
-;;     (progn
-;;       ; go emacs
-;;       (evil-mode (or -1 1))
-;;       (set-variable 'cursor-type 'bar)
-;;     )
-;;     (progn
-;;       ; go evil
-;;       (evil-mode (or 1 1))
-;;       (set-variable 'cursor-type 'box)
-;;     )
-;;   )
-;; )
-;;  
-;; (define-key evil-normal-state-map (kbd "M-u") 'my-toggle-evil-mode)
-;; (global-set-key (kbd "M-u") 'my-toggle-evil-mode)
-;these last two lines break the evil-mode mode-line indicator (see below) when in "emacs" mode
-
-#+END_SRC
-
-** evil-mode indicator
-From [[https://www.reddit.com/r/emacs/comments/gqc9fm/comment/fyx5i8c/?utm_source=share&utm_medium=web2x&context=3][here]], which has a link to an older version [[http://muublog.blogspot.com/2015/12/evil-mode-hack-for-colorful-mode-line.html][here]].
-
-Also, your cursor changes from a block to a bar when you switch from normal to insert modes.
-
-If you want to change the behavior of highlight-line (=hl-line-mode=), start [[https://stackoverflow.com/questions/40567535/disable-highlight-line-when-in-visual-mode-evil-mode][here]].  And [[https://www.reddit.com/r/emacs/comments/t7doal/i_bet_you_use_hllinemode_do_you_know_how_it_works/][here's]] some really nerdy ramblings on =hl-line-mode= which I haven't read. And [[https://www.reddit.com/r/emacs/comments/4ugor6/how_to_change_highlight_line_color/][here]] is direction on how to change =hl-line-face=.
-(test)
-#+begin_src emacs-lisp
-;; (defface my-evil-state-emacs-face
-;;   '((t (:background "Green" :foreground "Blue")))
-;;   "Evil Mode Emacs State Face")
-;; 
-;; (defface my-evil-state-insert-face
-;;   '((t (:background "Red" :foreground "White")))
-;;   "Evil Mode Insert State Face")
-;; 
-;; (defface my-evil-state-normal-face
-;;   '((t (:background "DodgerBlue1" :foreground "White")))
-;;   "Evil Mode Normal Stace Face")
-;; 
-;; (defface my-evil-state-visual-face
-;;   '((t (:background "Purple" :foreground "White")))
-;;   "Evil Mode Normal Stace Face")
-;; 
-;; ;; Override defun from evil-core.el
-;; (defun evil-generate-mode-line-tag (&optional state)
-;;   "Generate the evil mode-line tag for STATE."
-;;   (let ((tag (evil-state-property state :tag t)))
-;;     ;; prepare mode-line: add tooltip
-;;     (when (functionp tag)
-;; (setq tag (funcall tag)))
-;;     (if (stringp tag)
-;;   (propertize tag
-;; 	      'face (cond
-;; 		     ((string= "normal" state)
-;; 		      'my-evil-state-normal-face)
-;; 		     ((string= "insert" state)
-;; 		      'my-evil-state-insert-face)
-;; 		     ((string= "visual" state)
-;; 		      'my-evil-state-visual-face)
-;; 		     ((string= "emacs" state)
-;; 		      'my-evil-state-emacs-face))
-;; 	      'help-echo (evil-state-property state :name)
-;; 	      'mouse-face 'mode-line-highlight)
-;; tag)))
-;; 
-#+end_src
 * markdown-mode
 #+BEGIN_SRC emacs-lisp
 (use-package markdown-mode
@@ -1274,8 +1163,6 @@ You activate Olivetti mode with M-x olivetti-mode. This minor mode reduces the w
 ;; Distraction-free screen
 (use-package olivetti
     :ensure t
-;    :init
-;    (setq olivetti-body-width 80)
 )
 
 (add-hook 'olivetti-mode-on-hook (lambda () (olivetti-set-width 80)))
@@ -1283,119 +1170,6 @@ You activate Olivetti mode with M-x olivetti-mode. This minor mode reduces the w
 (add-hook 'text-mode-hook 'olivetti-mode)
 #+END_SRC
 ** 
-* meow-mode
-
-
-#+begin_src emacs-lisp
-
-
-;;(defun meow-setup ()
-;;  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
-;;  (meow-motion-overwrite-define-key
-;;   '("j" . meow-next)
-;;   '("k" . meow-prev)
-;;   '("<escape>" . ignore))
-;;  (meow-leader-define-key
-;;   ;; SPC j/k will run the original command in MOTION state.
-;;   '("j" . "H-j")
-;;   '("k" . "H-k")
-;;   ;; Use SPC (0-9) for digit arguments.
-;;   '("1" . meow-digit-argument)
-;;   '("2" . meow-digit-argument)
-;;   '("3" . meow-digit-argument)
-;;   '("4" . meow-digit-argument)
-;;   '("5" . meow-digit-argument)
-;;   '("6" . meow-digit-argument)
-;;   '("7" . meow-digit-argument)
-;;   '("8" . meow-digit-argument)
-;;   '("9" . meow-digit-argument)
-;;   '("0" . meow-digit-argument)
-;;   '("/" . meow-keypad-describe-key)
-;;   '("?" . meow-cheatsheet))
-;;  (meow-define-keys
-;;   'insert
-;;   '("C-i" . meow-insert-exit))
-;;  (meow-normal-define-key
-;;   '("0" . meow-expand-0)
-;;   '("9" . meow-expand-9)
-;;   '("8" . meow-expand-8)
-;;   '("7" . meow-expand-7)
-;;   '("6" . meow-expand-6)
-;;   '("5" . meow-expand-5)
-;;   '("4" . meow-expand-4)
-;;   '("3" . meow-expand-3)
-;;   '("2" . meow-expand-2)
-;;   '("1" . meow-expand-1)
-;;   '("-" . negative-argument)
-;;   '(";" . meow-reverse)
-;;   '("," . meow-inner-of-thing)
-;;   '("." . meow-bounds-of-thing)
-;;   '("[" . meow-beginning-of-thing)
-;;   '("]" . meow-end-of-thing)
-;;   '("a" . meow-append)
-;;   '("A" . meow-open-below)
-;;   '("b" . meow-back-word)
-;;   '("B" . meow-back-symbol)
-;;   '("c" . meow-change)
-;;   '("d" . meow-delete)
-;;   '("D" . meow-backward-delete)
-;;   '("e" . meow-next-word)
-;;   '("E" . meow-next-symbol)
-;;   '("f" . meow-find)
-;;   '("g" . meow-cancel-selection)
-;;   '("G" . meow-grab)
-;;   '("h" . meow-left)
-;;   '("H" . meow-left-expand)
-;;   '("i" . meow-insert)
-;;   '("I" . meow-open-above)
-;;   '("j" . meow-next)
-;;   '("J" . meow-next-expand)
-;;   '("k" . meow-prev)
-;;   '("K" . meow-prev-expand)
-;;   '("l" . meow-right)
-;;   '("L" . meow-right-expand)
-;;   '("m" . meow-join)
-;;   '("n" . meow-search)
-;;   '("o" . meow-block)
-;;   '("O" . meow-to-block)
-;;   '("p" . meow-yank)
-;;   '("q" . meow-quit)
-;;   '("Q" . meow-goto-line)
-;;   '("r" . meow-replace)
-;;   '("R" . meow-swap-grab)
-;;   '("s" . meow-kill)
-;;   '("t" . meow-till)
-;;   '("u" . meow-undo)
-;;   '("U" . meow-undo-in-selection)
-;;   '("v" . meow-visit)
-;;   '("w" . meow-mark-word)
-;;   '("W" . meow-mark-symbol)
-;;   '("x" . meow-line)
-;;   '("X" . meow-goto-line)
-;;   '("y" . meow-save)
-;;   '("Y" . meow-sync-grab)
-;;   '("z" . meow-pop-selection)
-;;   '("'" . repeat)
-;;   '("M-r" . undo-tree-redo)
-;;   '("<escape>" . ignore)))
-;;(require 'meow)
-;;(meow-setup)
-;;(meow-global-mode nil)
-#+end_src
-* boon-mode
-
-
-#+begin_src emacs-lisp
-;(define-key boon-command-map (kbd "i") 'next-line)
-;(define-key boon-command-map (kbd "o") 'previous-line)
-;(define-key boon-command-map (kbd "I") 'forward-paragraph)
-;(define-key boon-command-map (kbd "O") 'backward-paragraph)
-;(define-key boon-command-map (kbd "K") 'boon-smarter-downward)
-;(define-key boon-command-map (kbd "L") 'boon-smarter-upward)
-;(define-key boon-command-map (kbd "C-k") 'scroll-up-line)
-;(define-key boon-command-map (kbd "C-l") 'scroll-down-line)
-
-#+end_src
 * Backups, Auto-Save, and Version Control
 You do in fact still want to use emacs' backups alongside a VC like git, for reasons stated in [[https://stackoverflow.com/a/151946][the comments to this stackoverflow answer]]:
     "The backups are for when you are editing something not under version control - like a config file or something quick and dirty that you haven't gotten around to putting into version control yet. Then, when you haven't been doing what you ought to, the editor saves your neck."
@@ -1404,29 +1178,7 @@ You do in fact still want to use emacs' backups alongside a VC like git, for rea
 sflsdflkjh
 #+begin_src emacs-lisp
 (let ((dir "emacs-backups"))
-  (setq backup-directory-alist `((".*" . ,dir)))
-
-;  (setq auto-save-file-name-transforms `((".*" "emacs-autosaves" t)))  
-;; The previous line fails to move auto-saves to a different folder.
-;; It also causes auto-save to fail with the following error:
-;; Error (auto-save): Auto-saving gtd.org: Opening output file: Permission denied, c:/#!Users!Ethan!Dropbox!gtd!gtd.org#
-;; If you're getting that error you will need to reset the var's value AND close and re-open the other buffer
-;; (it seems to effect this buffer fine) 
-
-
-;  (setq auto-save-file-name-transforms 
-;        `(("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
-;           ,(concat temporary-file-directory "\\2") t)))
-;; The previous line just resets the var to the default value
-)
-
-
-
-; from https://stackoverflow.com/questions/151945/how-do-i-control-how-emacs-makes-backup-files
-;(defvar --backup-subdir "emacs-backups")
-;(if (not (file-exists-p --backup-subdir))
-;        (make-directory --backup-subdir t))
-;(setq backup-directory-alist `(("." . ,--backup-subdir)))
+(setq backup-directory-alist `((".*" . ,dir)))
 
 (setq make-backup-files t               ; backup of a file the first time it is saved.
       backup-by-copying t               ; don't clobber symlinks
