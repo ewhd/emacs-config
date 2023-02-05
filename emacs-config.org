@@ -1027,14 +1027,38 @@ https://github.com/takaxp/org-tree-slide
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
-  :init (setq markdown-command "multimarkdown")
+  :init (cond
+	 ((string-equal system-type "windows-nt") ; Microsoft Windows
+	  (progn
+	    (setq markdown-command "C:/Utils/Console/libMultiMarkdown6.6.0/bin/multimarkdown.exe")))
+	 ((string-equal system-type "gnu/linux") ; linux
+	  (progn
+	    (setq markdown-command "multimarkdown"))))
   :custom
   (markdown-asymmetric-header t)
   (markdown-split-window-direction 'right)
   :config
   (unbind-key "<M-down>" markdown-mode-map)
   (unbind-key "<M-up>" markdown-mode-map)
-)
+  )
+
+;; grip-mode for markdown preview (GitHub Readme Instant Preview)
+;; https://github.com/joeyespo/grip
+;; I had to add grip to my PATH in windows (C:\Users\ewhd\AppData\Local\Programs\Python\Python311\Lib\site-packages\grip)
+(use-package grip-mode
+  :ensure t
+  :bind (:map markdown-mode-command-map
+              ("g" . grip-mode))
+  :init
+  ;; Path to the grip binary
+  ;;(setq grip-binary-path "C:/Users/ewhd/AppData/Local/Programs/Python/Python311/Lib/site-packages/grip")
+
+  ;; Use embedded webkit to preview
+  ;; This requires GNU/Emacs version higher than 26 and built with the `--with-xwidgets` option.
+  ;(setq grip-preview-use-webkit t)
+
+  
+  )
 #+END_SRC
 * olivetti
 "Distraction-free writing means that your computer screen is free of clutter and, just like an old typewriter, only shows the text you are working on. In the article about configuring Emacs, we already removed the menu bar and other on-screen distractions.
