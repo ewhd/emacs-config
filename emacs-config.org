@@ -1164,33 +1164,33 @@ What do I want from evil mode?
 
 #+BEGIN_SRC emacs-lisp
 
-(setq evil-disable-insert-state-bindings t) 
-(use-package evil
-  :ensure nil
-  :config
-  (evil-mode 0)
-)
-
-
-
-(defun my-toggle-evil-mode ()
-  (interactive)
-  (if (bound-and-true-p evil-local-mode)
-    (progn
-      ; go emacs
-      (evil-mode (or -1 1))
-      (set-variable 'cursor-type 'bar)
-    )
-    (progn
-      ; go evil
-      (evil-mode (or 1 1))
-      (set-variable 'cursor-type 'box)
-    )
-  )
-)
- 
-(define-key evil-normal-state-map (kbd "M-u") 'my-toggle-evil-mode)
-(global-set-key (kbd "M-u") 'my-toggle-evil-mode)
+;; (setq evil-disable-insert-state-bindings t) 
+;; (use-package evil
+;;   :ensure nil
+;;   :config
+;;   (evil-mode 0)
+;; )
+;; 
+;; 
+;; 
+;; (defun my-toggle-evil-mode ()
+;;   (interactive)
+;;   (if (bound-and-true-p evil-local-mode)
+;;     (progn
+;;       ; go emacs
+;;       (evil-mode (or -1 1))
+;;       (set-variable 'cursor-type 'bar)
+;;     )
+;;     (progn
+;;       ; go evil
+;;       (evil-mode (or 1 1))
+;;       (set-variable 'cursor-type 'box)
+;;     )
+;;   )
+;; )
+;;  
+;; (define-key evil-normal-state-map (kbd "M-u") 'my-toggle-evil-mode)
+;; (global-set-key (kbd "M-u") 'my-toggle-evil-mode)
 ;these last two lines break the evil-mode mode-line indicator (see below) when in "emacs" mode
 
 #+END_SRC
@@ -1203,44 +1203,44 @@ Also, your cursor changes from a block to a bar when you switch from normal to i
 If you want to change the behavior of highlight-line (=hl-line-mode=), start [[https://stackoverflow.com/questions/40567535/disable-highlight-line-when-in-visual-mode-evil-mode][here]].  And [[https://www.reddit.com/r/emacs/comments/t7doal/i_bet_you_use_hllinemode_do_you_know_how_it_works/][here's]] some really nerdy ramblings on =hl-line-mode= which I haven't read. And [[https://www.reddit.com/r/emacs/comments/4ugor6/how_to_change_highlight_line_color/][here]] is direction on how to change =hl-line-face=.
 (test)
 #+begin_src emacs-lisp
-(defface my-evil-state-emacs-face
-  '((t (:background "Green" :foreground "Blue")))
-  "Evil Mode Emacs State Face")
-
-(defface my-evil-state-insert-face
-  '((t (:background "Red" :foreground "White")))
-  "Evil Mode Insert State Face")
-
-(defface my-evil-state-normal-face
-  '((t (:background "DodgerBlue1" :foreground "White")))
-  "Evil Mode Normal Stace Face")
-
-(defface my-evil-state-visual-face
-  '((t (:background "Purple" :foreground "White")))
-  "Evil Mode Normal Stace Face")
-
-;; Override defun from evil-core.el
-(defun evil-generate-mode-line-tag (&optional state)
-  "Generate the evil mode-line tag for STATE."
-  (let ((tag (evil-state-property state :tag t)))
-    ;; prepare mode-line: add tooltip
-    (when (functionp tag)
-(setq tag (funcall tag)))
-    (if (stringp tag)
-  (propertize tag
-	      'face (cond
-		     ((string= "normal" state)
-		      'my-evil-state-normal-face)
-		     ((string= "insert" state)
-		      'my-evil-state-insert-face)
-		     ((string= "visual" state)
-		      'my-evil-state-visual-face)
-		     ((string= "emacs" state)
-		      'my-evil-state-emacs-face))
-	      'help-echo (evil-state-property state :name)
-	      'mouse-face 'mode-line-highlight)
-tag)))
-
+;; (defface my-evil-state-emacs-face
+;;   '((t (:background "Green" :foreground "Blue")))
+;;   "Evil Mode Emacs State Face")
+;; 
+;; (defface my-evil-state-insert-face
+;;   '((t (:background "Red" :foreground "White")))
+;;   "Evil Mode Insert State Face")
+;; 
+;; (defface my-evil-state-normal-face
+;;   '((t (:background "DodgerBlue1" :foreground "White")))
+;;   "Evil Mode Normal Stace Face")
+;; 
+;; (defface my-evil-state-visual-face
+;;   '((t (:background "Purple" :foreground "White")))
+;;   "Evil Mode Normal Stace Face")
+;; 
+;; ;; Override defun from evil-core.el
+;; (defun evil-generate-mode-line-tag (&optional state)
+;;   "Generate the evil mode-line tag for STATE."
+;;   (let ((tag (evil-state-property state :tag t)))
+;;     ;; prepare mode-line: add tooltip
+;;     (when (functionp tag)
+;; (setq tag (funcall tag)))
+;;     (if (stringp tag)
+;;   (propertize tag
+;; 	      'face (cond
+;; 		     ((string= "normal" state)
+;; 		      'my-evil-state-normal-face)
+;; 		     ((string= "insert" state)
+;; 		      'my-evil-state-insert-face)
+;; 		     ((string= "visual" state)
+;; 		      'my-evil-state-visual-face)
+;; 		     ((string= "emacs" state)
+;; 		      'my-evil-state-emacs-face))
+;; 	      'help-echo (evil-state-property state :name)
+;; 	      'mouse-face 'mode-line-highlight)
+;; tag)))
+;; 
 #+end_src
 * markdown-mode
 #+BEGIN_SRC emacs-lisp
