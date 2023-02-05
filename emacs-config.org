@@ -339,7 +339,7 @@ For some reasons, this does not work in an org document.
 Which is very sad, but I'm keeping it here anyway.
 #+begin_src emacs-lisp
 (use-package minimap
-  :ensure nil
+  :ensure t
   )
 #+end_src
 ** eglot
