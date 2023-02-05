@@ -1,7 +1,12 @@
 ;; See: https://xvrdm.github.io/2017/05/29/a-minimal-emacs-setup-with-orgmode/
 
+;; help emacs find the right key files
+;; https://www.reddit.com/r/emacs/comments/y7rvom/fix_for_failed_to_verify_signature/
+(setq package-gnupghome-dir "elpa/gnupg")
+
 ;; add MELPA package server
 (require 'package)
+
 
 (add-to-list 'package-archives 
   '("melpa" . "http://melpa.org/packages/"))
