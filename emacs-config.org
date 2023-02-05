@@ -238,6 +238,11 @@ eglot is a language service provider. It gives information on things like syntax
 #+begin_src emacs-lisp
 
 #+end_src
+* Remapping
+#+begin_src emacs-lisp
+;; (global-set-key (kbd "C-v") 'yank)
+;; (global-set-key (kbd "C-S-v") 'scroll-up-command)
+#+end_src
 * Completion Tools
 See [[https://www.youtube.com/watch?v=Vx0bSKF4y78&t=6s][this video]].
 And [[https://lucidmanager.org/productivity/emacs-completion-system/][this page]].
@@ -336,10 +341,10 @@ org
 |
 |----gtd
 |    |    gtd.org
-|    |    |    * Big Projects
-|    |    |    * Short Projects
-|    |    |    * Tasks and Appointments
-|    |    inbox.org (for captures)
+|    |    |    * Projects
+|    |    |    * Work
+|    |    |    * All the little things
+|    |    inbox.org for captures
 |    |    
 |    |----gtd-archive (backup, auto-save, and archive for gtd material)
 |----templates
@@ -351,6 +356,29 @@ org
 
 #+end_example
 
+[2023-02-05 Sun] But I'm thinking of changing to something more like:
+
+#+begin_example
+
+org
+|    roam-note1.org
+|    roam-note2.org
+|
+|
+|----gtd
+|    |----gtd1.org for personal projects
+|    |----gtdcf.org for work
+|    |----gtd2.org for all the little things
+|    |----inbox.org for captures
+|    |----gtd-archive (backup, auto-save, and archive for gtd material)
+|----templates
+|----notes-archive (backup, auto-save, and archive for roam notes)
+|----dailies  
+|    |    date.org
+|    |    date.org
+|----images
+
+#+end_example
 *** Work Flow:
 - Text enters the system through either captures (witch get appended to a heading in inbox.org) or through a daily note, which serves as more of a daily workspace for ideas that need forming, especially for thoughts that I am discovering and so don't have any sort of title. Text from a daily note might get moved into a capture once it has a little more clarity.
   - Daily notes serve as both workspaces for ideas that need forming and as a narrative or documentation of my day as I write to myself to find out what I am thinking.
