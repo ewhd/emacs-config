@@ -1,13 +1,17 @@
 ;; See: https://xvrdm.github.io/2017/05/29/a-minimal-emacs-setup-with-orgmode/
 
+;; reduce garbage collector activity during startup
+;; The default is 800 kilobytes.  Measured in bytes.
+(setq gc-cons-threshold (* 50 1000 1000))
+
+
+
 ;; help emacs find the right key files
 ;; https://www.reddit.com/r/emacs/comments/y7rvom/fix_for_failed_to_verify_signature/
 (setq package-gnupghome-dir "elpa/gnupg")
 
 ;; add MELPA package server
 (require 'package)
-
-
 (add-to-list 'package-archives 
   '("melpa" . "http://melpa.org/packages/"))
 
@@ -35,6 +39,13 @@
 
 (package-initialize)
 
+
+;; load and start benchmark-init
+(require 'benchmark-init)
+;; To disable collection of benchmark data after init is done.
+(add-hook 'after-init-hook 'benchmark-init/deactivate)
+
+
 ;; if not yet installed, install package use-package
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
@@ -45,11 +56,13 @@
 ;;(cd "~/")
 
 
-
 ;; load org package and our emacs-config.org file
 (require 'org)
 (org-babel-load-file "~/.emacs.d/emacs-config.org") 
 
+;; (load-file "~/.emacs.d/emacs-config.el")
+
+;; (load-file "~/.emacs.d/emacs-config.elc")
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -64,7 +77,7 @@
  '(org-global-properties
    '(("Effort_ALL" . "0:00 0:07 0:15 0:30 0:45 1:00 1:30 2:00 2:30 3:00")))
  '(package-selected-packages
-   '(eglot corfu minimap which-key transpose-frame simple-modeline boon god-mode meow undo-tree doom-themes org-tree-slide adaptive-wrap highlight-parentheses magit olivetti org-superstar org-appear company-posframe mixed-pitch org-beautify-theme evil markdown-mode helm-org-rifle use-package)))
+   '(benchmark-init delight eglot corfu minimap which-key transpose-frame simple-modeline boon god-mode meow undo-tree doom-themes org-tree-slide adaptive-wrap highlight-parentheses magit olivetti org-superstar org-appear mixed-pitch org-beautify-theme evil markdown-mode helm-org-rifle use-package)))
 (put 'narrow-to-region 'disabled nil)
 (put 'narrow-to-page 'disabled nil)
 
@@ -74,8 +87,12 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "FiraCode Nerd Font" :height 150 :weight thin))))
- '(fixed-pitch ((t (:family "FiraCode Nerd Font" :height 1.0 :weight thin))))
- '(variable-pitch ((t (:family "DejaVu Sans" :height 1.5 :weight thin)))))
+ )
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
+
+
+
+;; Reset garbage collection at end of init
+;; Make gc pauses faster by decreasing the threshold.
+(setq gc-cons-threshold (* 2 1000 1000))
