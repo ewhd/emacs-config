@@ -4,6 +4,9 @@
 #+PROPERTY: results silent
 
 
+* References
+Good configs:
+- https://github.com/novoid/dot-emacs/blob/master/config.org
 * REMOVE STARTUP WELCOME SCREEN and open default file
 The code block below toggle off the welcome startup screen.
 
@@ -21,6 +24,7 @@ https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-fo
 #+END_SRC
 
 * Appearance
+** General Appearance
 #+BEGIN_SRC emacs-lisp
 (setq visible-bell 1
       org-startup-indented t
@@ -35,6 +39,11 @@ https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-fo
 (global-hl-line-mode 1)                  ; highlight current line
 
 (tool-bar-mode -1)                       ; hide the toolbar by default (the one with the silly icons)
+
+(tooltip-mode -1)                        ; turn tooltip-mode off
+
+;;(setq help-at-pt-display-when-idle t)
+;;(setq help-at-pt-timer-delay 0)
 
 ;; (org-startup-folded 'fold)                ; fold drawers (maybe everything?) on org-mode startup
 
@@ -90,9 +99,9 @@ When you turn on org-hide-emphasis-markers it can be hard to see or change the c
     :hook
     (org-mode . org-appear-mode)
     :config
-    (setq org-appear-autolinks t
+    (setq ;org-appear-autolinks nil
           org-appear-autosubmarkers t
-          org-appear-delay .7
+          ;org-appear-delay .7
           )
   )
 #+END_SRC
@@ -447,6 +456,7 @@ A line of inquiry (LOI) is the burbling ball of thoughts and questions and links
          ("C-S-v" . scroll-other-window)
          ("M-V" . scroll-other-window-down)
 	     ("C-c ." . org-time-stamp)
+	     ("C-S-l" . org-toggle-link-display)
         )
 )
 #+END_SRC
@@ -1225,10 +1235,10 @@ Config pulled from [[https://sachachua.com/dotemacs/index.html#orgc32cd3c][Sacha
 #+begin_src emacs-lisp
 (defun xah-check-parens-balance ()
   "Check if there are unbalanced parentheses/brackets/quotes in current bufffer or selection.
-If so, place cursor there, print error to message buffer.
+  If so, place cursor there, print error to message buffer.
 
-URL `http://ergoemacs.org/emacs/emacs_check_parens_balance.html'
-Version 2018-07-03"
+  URL `http://ergoemacs.org/emacs/emacs_check_parens_balance.html'
+  Version 2018-07-03"
   (interactive)
   (let* (
          ($bracket-alist
