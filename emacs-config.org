@@ -60,6 +60,7 @@ https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-fo
 (setq scroll-margin 2)                        ; Add a margin when scrolling vertically
 (delete-selection-mode 1)               ; Replace region when inserting text
 
+
 (desktop-save-mode 1) ; 0 for off
 
 (setq sentence-end-double-space nil)
@@ -90,6 +91,7 @@ https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-fo
                 eshell-mode-hook
                 help-mode-hook
 		    markdown-mode-hook
+                org-agenda-mode-hook
 		))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
@@ -689,7 +691,7 @@ From [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org][h
 **** Set agenda to open in new frame
 [[https://www.reddit.com/r/orgmode/comments/kwko93/comment/gj536oq/?utm_source=share&utm_medium=web2x&context=3][Source]].
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-window-setup 'only-window); agenda takes whole window
+(setq org-agenda-window-setup 'current-window); agenda takes current window
 (setq org-agenda-restore-windows-after-quit t); restore window configuration on exit
 #+END_SRC
 **** Configure org-agenda-follow-mode
@@ -727,6 +729,12 @@ From [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org][h
               (alltodo "" ((org-agenda-overriding-header "")
                            (org-super-agenda-groups
                             '(
+                              (:name "On Hold"
+                                      :tag "HOLD"
+                                      :order 30)
+			      (:name "Review"
+				     :tag "REVIEW"
+				     :order 8)
                               (:name "Overdue"
                                      :deadline past
                                      :order 1)
@@ -740,26 +748,30 @@ From [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org][h
 			      (:name "Next"
                                      :todo "NEXT"
                                      :order 4)
+			      (:name "Started"
+				     :todo "STARTED"
+			             :order 5)
                               (:name "Important"
                                      :tag "Important"
                                      :priority "A"
-                                     :order 5)
-			      (:name "Started"
-				     :todo "STARTED"
-			             :order 6)
-			      (:name "Review"
-				     :todo "REVIEW"
-				     :order 7)
+                                     :order 6)
                               (:name "Waiting"
-                                     :todo "WAITING"
-                                     :order 8)
+                                     :tag "WAITING"
+                                     :order 9)
                               (:name "Due Soon"
                                      :deadline future
-                                     :order 9)
-                              (:name "trivial"
+                                     :order 10)
+                              (:name "Someday"
                                      :priority "C"
-                                     :order 90)
-			      (:discard (:tag "PROJECT"))
+                                     :order 20)
+                              (:name "Other Items"
+                                     :todo "TODO"
+                                     :priority nil
+                                     :order 7)
+                              (:name "Projects"
+                                     :todo "PROJECT - OPEN"
+                                     :order 0)
+			      ;(:discard (:tag "PROJECT"))
                               ))))))))
           )
 #+end_src
@@ -1083,8 +1095,8 @@ https://github.com/emacsorphanage/god-mode
 #+BEGIN_SRC emacs-lisp
 (use-package god-mode
   :config
-  (global-set-key (kbd "C-i") 'god-mode-all)
-  (global-set-key (kbd "<escape>") 'god-mode-all)
+  ;(global-set-key (kbd "C-i") #'god-mode-all)
+  (global-set-key (kbd "<escape>") #'god-mode-all)
   (global-set-key (kbd "C-x C-1") #'delete-other-windows)
   (global-set-key (kbd "C-x C-2") #'split-window-below)
   (global-set-key (kbd "C-x C-3") #'split-window-right)
@@ -1094,12 +1106,15 @@ https://github.com/emacsorphanage/god-mode
   (define-key god-local-mode-map (kbd ".") #'repeat)
   (define-key god-local-mode-map (kbd "u") #'undo-tree-undo)
   (define-key god-local-mode-map (kbd "U") #'undo-tree-redo)
-  (define-key god-local-mode-map (kbd ".") #'repeat)
+  ;(define-key god-local-mode-map (kbd ".") #'repeat)
   (define-key god-local-mode-map (kbd "[") #'backward-paragraph)
   (define-key god-local-mode-map (kbd "]") #'forward-paragraph)
+  (define-key god-local-mode-map (kbd "C-x C-b") #'helm-mini)
 
   (setq god-mode-enable-function-key-translation nil)
   )
+
+
 
 
 (defun my-god-mode-update-mode-line ()
