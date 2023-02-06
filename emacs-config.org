@@ -797,7 +797,7 @@ From [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org][h
 **** Set agenda to open in new frame
 [[https://www.reddit.com/r/orgmode/comments/kwko93/comment/gj536oq/?utm_source=share&utm_medium=web2x&context=3][Source]].
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-window-setup 'only-window); agenda takes whole window
+(setq org-agenda-window-setup 'current-window); agenda takes other window
 (setq org-agenda-restore-windows-after-quit t); restore window configuration on exit
 #+END_SRC
 **** Configure org-agenda-follow-mode
