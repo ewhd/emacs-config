@@ -64,9 +64,22 @@ https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-fo
 (add-to-list 'default-frame-alist
              '(font . "DejaVu Sans Mono-15"))
 
+
 #+END_SRC
 
 
+** delight
+I chose delight over diminish.
+
+https://www.emacswiki.org/emacs/DelightedModes
+
+#+begin_src emacs-lisp
+(use-package delight
+  :ensure t
+  :delight
+  (org-indent-mode)
+  )
+#+end_src
 ** Show hidden emphasis markers
 See [[https://lucidmanager.org/productivity/ricing-org-mode/][here]] and [[https://github.com/awth13/org-appear][here]].
 When you turn on org-hide-emphasis-markers it can be hard to see or change the characters that encode the formatting. org-appear solves tha.
@@ -222,7 +235,7 @@ Documentation [[https://github.com/justbur/emacs-which-key#initial-setup][here]]
   (setq which-key-idle-delay 10)
   (setq which-key-idle-secondary-delay 0.05)
   :bind (("C-h m" . which-key-show-top-level))
-  :diminish which-key-mode)
+  :delight which-key-mode)
 
 #+end_src
 ** minimap
@@ -257,6 +270,7 @@ And [[https://lucidmanager.org/productivity/emacs-completion-system/][this page]
 #+BEGIN_SRC emacs-lisp
 (use-package helm
   :ensure t
+  :delight helm-mode
   :config
   (require 'helm-config)
 
@@ -1194,14 +1208,13 @@ Config pulled from [[https://sachachua.com/dotemacs/index.html#orgc32cd3c][Sacha
 #+begin_src emacs-lisp
 (use-package undo-tree
   :ensure t
-  :after evil
-  :diminish undo-tree-mode
+  :delight undo-tree-mode
   :config
   (progn
-    (evil-set-undo-system 'undo-tree)
     (global-undo-tree-mode t)
     (setq undo-tree-visualizer-timestamps t)
-    (setq undo-tree-visualizer-diff t)))
+    (setq undo-tree-visualizer-diff t))
+  )
 #+end_src
 * xah-check-parens-balance
 - [2021-11-03 Wed]
