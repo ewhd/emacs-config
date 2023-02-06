@@ -10,10 +10,6 @@
 ;; https://www.reddit.com/r/emacs/comments/y7rvom/fix_for_failed_to_verify_signature/
 (setq package-gnupghome-dir "elpa/gnupg")
 
-;; add MELPA package server
-(require 'package)
-(add-to-list 'package-archives 
-  '("melpa" . "http://melpa.org/packages/"))
 
 ;; The purpose of this file is to redirect emacs to look for its 'init' file 
 ;; under the Home folder of a Windows 10 machine and to recognize its org-mode 
@@ -31,25 +27,28 @@
 ;; Then emacs is instructed to load "~/.emacs.d/emacs-config.org" as its 'init' 
 ;; file.
 ;; The rest is for internal use.
-;; 
-;; test
 
-(unless package-archive-contents
-  (package-refresh-contents))
 
+
+;; https://ianyepan.github.io/posts/setting-up-use-package/
+(require 'package)
+(add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
 (package-initialize)
-
-
-;; load and start benchmark-init
-(require 'benchmark-init)
-;; To disable collection of benchmark data after init is done.
-(add-hook 'after-init-hook 'benchmark-init/deactivate)
-
 
 ;; if not yet installed, install package use-package
 (unless (package-installed-p 'use-package)
+  (package refresh contents)
   (package-install 'use-package))
+(eval-and-compile
+  (setq use-package-always-ensure nil
+        use-package-expand-minimally t))
 
+;; load and start benchmark-init
+(use-package benchmark-init
+  :config
+  ;; To disable collection of benchmark data after init is done.
+  (add-hook 'after-init-hook 'benchmark-init/deactivate))
 
 
 ;; Set the working directory to home regardless of where Emacs was started from

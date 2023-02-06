@@ -84,7 +84,6 @@ https://www.emacswiki.org/emacs/DelightedModes
 
 #+begin_src emacs-lisp
 (use-package delight
-  :ensure t
   :delight
   (org-indent-mode)
   )
@@ -95,7 +94,6 @@ When you turn on org-hide-emphasis-markers it can be hard to see or change the c
 #+BEGIN_SRC emacs-lisp
   ;; Show hidden emphasis markers
   (use-package org-appear
-    :ensure t
     :hook
     (org-mode . org-appear-mode)
     :config
@@ -111,7 +109,6 @@ See [[https://lucidmanager.org/productivity/ricing-org-mode/][here]] and [[https
 #+BEGIN_SRC emacs-lisp
   ;; Nice bullets
   (use-package org-superstar
-      :ensure t
       :config
       (setq org-superstar-special-todo-items t)
       (add-hook 'org-mode-hook (lambda ()
@@ -220,7 +217,6 @@ Use the [[https://github.com/Greduan/emacs-theme-gruvbox][gruvbox theme]].
 This has been superceded by [[*doom-themes][doom-themes]].
 #+begin_src emacs-lisp
 (use-package gruvbox-theme
-  :ensure t
   :config
   (load-theme 'gruvbox-dark-medium t)
   )
@@ -231,7 +227,6 @@ And mostly [[https://dev.to/deciduously/how-i-emacs-and-so-can-you-packages-m9p]
 Documentation [[https://github.com/justbur/emacs-which-key#initial-setup][here]]
 #+begin_src emacs-lisp
 (use-package which-key
-  :ensure t
   :init
   (which-key-mode)
   :config
@@ -251,9 +246,7 @@ Documentation [[https://github.com/justbur/emacs-which-key#initial-setup][here]]
 For some reasons, this does not work in an org document.
 Which is very sad, but I'm keeping it here anyway.
 #+begin_src emacs-lisp
-(use-package minimap
-  :ensure t
-  )
+(use-package minimap)
 #+end_src
 ** eglot
 eglot is a language service provider. It gives information on things like syntax.
@@ -270,15 +263,12 @@ See [[https://www.youtube.com/watch?v=Vx0bSKF4y78&t=6s][this video]].
 And [[https://lucidmanager.org/productivity/emacs-completion-system/][this page]].
 ** helm-org-rifle
 #+BEGIN_SRC emacs-lisp
-(use-package helm-org-rifle
-  :ensure t
-)
+(use-package helm-org-rifle)
 #+END_SRC
 
 ** helm
 #+BEGIN_SRC emacs-lisp
 (use-package helm
-  :ensure t
   :delight helm-mode
   :config
   (require 'helm-config)
@@ -304,7 +294,6 @@ This really only works with code, and I don't really edit code in emacs yet, so 
 
 #+begin_src emacs-lisp
 ;(use-package corfu
-;  :ensure t
 ;  ;; Optional customizations
 ;  :custom
 ;  (corfu-cycle t)                 ; Allows cycling through candidates
@@ -701,7 +690,6 @@ From [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org][h
 #+begin_src emacs-lisp
 (use-package org-super-agenda
     :after org
-    :ensure t
     :config
     (org-super-agenda-mode)
     (setq org-agenda-custom-commands
@@ -847,7 +835,6 @@ Things I want to change:
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-roam
-        :ensure t
         :init
         (setq org-roam-v2-ack t)
         :hook
@@ -1014,7 +1001,6 @@ This should get the server view working.
 
 #+BEGIN_SRC emacs-lisp
 ;(use-package org-roam-server
-;  :ensure t
 ;  :config
 ;  (setq org-roam-server-host "127.0.0.1"
 ;        org-roam-server-port 8080
@@ -1036,14 +1022,12 @@ https://github.com/takaxp/org-tree-slide
 #+begin_src emacs-lisp
 (use-package org-tree-slide
   :after org
-  :ensure t
 )
 #+end_src
 * dired-sidebar
 #+BEGIN_SRC emacs-lisp
 (use-package dired-sidebar
   :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
-  :ensure t
   :commands (dired-sidebar-toggle-sidebar)
   :init
   (add-hook 'dired-sidebar-mode-hook
@@ -1064,7 +1048,6 @@ https://github.com/takaxp/org-tree-slide
 * deft
 #+BEGIN_SRC emacs-lisp
 (use-package deft
-  :ensure t
   :config
   (setq deft-directory "~/Dropbox/omnibus/")
 )
@@ -1076,7 +1059,6 @@ https://github.com/emacsorphanage/god-mode
 
 #+BEGIN_SRC emacs-lisp
 (use-package god-mode
-  :ensure t
   :config
   (global-set-key (kbd "C-z") 'god-mode-all)
   (global-set-key (kbd "<escape>") 'god-mode-all)
@@ -1115,7 +1097,6 @@ https://github.com/emacsorphanage/god-mode
 * markdown-mode
 #+BEGIN_SRC emacs-lisp
 (use-package markdown-mode
-  :ensure t
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
@@ -1140,7 +1121,6 @@ https://github.com/emacsorphanage/god-mode
 ;; I had to add grip to my PATH in windows (C:\Users\ewhd\AppData\Local\Programs\Python\Python311\Lib\site-packages\grip)
 ;; However, I can't get my access token to work -- nevermind, I just had to put the name and token in settings.py in single quotes
 (use-package grip-mode
-  :ensure t
   :bind (:map markdown-mode-command-map
               ("g" . grip-mode))
   :init
@@ -1170,9 +1150,7 @@ You activate Olivetti mode with M-x olivetti-mode. This minor mode reduces the w
 
 #+BEGIN_SRC emacs-lisp
 ;; Distraction-free screen
-(use-package olivetti
-    :ensure t
-)
+(use-package olivetti)
 
 (add-hook 'olivetti-mode-on-hook (lambda () (olivetti-set-width 80)))
 
@@ -1208,7 +1186,6 @@ See [[https://emacs.stackexchange.com/questions/293/what-should-shouldnt-i-do-wh
 test change
 #+begin_src emacs-lisp
 (use-package magit
-  :ensure t
   :bind (("C-x g" . magit)))
 
 #+end_src
@@ -1217,7 +1194,6 @@ Config pulled from [[https://sachachua.com/dotemacs/index.html#orgc32cd3c][Sacha
 
 #+begin_src emacs-lisp
 (use-package undo-tree
-  :ensure t
   :delight undo-tree-mode
   :config
   (progn
