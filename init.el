@@ -34,15 +34,24 @@
 (require 'package)
 (add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/"))
 (add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives '("elpa" . "https://elpa.gnu.org/packages/"))
+
 (package-initialize)
+(unless package-archive-contents
+  (package-refresh-contents))
 
 ;; if not yet installed, install package use-package
 (unless (package-installed-p 'use-package)
-  (package refresh contents)
   (package-install 'use-package))
 (eval-and-compile
   (setq use-package-always-ensure nil
+	use-package-always-defer nil
         use-package-expand-minimally t))
+;; N.B. setting always-ensure to nil drops load time from ~18 to ~12 seconds
+;; further setting always-defer to true drops it below 5 seconds, but causes
+;; some packages not to load as normal (mostly cosmetic ones, from what I,
+;; but I didn't probe deeply)
+
 
 ;; load and start benchmark-init
 (use-package benchmark-init
