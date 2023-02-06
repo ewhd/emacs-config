@@ -40,6 +40,12 @@ https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-fo
 
 (tool-bar-mode -1)                       ; hide the toolbar by default (the one with the silly icons)
 
+(scroll-bar-mode -1)
+
+(menu-bar-mode -1)
+
+(column-number-mode)
+
 (tooltip-mode -1)                        ; turn tooltip-mode off
 
 ;;(setq help-at-pt-display-when-idle t)
@@ -73,6 +79,19 @@ https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-fo
 (add-to-list 'default-frame-alist
              '(font . "DejaVu Sans Mono-15"))
 
+;; Turn on line number mode
+(setq display-line-numbers 'relative)
+(global-display-line-numbers-mode t)
+;; Disable line numbers for some modes
+(dolist (mode '(org-mode-hook
+                term-mode-hook
+                shell-mode-hook
+                treemacs-mode-hook
+                eshell-mode-hook
+                help-mode-hook
+		    markdown-mode-hook
+		))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 #+END_SRC
 
@@ -257,6 +276,9 @@ eglot is a language service provider. It gives information on things like syntax
 #+begin_src emacs-lisp
 ;; (global-set-key (kbd "C-v") 'yank)
 ;; (global-set-key (kbd "C-S-v") 'scroll-up-command)
+(global-set-key (kbd "C-;") 'eval-expression)
+(global-set-key (kbd "C-h n") nil)
+(global-set-key (kbd "C-h C-n") nil)
 #+end_src
 * Completion Tools
 See [[https://www.youtube.com/watch?v=Vx0bSKF4y78&t=6s][this video]].
