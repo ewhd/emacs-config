@@ -1083,7 +1083,7 @@ https://github.com/emacsorphanage/god-mode
 #+BEGIN_SRC emacs-lisp
 (use-package god-mode
   :config
-  (global-set-key (kbd "C-i") 'god-mode-all)
+;  (global-set-key (kbd "C-i") 'god-mode-all)
   (global-set-key (kbd "<escape>") 'god-mode-all)
   (global-set-key (kbd "C-x C-1") #'delete-other-windows)
   (global-set-key (kbd "C-x C-2") #'split-window-below)
