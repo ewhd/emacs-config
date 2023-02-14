@@ -281,6 +281,7 @@ eglot is a language service provider. It gives information on things like syntax
 (global-set-key (kbd "C-;") 'eval-expression)
 (global-set-key (kbd "C-h n") nil)
 (global-set-key (kbd "C-h C-n") nil)
+;(global-set-key (kbd "C-x 4-s") 'window-swap-states) ; not working
 #+end_src
 * Completion Tools
 See [[https://www.youtube.com/watch?v=Vx0bSKF4y78&t=6s][this video]].
@@ -674,6 +675,44 @@ Formatting fields in agenda-view:
 
 
 #+END_SRC emacs-lisp
+**** Truncating fields in agenda view
+Formatting fields in agenda-view:
+- https://lists.gnu.org/archive/html/emacs-orgmode/2010-01/msg00744.html
+- http://doc.endlessparentheses.com/Var/org-agenda-prefix-format.html
+
+#+begin_src emacs-lisp
+(defvar my-org-agenda-list-category t)
+(defun my-org-agenda-toggle-list-category ()
+  "Toggles whether category/file name appears or not at the left
+  of entries in agenda listings. Useful to unclutter listings."
+  (interactive)
+  (if my-org-agenda-list-category
+      (progn 
+        (setq my-org-agenda-list-category nil)
+        (setq org-agenda-prefix-format
+              '((agenda  . "  %-12:c%?-12t% s")
+                (timeline  . "  % s")
+                (todo  . "  %-12:c")
+                (tags  . "  %-12:c")
+                (search . "  %-12:c")))
+        )
+    (setq my-org-agenda-list-category t)
+    (setq org-agenda-prefix-format
+          '((agenda  . "  %?-12t% s")
+            (timeline  . "  % s")
+            (todo  . "  ")
+            (tags  . "  ")
+            (search . "  ")))
+    )
+  (org-agenda-redo))
+
+(add-hook 
+ 'org-mode-hook
+ (lambda ()
+   (define-key org-agenda-keymap   "L" 'my-org-agenda-toggle-list-category)
+   (define-key org-agenda-mode-map "L" 'my-org-agenda-toggle-list-category)
+   ))
+#+end_src
 **** Customize agenda-view
 From [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org][here]] -- modified.
 #+begin_src emacs-lisp
@@ -1143,6 +1182,9 @@ https://github.com/emacsorphanage/god-mode
 
 ;; start in god-mode
 (god-mode-all)
+
+;; turn on god-mode when idle
+;(run-with-idle-timer 60 t 'god-mode-all)
 #+END_SRC
 
 
@@ -1164,6 +1206,7 @@ https://github.com/emacsorphanage/god-mode/issues/77
     (god-local-mode-pause))) 
 
 (define-key god-local-mode-map (kbd "I") 'mortal-mode)
+(define-key god-local-mode-map (kbd "i") 'mortal-mode)
 
 #+end_src
 
