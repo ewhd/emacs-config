@@ -1141,7 +1141,7 @@ https://github.com/emacsorphanage/god-mode
   (global-set-key (kbd "C-x C-3") #'split-window-right)
   (global-set-key (kbd "C-x C-0") #'delete-window)
   (global-set-key (kbd "C-x C-o") #'other-window)
-
+  
   (define-key god-local-mode-map (kbd ".") #'repeat)
   (define-key god-local-mode-map (kbd "u") #'undo-tree-undo)
   (define-key god-local-mode-map (kbd "U") #'undo-tree-redo)
@@ -1149,6 +1149,10 @@ https://github.com/emacsorphanage/god-mode
   (define-key god-local-mode-map (kbd "[") #'backward-paragraph)
   (define-key god-local-mode-map (kbd "]") #'forward-paragraph)
   (define-key god-local-mode-map (kbd "C-x C-b") #'helm-mini)
+  (define-key god-local-mode-map (kbd "C-x C-r C-t") #'string-rectangle)
+  (define-key god-local-mode-map (kbd "C-x C-r C-d") #'delete-rectangle)
+  (define-key god-local-mode-map (kbd "C-x C-r C-k") #'kill-rectangle)
+  (define-key god-local-mode-map (kbd "C-x C-r C-y") #'yank-rectangle)
 
   (setq god-mode-enable-function-key-translation nil)
   )
