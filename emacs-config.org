@@ -276,12 +276,15 @@ eglot is a language service provider. It gives information on things like syntax
 #+end_src
 * Remapping
 #+begin_src emacs-lisp
-;; (global-set-key (kbd "C-v") 'yank)
+(global-set-key (kbd "C-v") 'yank)
+(global-set-key (kbd "M-v") 'kill-ring-save)
+(global-set-key (kbd "C-z") 'undo-tree-undo)
 ;; (global-set-key (kbd "C-S-v") 'scroll-up-command)
 (global-set-key (kbd "C-;") 'eval-expression)
 (global-set-key (kbd "C-h n") nil)
 (global-set-key (kbd "C-h C-n") nil)
 ;(global-set-key (kbd "C-x 4-s") 'window-swap-states) ; not working
+
 #+end_src
 * Completion Tools
 See [[https://www.youtube.com/watch?v=Vx0bSKF4y78&t=6s][this video]].
@@ -355,7 +358,21 @@ This really only works with code, and I don't really edit code in emacs yet, so 
 #+end_src
 
 
+* multiple-cursors
 
+[[https://www.reddit.com/r/emacs/comments/iu0euj/comment/g5i3lcr/?utm_source=share&utm_medium=web2x&context=3][Source]].
+
+#+begin_src emacs-lisp
+(use-package multiple-cursors
+  :ensure   t
+  :bind (("H-SPC" . set-rectangular-region-anchor)
+         ("C-M-SPC" . set-rectangular-region-anchor)
+         ("C->" . mc/mark-next-like-this)
+         ("C-<" . mc/mark-previous-like-this)
+         ("C-c C->" . mc/mark-all-like-this)
+         ("C-c C-SPC" . mc/edit-lines)
+         ))
+#+end_src
 
 * org derivatives
 ** Design
@@ -478,6 +495,8 @@ A line of inquiry (LOI) is the burbling ball of thoughts and questions and links
 My keyword system begins with TODO, then can progress in either:
 - =REVIEW=: the task needs clarification, to be broken up, or possibly to be cancelled
 - =NEXT=: the task is on deck
+- =OPEN=: tasks which repeat regularly -- I use these to accumulate time
+- =EVENT=: scheduled events
 - =STARTED=: the task has been begun but is not finished
 - =WAITING=: the task is waiting for something (requires a note)
 - =HOLD=: the task is not active but is not waiting for a specific trigger (requires a note)
@@ -500,6 +519,11 @@ My keyword system begins with TODO, then can progress in either:
     "CANCELED(x!)"
     "DONE(d!)")
    (sequence
+    "OPEN(o)"
+    "EVENT(e)"
+    "|"
+    "COMPLETE(c)")
+   (sequence
     "PROJECT - OPEN(p!)"
     "PROJECT - ON-HOLD(@/!)"
     "|"
@@ -513,6 +537,9 @@ My keyword system begins with TODO, then can progress in either:
     ("HOLD" . "cyan")
     ("CANCELED" . "green")
     ("DONE" . "green")
+    ("OPEN" . (:foreground "white" :background "purple"))
+    ("EVENT" . (:foreground "white" :background "blue"))
+    ("COMPLETE" . (:foreground "white" :background "dark green"))
     ("PROJECT - OPEN" . (:foreground "red" :weight bold))
     ("PROJECT - ON-HOLD" . (:foreground "cyan" :weight bold))
     ("FINISHED" . (:foreground "green" :weight bold))))
@@ -548,6 +575,10 @@ Different keywords will add or remove corresponding tags.
   - Adds the =waiting= tag
   - Removes the =next= tag
   - May retain the =review= or =started= tags
+- Moving a task to =OPEN= or =EVENT= or =CLOSED=:
+  - Removes all other tags
+  - Moving to =OPEN= adds the =open= tag
+  - Moving to =EVENT= adds the =event= tag
 - Moving a task to =CANCELED= adds the =canceled= tag
 - Moving a task to =DONE= removes the =canceled= tag
 - Moving a task to a todo state removes the =canceled= tag
@@ -555,33 +586,41 @@ Different keywords will add or remove corresponding tags.
 
 Also, assigning any project states assigns the =project= tag, which retains even if it is moved to =FINISHED= or =CANCELED=, and assigning any other keyword (or no keyword) removes the =project= tag.
 
-Finally, the =next=, =started=, and =project= tags are excluded from inheritance. Consequently, the =review=, =waiting=, and =canceled= tags are inherited.
+Finally, the =next=, =started=, and =project= tags are excluded from inheritance. Consequently, the =review=, =waiting=, =hold=, and =canceled= tags are inherited.
 #+begin_src emacs-lisp
 (setq org-todo-state-tags-triggers
 ;; Triggers for state changes
       (quote (
-              ;; Move to TODO removes the review, next, started, waiting, and project tags
-              ("TODO" ("REVIEW") ("NEXT") ("STARTED") ("WAITING") ("HOLD") ("PROJECT"))
+              ;; Move to TODO removes the review, next, started, waiting, hold, open, event, and project tags
+              ("TODO" ("REVIEW") ("NEXT") ("STARTED") ("WAITING") ("HOLD") ("OPEN") ("EVENT") ("PROJECT"))
 
               ;; Move to REVIEW adds review tag
-              ;; Move to REVIEW removes next, waiting, and project tags
-              ("REVIEW" ("REVIEW" . t) ("NEXT") ("WAITING") ("HOLD") ("PROJECT"))
+              ;; Move to REVIEW removes next, waiting, hold, open, event, and project tags
+              ("REVIEW" ("REVIEW" . t) ("NEXT") ("WAITING") ("HOLD") ("OPEN") ("EVENT") ("PROJECT"))
 
               ;; Move to NEXT adds next tag
-              ;; Move to NEXT removes review, waiting, and project tags
-              ("NEXT" ("NEXT" . t) ("REVIEW") ("WAITING") ("HOLD") ("PROJECT"))
+              ;; Move to NEXT removes review, waiting, hold, open, event, and project tags
+              ("NEXT" ("NEXT" . t) ("REVIEW") ("WAITING") ("HOLD") ("OPEN") ("EVENT") ("PROJECT"))
 
               ;; Move to STARTED adds the started tag
-              ;; Move to STARTED removes review, next, waiting, and project tags
-              ("STARTED" ("STARTED" . t) ("REVIEW") ("NEXT") ("WAITING") ("HOLD") ("PROJECT"))
+              ;; Move to STARTED removes review, next, waiting, hold, open, event, and project tags
+              ("STARTED" ("STARTED" . t) ("REVIEW") ("NEXT") ("WAITING") ("HOLD") ("OPEN") ("EVENT") ("PROJECT"))
 
               ;; Move to WAITING adds the waiting tag
-              ;; Move to WAITING removes the next and project tags
-              ("WAITING" ("WAITING" . t) ("NEXT") ("HOLD") ("PROJECT"))
+              ;; Move to WAITING removes the next, hold, open, event, and project tags
+              ("WAITING" ("WAITING" . t) ("NEXT") ("HOLD") ("OPEN") ("EVENT") ("PROJECT"))
 
 	            ;; Move to HOLD adds the hold tag
-	            ;; Move to HOLD removes next, waiting, and project tags
-              ("HOLD" ("HOLD" . t) ("NEXT") ("WAITING") ("PROJECT"))
+	            ;; Move to HOLD removes next, waiting, open, event, and project tags
+              ("HOLD" ("HOLD" . t) ("NEXT") ("WAITING") ("OPEN") ("EVENT") ("PROJECT"))
+
+              ;; Move to OPEN adds the open tag
+	            ;; Move to OPEN removes the review, next, waiting, hold, event, and project tags
+              ("OPEN" ("OPEN" . t) ("REVIEW") ("NEXT") ("WAITING") ("HOLD") ("EVENT") ("PROJECT"))
+
+              ;; Move to EVENT add the event tag
+	            ;; Move to EVENT removes the review, next, waiting, hold, open, and project tags
+	            ("EVENT" ("EVENT" . t) ("REVIEW") ("NEXT") ("WAITING") ("HOLD") ("OPEN") ("PROJECT"))
 	      
               ;; Move to canceled adds the canceled tag
 	            ;; Move to canceled removes the project tag
@@ -592,20 +631,20 @@ Finally, the =next=, =started=, and =project= tags are excluded from inheritance
               
               ;; Move to any todo state removes the canceled tag
               (todo ("CANCELED"))
-              ;; Move to any done state removes review, next, started, and waiting tags
-              (done ("REVIEW") ("NEXT") ("STARTED") ("WAITING"))
+              ;; Move to any done state removes review, next, started, waiting, open, and event tags
+              (done ("REVIEW") ("NEXT") ("STARTED") ("WAITING") ("OPEN") ("EVENT"))
 
-              ;; Assigning "PROJECT - OPEN" or "FINISHED" states adds the project tag and removes review, next, started, waiting, and hold tags
-              ;; Assigning the "PROJECT - ON-HOLD" state adds the project and hold tags and removes review, next, started, and waiting tags
-              ("PROJECT - OPEN" ("PROJECT" . t) ("REVIEW") ("NEXT") ("STARTED") ("WAITING") ("HOLD"))
+              ;; Assigning "PROJECT - OPEN" or "FINISHED" states adds the project tag and removes review, next, started, waiting, hold, open, and event tags
+              ;; Assigning the "PROJECT - ON-HOLD" state adds the project and hold tags and removes review, next, started, waiting, hold, open, and event tags
+              ("PROJECT - OPEN" ("PROJECT" . t) ("REVIEW") ("NEXT") ("STARTED") ("WAITING") ("HOLD") ("OPEN") ("EVENT"))
               ("PROJECT - ON-HOLD" ("PROJECT" . t) ("HOLD" . t) ("REVIEW") ("NEXT") ("STARTED") ("WAITING"))
-              ("FINISHED" ("PROJECT" . t) ("REVIEW") ("NEXT") ("STARTED") ("WAITING") ("HOLD"))
+              ("FINISHED" ("PROJECT" . t) ("REVIEW") ("NEXT") ("STARTED") ("WAITING") ("HOLD") ("OPEN") ("EVENT"))
 
-              ;; Assigning no keyword removes the project tag
-              ("" ("PROJECT"))
+              ;; Assigning no keyword removes all tags
+              ("" ("REVIEW") ("NEXT") ("STARTED") ("WAITING") ("HOLD") ("OPEN") ("EVENT") ("PROJECT") ("CANCELED"))
              )))
 
-(setq org-tags-exclude-from-inheritance '("NEXT" "STARTED" "PROJECT"))
+(setq org-tags-exclude-from-inheritance '("NEXT" "STARTED" "PROJECT" "OPEN" "EVENT"))
 #+end_src
 *** org-capture
 
@@ -658,7 +697,7 @@ Org-agenda commands can be found [[https://orgmode.org/manual/Agenda-Commands.ht
     - I leave the defective code block here, with it's content commented out, for posterity/curiosity's sake.
 
 #+begin_src emacs-lisp
-(setq org-agenda-files (list "~/Dropbox/org/gtd/gtd.org" "~/Dropbox/org/gtd/people.org" "~/Dropbox/org/gtd/cfgtd.org"))
+(setq org-agenda-files (list "~/Dropbox/org/gtd/gtd.org"    "~/Dropbox/org/gtd/people.org" "~/Dropbox/org/gtd/cfgtd.org"))
 #+end_src
 
 **** Word wrapping in agenda buffers
@@ -784,16 +823,26 @@ From [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org][h
                                      :deadline today
 				     :scheduled today
                                      :order 3)
+			      ;; (:name "Approaching Deadline"
+                              ;;        :deadline future
+			      ;; 	     :order 4)
+			      ;; (:name "Scheduled soon"
+			      ;; 	     :scheduled future
+			      ;; 	     :order 5)
 			      (:name "Next"
                                      :todo "NEXT"
-                                     :order 4)
+                                     :order 6)
 			      (:name "Started"
 				     :todo "STARTED"
-			             :order 5)
-                              (:name "Important"
-                                     :tag "Important"
-                                     :priority "A"
-                                     :order 6)
+			             :order 7)
+                              ;; (:name "Important"
+                              ;;        :tag "Important"
+                              ;;        :priority "A"
+                              ;;        :order 7)
+                              (:name "Other Items"
+                                     :todo "TODO"
+                                     :priority nil
+                                     :order 8)
                               (:name "Waiting"
                                      :tag "WAITING"
                                      :order 9)
@@ -803,17 +852,16 @@ From [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org][h
                               (:name "Someday"
                                      :priority "C"
                                      :order 20)
-                              (:name "Other Items"
-                                     :todo "TODO"
-                                     :priority nil
-                                     :order 7)
                               (:name "Projects"
                                      :todo "PROJECT - OPEN"
-                                     :order 0)
+                                     :order 25)
 			      ;(:discard (:tag "PROJECT"))
                               ))))))))
           )
 #+end_src
+
+#+RESULTS:
+: t
 
 *** org-mode Timestamping
 [2021-11-02 Tue]
