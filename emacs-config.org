@@ -95,6 +95,8 @@ https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-fo
 		))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
+;; reduce scroll speed with two finger movement on touchpad
+(setq mouse-wheel-scroll-amount '(1))
 #+END_SRC
 
 
@@ -768,6 +770,7 @@ From [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org][h
 **** Set agenda to open in new frame
 [[https://www.reddit.com/r/orgmode/comments/kwko93/comment/gj536oq/?utm_source=share&utm_medium=web2x&context=3][Source]].
 #+BEGIN_SRC emacs-lisp
+
 (setq org-agenda-window-setup 'current-window); agenda takes current window
 
 (setq org-agenda-restore-windows-after-quit t); restore window configuration on exit
@@ -1111,7 +1114,8 @@ TEMPLATE is the processed template used to format the entry."
          field-value)))))
 
 #+end_src
-
+*** MD-roam
+https://github.com/nobiot/md-roam
 
 ** org-roam-server
 This should get the server view working.
@@ -1187,9 +1191,8 @@ https://github.com/emacsorphanage/god-mode
   (global-set-key (kbd "C-x C-1") #'delete-other-windows)
   (global-set-key (kbd "C-x C-2") #'split-window-below)
   (global-set-key (kbd "C-x C-3") #'split-window-right)
-  (global-set-key (kbd "C-x C-0") #'delete-window)
   (global-set-key (kbd "C-x C-o") #'other-window)
-  
+
   (define-key god-local-mode-map (kbd ".") #'repeat)
   (define-key god-local-mode-map (kbd "u") #'undo-tree-undo)
   (define-key god-local-mode-map (kbd "U") #'undo-tree-redo)
