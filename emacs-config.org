@@ -1052,7 +1052,8 @@ TEMPLATE is the processed template used to format the entry."
          field-value)))))
 
 #+end_src
-
+*** MD-roam
+https://github.com/nobiot/md-roam
 
 ** org-roam-server
 This should get the server view working.
@@ -1125,19 +1126,19 @@ https://github.com/emacsorphanage/god-mode
   :config
 ;  (global-set-key (kbd "C-i") 'god-mode-all)
   (global-set-key (kbd "<escape>") 'god-mode-all)
+  (global-set-key (kbd "C-x C-0") #'delete-window)
   (global-set-key (kbd "C-x C-1") #'delete-other-windows)
   (global-set-key (kbd "C-x C-2") #'split-window-below)
   (global-set-key (kbd "C-x C-3") #'split-window-right)
-  (global-set-key (kbd "C-x C-0") #'delete-window)
   (global-set-key (kbd "C-x C-o") #'other-window)
 
-  (define-key god-local-mode-map (kbd ".") #'repeat)
   (define-key god-local-mode-map (kbd "u") #'undo-tree-undo)
   (define-key god-local-mode-map (kbd "U") #'undo-tree-redo)
   (define-key god-local-mode-map (kbd ".") #'repeat)
   (define-key god-local-mode-map (kbd "[") #'backward-paragraph)
   (define-key god-local-mode-map (kbd "]") #'forward-paragraph)
-
+  (define-key god-local-mode-map (kbd "C-x C-b") #'helm-mini)
+  
   (setq god-mode-enable-function-key-translation nil)
   )
 
@@ -1189,6 +1190,7 @@ https://github.com/emacsorphanage/god-mode/issues/77
     (god-local-mode-pause))) 
 
 (define-key god-local-mode-map (kbd "I") 'mortal-mode)
+(define-key god-local-mode-map (kbd "i") 'mortal-mode)
 
 #+end_src
 
