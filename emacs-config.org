@@ -4,6 +4,9 @@
 #+PROPERTY: results silent
 
 
+* References
+Good configs:
+- https://github.com/novoid/dot-emacs/blob/master/config.org
 * REMOVE STARTUP WELCOME SCREEN and open default file
 The code block below toggle off the welcome startup screen.
 
@@ -21,6 +24,7 @@ https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-fo
 #+END_SRC
 
 * Appearance
+** General Appearance
 #+BEGIN_SRC emacs-lisp
 (setq visible-bell 1
       org-startup-indented t
@@ -36,6 +40,17 @@ https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-fo
 
 (tool-bar-mode -1)                       ; hide the toolbar by default (the one with the silly icons)
 
+(scroll-bar-mode -1)
+
+(menu-bar-mode -1)
+
+(column-number-mode)
+
+(tooltip-mode -1)                        ; turn tooltip-mode off
+
+;;(setq help-at-pt-display-when-idle t)
+;;(setq help-at-pt-timer-delay 0)
+
 ;; (org-startup-folded 'fold)                ; fold drawers (maybe everything?) on org-mode startup
 
 (setq help-window-select t)                   ; Focus new help windows when opened)
@@ -44,6 +59,7 @@ https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-fo
 (setq scroll-conservatively 101)              ; Avoid recentering when scrolling far
 (setq scroll-margin 2)                        ; Add a margin when scrolling vertically
 (delete-selection-mode 1)               ; Replace region when inserting text
+
 
 (desktop-save-mode 1) ; 0 for off
 
@@ -60,61 +76,51 @@ https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-fo
 ;; https://www.reddit.com/r/emacs/comments/t01efg/comment/iat14ob/?utm_source=share&utm_medium=web2x&context=3
 (add-to-list 'global-auto-revert-ignore-modes 'Buffer-menu-mode)
 
-#+END_SRC
 
+(add-to-list 'default-frame-alist
+             '(font . "DejaVu Sans Mono-15"))
 
-** mixed-pitch
-Check out [[https://zzamboni.org/post/beautifying-org-mode-in-emacs/][this]], and maybe integrate it?
-
-[[https://emacsredux.com/blog/2021/12/22/check-if-a-font-is-available-with-emacs-lisp/][This page]] talks about how to check for a font's availability before trying to use it.
-
-#+BEGIN_SRC emacs-lisp
-;; Set default, fixed and variabel pitch fonts
-;; Use M-x menu-set-font to view available fonts
-(custom-theme-set-faces
-   'user
-   '(default ((t (:family "FiraCode Nerd Font" :height 150 :weight thin))))
-   '(fixed-pitch ((t (:family "FiraCode Nerd Font" :height 1.0 :weight thin))))
-   '(variable-pitch ((t (:family "DejaVu Sans" :height 1.5 :weight thin))))
-)
-
-(use-package mixed-pitch
-  :ensure t
-  ;:hook
-  ;(text-mode . mixed-pitch-mode)
-;;   :config
-;;   (set-face-attribute 'default nil :family "FiraCode Nerd Font" :height 160)
-;;   (set-face-attribute 'fixed-pitch nil :family "FiraCode Nerd Font" :height 1.0)
-;;   (set-face-attribute 'variable-pitch nil :family "DejaVu Sans" :height 1.5)
-)
-
+;; Turn on line number mode
+(setq display-line-numbers 'relative)
+(global-display-line-numbers-mode t)
+;; Disable line numbers for some modes
+(dolist (mode '(org-mode-hook
+                term-mode-hook
+                shell-mode-hook
+                treemacs-mode-hook
+                eshell-mode-hook
+                help-mode-hook
+		    markdown-mode-hook
+                org-agenda-mode-hook
+		))
+  (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
 #+END_SRC
 
 
-** solve problem with proportional fonts on dropdown menus
-This probably isn't actually a problem for me right now, but [[https://lucidmanager.org/productivity/ricing-org-mode/][this guide]] I'm using recommends it so I'm including for the sake of completion.
-# 
-#+BEGIN_SRC emacs-lisp
-   ;; Required for proportional font
-   (use-package company-posframe
-     :ensure t
-     :config
-     (company-posframe-mode 1))
-#+END_SRC
+** delight
+I chose delight over diminish.
+
+https://www.emacswiki.org/emacs/DelightedModes
+
+#+begin_src emacs-lisp
+(use-package delight
+  :delight
+  (org-indent-mode)
+  )
+#+end_src
 ** Show hidden emphasis markers
 See [[https://lucidmanager.org/productivity/ricing-org-mode/][here]] and [[https://github.com/awth13/org-appear][here]].
 When you turn on org-hide-emphasis-markers it can be hard to see or change the characters that encode the formatting. org-appear solves tha.
 #+BEGIN_SRC emacs-lisp
   ;; Show hidden emphasis markers
   (use-package org-appear
-    :ensure t
     :hook
     (org-mode . org-appear-mode)
     :config
-    (setq org-appear-autolinks t
+    (setq ;org-appear-autolinks nil
           org-appear-autosubmarkers t
-          org-appear-delay .7
+          ;org-appear-delay .7
           )
   )
 #+END_SRC
@@ -124,7 +130,6 @@ See [[https://lucidmanager.org/productivity/ricing-org-mode/][here]] and [[https
 #+BEGIN_SRC emacs-lisp
   ;; Nice bullets
   (use-package org-superstar
-      :ensure t
       :config
       (setq org-superstar-special-todo-items t)
       (add-hook 'org-mode-hook (lambda ()
@@ -142,27 +147,6 @@ See [[https://lucidmanager.org/productivity/ricing-org-mode/][here]] and [[https
         org-src-strip-leading-and-trailing-blank-lines t
         org-src-preserve-indentation t ;; do not put two spaces on the left
         org-src-tab-acts-natively t)
-#+end_src
-** highlight-parentheses
-- [2021-11-03 Wed]
-  - Found from [[https://emacs.stackexchange.com/a/27037][here]].
-  - WARNING: open quotation marks appear to break this!
-  - Also matches different delimeters with one another. Instead I added [[*xah-check-parens-balance][xah-check-parens-balance]], which handles all this much better.
-#+begin_src emacs-lisp
-;(use-package highlight-parentheses
-;   :ensure t
-;   :pin melpa
-;   :config 
-;   (setq hl-paren-background-colors '("orangered4"))
-;   (setq hl-paren-colors '("black")))
-;
-;(define-globalized-minor-mode global-highlight-parentheses-mode
-;  highlight-parentheses-mode
-;  (lambda ()
-;    (highlight-parentheses-mode t)))
-;(global-highlight-parentheses-mode 0)
-;
-;(highlight-parentheses-mode 1)
 #+end_src
 ** show-paren-mode
 #+begin_src emacs-lisp
@@ -246,20 +230,6 @@ See [[https://emacs.stackexchange.com/a/14590][here]] and [[https://stackoverflo
 (setq split-window-preferred-function 'my-split-window-sensibly)
 #+END_SRC
 
-** moom
-https://github.com/takaxp/moom
-
-When I use moom-mode, it messes up the fixed-pitch fonts for menu bars, calendars, and the like. For now, just re-run the code in [[*mixed-pitch][mixed-pitch]].
-
-#+begin_src emacs-lisp
-;(use-package moom
-;  :after org
-;  :ensure t
-;  :config
-;  (moom-mode 1)
-;)
-#+end_src
-
 
 ** Themes:
 *** gruvbox-theme
@@ -268,56 +238,9 @@ Use the [[https://github.com/Greduan/emacs-theme-gruvbox][gruvbox theme]].
 This has been superceded by [[*doom-themes][doom-themes]].
 #+begin_src emacs-lisp
 (use-package gruvbox-theme
-  :ensure t
   :config
   (load-theme 'gruvbox-dark-medium t)
   )
-#+end_src
-*** doom-themes
-From [[https://github.com/doomemacs/themes][here]].
-
-!!! Ok, there's something weird going on where the modeline and the theme are messed up until I reload the theme.
-Nevermind, I think I just had a gui custom line in linit that loaded a different theme, and that was causing conflict.
-
-#+begin_src emacs-lisp
-;(use-package doom-themes
-;  :ensure t
-;  :config
-;  ;; Global settings (defaults)
-;  (setq doom-themes-enable-bold t    ; if nil, bold is universally disabled
-;        doom-themes-enable-italic t) ; if nil, italics is universally disabled
-;  (load-theme 'doom-gruvbox t)
-;
-;  ;; Enable flashing mode-line on errors
-;  (doom-themes-visual-bell-config)
-;  ;; Enable custom neotree theme (all-the-icons must be installed!)
-;  (doom-themes-neotree-config)
-;  ;; or for treemacs users
-;  (setq doom-themes-treemacs-theme "doom-atom") ; use "doom-colors" for less minimal icon theme
-;  (doom-themes-treemacs-config)
-;  ;; Corrects (and improves) org-mode's native fontification.
-;  (doom-themes-org-config))
-#+end_src
-** doom-modeline
-See [[https://github.com/seagle0128/doom-modeline][source]].
-
-For example of customizations, see [[https://github.com/angrybacon/dotemacs/blob/master/dotemacs.org#mode-line][here]].
-
-This keeps causing an interesting but problematic fatal error, so I have uninstalled it.
-  
-#+begin_src emacs-lisp
-
-;(use-package doom-modeline
-;  :ensure t
-;  :init (doom-modeline-mode nil)
-;  :hook (after-init . doom-modeline-mode)
-;  )
-#+end_src
-** mood-line
-
-
-#+begin_src emacs-lisp
-
 #+end_src
 ** which-key
 From [[https://www.youtube.com/watch?v=mBPQI71XaXU][here]].
@@ -325,7 +248,6 @@ And mostly [[https://dev.to/deciduously/how-i-emacs-and-so-can-you-packages-m9p]
 Documentation [[https://github.com/justbur/emacs-which-key#initial-setup][here]]
 #+begin_src emacs-lisp
 (use-package which-key
-  :ensure t
   :init
   (which-key-mode)
   :config
@@ -338,59 +260,47 @@ Documentation [[https://github.com/justbur/emacs-which-key#initial-setup][here]]
   (setq which-key-idle-delay 10)
   (setq which-key-idle-secondary-delay 0.05)
   :bind (("C-h m" . which-key-show-top-level))
-  :diminish which-key-mode)
+  :delight which-key-mode)
 
 #+end_src
 ** minimap
 For some reasons, this does not work in an org document.
 Which is very sad, but I'm keeping it here anyway.
 #+begin_src emacs-lisp
-(use-package minimap
-  :ensure nil
-  )
+(use-package minimap)
 #+end_src
 ** eglot
 eglot is a language service provider. It gives information on things like syntax.
 #+begin_src emacs-lisp
 
 #+end_src
+* Remapping
+#+begin_src emacs-lisp
+(global-set-key (kbd "C-v") 'yank)
+(global-set-key (kbd "M-v") 'kill-ring-save)
+(global-set-key (kbd "C-z") 'undo-tree-undo)
+;; (global-set-key (kbd "C-S-v") 'scroll-up-command)
+(global-set-key (kbd "C-;") 'eval-expression)
+(global-set-key (kbd "C-h n") nil)
+(global-set-key (kbd "C-h C-n") nil)
+;(global-set-key (kbd "C-x 4-s") 'window-swap-states) ; not working
+
+#+end_src
 * Completion Tools
 See [[https://www.youtube.com/watch?v=Vx0bSKF4y78&t=6s][this video]].
 And [[https://lucidmanager.org/productivity/emacs-completion-system/][this page]].
-** company-mode
-Autocompletion, as per [[https://lucidmanager.org/productivity/emacs-completion-system/][here]].
-C:\Use
-#+begin_src emacs-lisp
-(use-package company
-  :ensure t
-  :config
-  (setq company-idle-delay 0
-        company-minimum-prefix-length 4
-        company-selection-wrap-around t)
-  :bind(:map company-active-map
-           ("<return>" . nil)
-           ("RET" . nil)
-           ("C-<return>" . company-complete-selection))
-  )
-
-(global-company-mode)
-#+end_src
 ** helm-org-rifle
 #+BEGIN_SRC emacs-lisp
-(use-package helm-org-rifle
-  :ensure t
-)
+(use-package helm-org-rifle)
 #+END_SRC
 
 ** helm
 #+BEGIN_SRC emacs-lisp
 (use-package helm
-  :ensure t
+  :delight helm-mode
   :config
   (require 'helm-config)
-;  (helm-mode 1)
-;  (global-set-key (kbd "M-x") 'helm-M-x)
-;  (global-set-key (kbd "C-x C-f") 'helm-find-files)
+
   :init
   (helm-mode 1)
   :bind
@@ -406,10 +316,12 @@ C:\Use
 
 ** corfu
 Pulled directly from [[https://github.com/Gavinok/emacs.d/blob/main/init.el][here]].
-custo
+Explained [[https://www.youtube.com/watch?v=Vx0bSKF4y78&t=568s][here]].
+
+This really only works with code, and I don't really edit code in emacs yet, so I've commented it out for now until I return to it.
+
 #+begin_src emacs-lisp
 ;(use-package corfu
-;  :ensure t
 ;  ;; Optional customizations
 ;  :custom
 ;  (corfu-cycle t)                 ; Allows cycling through candidates
@@ -446,7 +358,21 @@ custo
 #+end_src
 
 
+* multiple-cursors
 
+[[https://www.reddit.com/r/emacs/comments/iu0euj/comment/g5i3lcr/?utm_source=share&utm_medium=web2x&context=3][Source]].
+
+#+begin_src emacs-lisp
+(use-package multiple-cursors
+  :ensure   t
+  :bind (("H-SPC" . set-rectangular-region-anchor)
+         ("C-M-SPC" . set-rectangular-region-anchor)
+         ("C->" . mc/mark-next-like-this)
+         ("C-<" . mc/mark-previous-like-this)
+         ("C-c C->" . mc/mark-all-like-this)
+         ("C-c C-SPC" . mc/edit-lines)
+         ))
+#+end_src
 
 * org derivatives
 ** Design
@@ -469,10 +395,10 @@ org
 |
 |----gtd
 |    |    gtd.org
-|    |    |    * Big Projects
-|    |    |    * Short Projects
-|    |    |    * Tasks and Appointments
-|    |    inbox.org (for captures)
+|    |    |    * Projects
+|    |    |    * Work
+|    |    |    * All the little things
+|    |    inbox.org for captures
 |    |    
 |    |----gtd-archive (backup, auto-save, and archive for gtd material)
 |----templates
@@ -484,6 +410,29 @@ org
 
 #+end_example
 
+[2023-02-05 Sun] But I'm thinking of changing to something more like:
+
+#+begin_example
+
+org
+|    roam-note1.org
+|    roam-note2.org
+|
+|
+|----gtd
+|    |----gtd1.org for personal projects
+|    |----gtdcf.org for work
+|    |----gtd2.org for all the little things
+|    |----inbox.org for captures
+|    |----gtd-archive (backup, auto-save, and archive for gtd material)
+|----templates
+|----notes-archive (backup, auto-save, and archive for roam notes)
+|----dailies  
+|    |    date.org
+|    |    date.org
+|----images
+
+#+end_example
 *** Work Flow:
 - Text enters the system through either captures (witch get appended to a heading in inbox.org) or through a daily note, which serves as more of a daily workspace for ideas that need forming, especially for thoughts that I am discovering and so don't have any sort of title. Text from a daily note might get moved into a capture once it has a little more clarity.
   - Daily notes serve as both workspaces for ideas that need forming and as a narrative or documentation of my day as I write to myself to find out what I am thinking.
@@ -538,7 +487,7 @@ A line of inquiry (LOI) is the burbling ball of thoughts and questions and links
          ("C-S-v" . scroll-other-window)
          ("M-V" . scroll-other-window-down)
 	     ("C-c ." . org-time-stamp)
-
+	     ("C-S-l" . org-toggle-link-display)
         )
 )
 #+END_SRC
@@ -546,6 +495,8 @@ A line of inquiry (LOI) is the burbling ball of thoughts and questions and links
 My keyword system begins with TODO, then can progress in either:
 - =REVIEW=: the task needs clarification, to be broken up, or possibly to be cancelled
 - =NEXT=: the task is on deck
+- =OPEN=: tasks which repeat regularly -- I use these to accumulate time
+- =EVENT=: scheduled events
 - =STARTED=: the task has been begun but is not finished
 - =WAITING=: the task is waiting for something (requires a note)
 - =HOLD=: the task is not active but is not waiting for a specific trigger (requires a note)
@@ -568,6 +519,11 @@ My keyword system begins with TODO, then can progress in either:
     "CANCELED(x!)"
     "DONE(d!)")
    (sequence
+    "OPEN(o)"
+    "EVENT(e)"
+    "|"
+    "COMPLETE(c)")
+   (sequence
     "PROJECT - OPEN(p!)"
     "PROJECT - ON-HOLD(@/!)"
     "|"
@@ -581,6 +537,9 @@ My keyword system begins with TODO, then can progress in either:
     ("HOLD" . "cyan")
     ("CANCELED" . "green")
     ("DONE" . "green")
+    ("OPEN" . (:foreground "white" :background "purple"))
+    ("EVENT" . (:foreground "white" :background "blue"))
+    ("COMPLETE" . (:foreground "white" :background "dark green"))
     ("PROJECT - OPEN" . (:foreground "red" :weight bold))
     ("PROJECT - ON-HOLD" . (:foreground "cyan" :weight bold))
     ("FINISHED" . (:foreground "green" :weight bold))))
@@ -616,6 +575,10 @@ Different keywords will add or remove corresponding tags.
   - Adds the =waiting= tag
   - Removes the =next= tag
   - May retain the =review= or =started= tags
+- Moving a task to =OPEN= or =EVENT= or =CLOSED=:
+  - Removes all other tags
+  - Moving to =OPEN= adds the =open= tag
+  - Moving to =EVENT= adds the =event= tag
 - Moving a task to =CANCELED= adds the =canceled= tag
 - Moving a task to =DONE= removes the =canceled= tag
 - Moving a task to a todo state removes the =canceled= tag
@@ -623,33 +586,41 @@ Different keywords will add or remove corresponding tags.
 
 Also, assigning any project states assigns the =project= tag, which retains even if it is moved to =FINISHED= or =CANCELED=, and assigning any other keyword (or no keyword) removes the =project= tag.
 
-Finally, the =next=, =started=, and =project= tags are excluded from inheritance. Consequently, the =review=, =waiting=, and =canceled= tags are inherited.
+Finally, the =next=, =started=, and =project= tags are excluded from inheritance. Consequently, the =review=, =waiting=, =hold=, and =canceled= tags are inherited.
 #+begin_src emacs-lisp
 (setq org-todo-state-tags-triggers
 ;; Triggers for state changes
       (quote (
-              ;; Move to TODO removes the review, next, started, waiting, and project tags
-              ("TODO" ("REVIEW") ("NEXT") ("STARTED") ("WAITING") ("HOLD") ("PROJECT"))
+              ;; Move to TODO removes the review, next, started, waiting, hold, open, event, and project tags
+              ("TODO" ("REVIEW") ("NEXT") ("STARTED") ("WAITING") ("HOLD") ("OPEN") ("EVENT") ("PROJECT"))
 
               ;; Move to REVIEW adds review tag
-              ;; Move to REVIEW removes next, waiting, and project tags
-              ("REVIEW" ("REVIEW" . t) ("NEXT") ("WAITING") ("HOLD") ("PROJECT"))
+              ;; Move to REVIEW removes next, waiting, hold, open, event, and project tags
+              ("REVIEW" ("REVIEW" . t) ("NEXT") ("WAITING") ("HOLD") ("OPEN") ("EVENT") ("PROJECT"))
 
               ;; Move to NEXT adds next tag
-              ;; Move to NEXT removes review, waiting, and project tags
-              ("NEXT" ("NEXT" . t) ("REVIEW") ("WAITING") ("HOLD") ("PROJECT"))
+              ;; Move to NEXT removes review, waiting, hold, open, event, and project tags
+              ("NEXT" ("NEXT" . t) ("REVIEW") ("WAITING") ("HOLD") ("OPEN") ("EVENT") ("PROJECT"))
 
               ;; Move to STARTED adds the started tag
-              ;; Move to STARTED removes review, next, waiting, and project tags
-              ("STARTED" ("STARTED" . t) ("REVIEW") ("NEXT") ("WAITING") ("HOLD") ("PROJECT"))
+              ;; Move to STARTED removes review, next, waiting, hold, open, event, and project tags
+              ("STARTED" ("STARTED" . t) ("REVIEW") ("NEXT") ("WAITING") ("HOLD") ("OPEN") ("EVENT") ("PROJECT"))
 
               ;; Move to WAITING adds the waiting tag
-              ;; Move to WAITING removes the next and project tags
-              ("WAITING" ("WAITING" . t) ("NEXT") ("HOLD") ("PROJECT"))
+              ;; Move to WAITING removes the next, hold, open, event, and project tags
+              ("WAITING" ("WAITING" . t) ("NEXT") ("HOLD") ("OPEN") ("EVENT") ("PROJECT"))
 
 	            ;; Move to HOLD adds the hold tag
-	            ;; Move to HOLD removes next, waiting, and project tags
-              ("HOLD" ("HOLD" . t) ("NEXT") ("WAITING") ("PROJECT"))
+	            ;; Move to HOLD removes next, waiting, open, event, and project tags
+              ("HOLD" ("HOLD" . t) ("NEXT") ("WAITING") ("OPEN") ("EVENT") ("PROJECT"))
+
+              ;; Move to OPEN adds the open tag
+	            ;; Move to OPEN removes the review, next, waiting, hold, event, and project tags
+              ("OPEN" ("OPEN" . t) ("REVIEW") ("NEXT") ("WAITING") ("HOLD") ("EVENT") ("PROJECT"))
+
+              ;; Move to EVENT add the event tag
+	            ;; Move to EVENT removes the review, next, waiting, hold, open, and project tags
+	            ("EVENT" ("EVENT" . t) ("REVIEW") ("NEXT") ("WAITING") ("HOLD") ("OPEN") ("PROJECT"))
 	      
               ;; Move to canceled adds the canceled tag
 	            ;; Move to canceled removes the project tag
@@ -660,20 +631,20 @@ Finally, the =next=, =started=, and =project= tags are excluded from inheritance
               
               ;; Move to any todo state removes the canceled tag
               (todo ("CANCELED"))
-              ;; Move to any done state removes review, next, started, and waiting tags
-              (done ("REVIEW") ("NEXT") ("STARTED") ("WAITING"))
+              ;; Move to any done state removes review, next, started, waiting, open, and event tags
+              (done ("REVIEW") ("NEXT") ("STARTED") ("WAITING") ("OPEN") ("EVENT"))
 
-              ;; Assigning "PROJECT - OPEN" or "FINISHED" states adds the project tag and removes review, next, started, waiting, and hold tags
-              ;; Assigning the "PROJECT - ON-HOLD" state adds the project and hold tags and removes review, next, started, and waiting tags
-              ("PROJECT - OPEN" ("PROJECT" . t) ("REVIEW") ("NEXT") ("STARTED") ("WAITING") ("HOLD"))
+              ;; Assigning "PROJECT - OPEN" or "FINISHED" states adds the project tag and removes review, next, started, waiting, hold, open, and event tags
+              ;; Assigning the "PROJECT - ON-HOLD" state adds the project and hold tags and removes review, next, started, waiting, hold, open, and event tags
+              ("PROJECT - OPEN" ("PROJECT" . t) ("REVIEW") ("NEXT") ("STARTED") ("WAITING") ("HOLD") ("OPEN") ("EVENT"))
               ("PROJECT - ON-HOLD" ("PROJECT" . t) ("HOLD" . t) ("REVIEW") ("NEXT") ("STARTED") ("WAITING"))
-              ("FINISHED" ("PROJECT" . t) ("REVIEW") ("NEXT") ("STARTED") ("WAITING") ("HOLD"))
+              ("FINISHED" ("PROJECT" . t) ("REVIEW") ("NEXT") ("STARTED") ("WAITING") ("HOLD") ("OPEN") ("EVENT"))
 
-              ;; Assigning no keyword removes the project tag
-              ("" ("PROJECT"))
+              ;; Assigning no keyword removes all tags
+              ("" ("REVIEW") ("NEXT") ("STARTED") ("WAITING") ("HOLD") ("OPEN") ("EVENT") ("PROJECT") ("CANCELED"))
              )))
 
-(setq org-tags-exclude-from-inheritance '("NEXT" "STARTED" "PROJECT"))
+(setq org-tags-exclude-from-inheritance '("NEXT" "STARTED" "PROJECT" "OPEN" "EVENT"))
 #+end_src
 *** org-capture
 
@@ -726,7 +697,7 @@ Org-agenda commands can be found [[https://orgmode.org/manual/Agenda-Commands.ht
     - I leave the defective code block here, with it's content commented out, for posterity/curiosity's sake.
 
 #+begin_src emacs-lisp
-(setq org-agenda-files (list "~/Dropbox/org/gtd/gtd.org" "~/Dropbox/org/gtd/people.org" "~/Dropbox/org/gtd/cfgtd.org"))
+(setq org-agenda-files (list "~/Dropbox/org/gtd/gtd.org"    "~/Dropbox/org/gtd/people.org" "~/Dropbox/org/gtd/cfgtd.org"))
 #+end_src
 
 **** Word wrapping in agenda buffers
@@ -797,7 +768,8 @@ From [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org][h
 **** Set agenda to open in new frame
 [[https://www.reddit.com/r/orgmode/comments/kwko93/comment/gj536oq/?utm_source=share&utm_medium=web2x&context=3][Source]].
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-window-setup 'current-window); agenda takes other window
+(setq org-agenda-window-setup 'current-window); agenda takes current window
+
 (setq org-agenda-restore-windows-after-quit t); restore window configuration on exit
 #+END_SRC
 **** Configure org-agenda-follow-mode
@@ -820,7 +792,6 @@ From [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org][h
 #+begin_src emacs-lisp
 (use-package org-super-agenda
     :after org
-    :ensure t
     :config
     (org-super-agenda-mode)
     (setq org-agenda-custom-commands
@@ -836,6 +807,12 @@ From [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org][h
               (alltodo "" ((org-agenda-overriding-header "")
                            (org-super-agenda-groups
                             '(
+                              (:name "On Hold"
+                                      :tag "HOLD"
+                                      :order 30)
+			      (:name "Review"
+				     :tag "REVIEW"
+				     :order 8)
                               (:name "Overdue"
                                      :deadline past
                                      :order 1)
@@ -846,32 +823,45 @@ From [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org][h
                                      :deadline today
 				     :scheduled today
                                      :order 3)
+			      ;; (:name "Approaching Deadline"
+                              ;;        :deadline future
+			      ;; 	     :order 4)
+			      ;; (:name "Scheduled soon"
+			      ;; 	     :scheduled future
+			      ;; 	     :order 5)
 			      (:name "Next"
                                      :todo "NEXT"
-                                     :order 4)
-                              (:name "Important"
-                                     :tag "Important"
-                                     :priority "A"
-                                     :order 5)
+                                     :order 6)
 			      (:name "Started"
 				     :todo "STARTED"
-			             :order 6)
-			      (:name "Review"
-				     :todo "REVIEW"
-				     :order 7)
-                              (:name "Waiting"
-                                     :todo "WAITING"
+			             :order 7)
+                              ;; (:name "Important"
+                              ;;        :tag "Important"
+                              ;;        :priority "A"
+                              ;;        :order 7)
+                              (:name "Other Items"
+                                     :todo "TODO"
+                                     :priority nil
                                      :order 8)
+                              (:name "Waiting"
+                                     :tag "WAITING"
+                                     :order 9)
                               (:name "Due Soon"
                                      :deadline future
-                                     :order 9)
-                              (:name "trivial"
+                                     :order 10)
+                              (:name "Someday"
                                      :priority "C"
-                                     :order 90)
-			      (:discard (:tag "PROJECT"))
+                                     :order 20)
+                              (:name "Projects"
+                                     :todo "PROJECT - OPEN"
+                                     :order 25)
+			      ;(:discard (:tag "PROJECT"))
                               ))))))))
           )
 #+end_src
+
+#+RESULTS:
+: t
 
 *** org-mode Timestamping
 [2021-11-02 Tue]
@@ -966,7 +956,6 @@ Things I want to change:
 
 #+BEGIN_SRC emacs-lisp
   (use-package org-roam
-        :ensure t
         :init
         (setq org-roam-v2-ack t)
         :hook
@@ -1133,7 +1122,6 @@ This should get the server view working.
 
 #+BEGIN_SRC emacs-lisp
 ;(use-package org-roam-server
-;  :ensure t
 ;  :config
 ;  (setq org-roam-server-host "127.0.0.1"
 ;        org-roam-server-port 8080
@@ -1155,14 +1143,12 @@ https://github.com/takaxp/org-tree-slide
 #+begin_src emacs-lisp
 (use-package org-tree-slide
   :after org
-  :ensure t
 )
 #+end_src
 * dired-sidebar
 #+BEGIN_SRC emacs-lisp
 (use-package dired-sidebar
   :bind (("C-x C-n" . dired-sidebar-toggle-sidebar))
-  :ensure t
   :commands (dired-sidebar-toggle-sidebar)
   :init
   (add-hook 'dired-sidebar-mode-hook
@@ -1183,125 +1169,140 @@ https://github.com/takaxp/org-tree-slide
 * deft
 #+BEGIN_SRC emacs-lisp
 (use-package deft
-  :ensure t
   :config
   (setq deft-directory "~/Dropbox/omnibus/")
 )
 #+END_SRC
 
 
-* evil
-For interfacing with emacs keybindings, see [[https://github.com/noctuid/evil-guide#use-some-emacs-keybindings][this part of the guide]].
+* God-mode
+https://github.com/emacsorphanage/god-mode
 
-What do I want from evil mode?
-- I want to disable insert mode and instead revert to emacs keybindings.
-- However, I want to retain some useful bindings from vim:
-  - =^N= and =^P= for evil-complete-next/previous is gold
-  - I might copy over =^Y=, since evil-copy-from-above sounds useful. I've never like emacs yank system and I'll probably be doing most of my copy/pasting in evil mode now.
-  - I want some kind of indicator of what mode I'm in (emacs vs vim insert/normal/visual, etc).
-  - Vim normal mode needs to allow <tab> to fold/unfold org headers!
-  - C-j in insert mode should go to the end of the line and then insert a newline (equivalent to 'o' in normal mode). It should do this in vim, also.
-  - 'o' in normal mode (and C-j as described above) should default to M-<enter> when working in an org list
-  - But other than that, it should be mostly like emacs, and vim's insert mode should also behave more like emacs 
-
-
-=my-toggle-evil-mode= function comes from [[http://makble.com/how-to-toggle-evil-mode-in-emacs][here]].
 
 #+BEGIN_SRC emacs-lisp
-
-(setq evil-disable-insert-state-bindings t) 
-(use-package evil
-  :ensure nil
+(use-package god-mode
   :config
-  (evil-mode 0)
-)
+  ;(global-set-key (kbd "C-i") #'god-mode-all)
+  (global-set-key (kbd "<escape>") #'god-mode-all)
+  (global-set-key (kbd "C-x C-1") #'delete-other-windows)
+  (global-set-key (kbd "C-x C-2") #'split-window-below)
+  (global-set-key (kbd "C-x C-3") #'split-window-right)
+  (global-set-key (kbd "C-x C-0") #'delete-window)
+  (global-set-key (kbd "C-x C-o") #'other-window)
+  
+  (define-key god-local-mode-map (kbd ".") #'repeat)
+  (define-key god-local-mode-map (kbd "u") #'undo-tree-undo)
+  (define-key god-local-mode-map (kbd "U") #'undo-tree-redo)
+  ;(define-key god-local-mode-map (kbd ".") #'repeat)
+  (define-key god-local-mode-map (kbd "[") #'backward-paragraph)
+  (define-key god-local-mode-map (kbd "]") #'forward-paragraph)
+  (define-key god-local-mode-map (kbd "C-x C-b") #'helm-mini)
+  (define-key god-local-mode-map (kbd "C-x C-r C-t") #'string-rectangle)
+  (define-key god-local-mode-map (kbd "C-x C-r C-d") #'delete-rectangle)
+  (define-key god-local-mode-map (kbd "C-x C-r C-k") #'kill-rectangle)
+  (define-key god-local-mode-map (kbd "C-x C-r C-y") #'yank-rectangle)
 
-
-
-(defun my-toggle-evil-mode ()
-  (interactive)
-  (if (bound-and-true-p evil-local-mode)
-    (progn
-      ; go emacs
-      (evil-mode (or -1 1))
-      (set-variable 'cursor-type 'bar)
-    )
-    (progn
-      ; go evil
-      (evil-mode (or 1 1))
-      (set-variable 'cursor-type 'box)
-    )
+  (setq god-mode-enable-function-key-translation nil)
   )
-)
- 
-(define-key evil-normal-state-map (kbd "M-u") 'my-toggle-evil-mode)
-(global-set-key (kbd "M-u") 'my-toggle-evil-mode)
-;these last two lines break the evil-mode mode-line indicator (see below) when in "emacs" mode
 
+
+
+
+(defun my-god-mode-update-mode-line ()
+  (cond
+   (god-local-mode
+    (set-face-attribute 'mode-line nil
+                        :foreground "#93d44a"
+                        :background "#0a2832")
+)
+   (t
+    (set-face-attribute 'mode-line nil
+			:foreground "#fa8b1b"
+			:background "#0a2832")
+)))
+
+(add-hook 'post-command-hook #'my-god-mode-update-mode-line)
+
+;; https://emacs.stackexchange.com/questions/33660/making-it-clearer-im-in-god-mode
+;; Update cursor
+(defun my-god-mode-update-cursor ()
+    (setq cursor-type (if (or god-local-mode buffer-read-only)
+                        'box
+                        'bar)))
+(add-hook 'god-mode-enabled-hook #'my-god-mode-update-cursor)
+(add-hook 'god-mode-disabled-hook #'my-god-mode-update-cursor)
+
+;; start in god-mode
+(god-mode-all)
+
+;; turn on god-mode when idle
+;(run-with-idle-timer 60 t 'god-mode-all)
 #+END_SRC
 
-** evil-mode indicator
-From [[https://www.reddit.com/r/emacs/comments/gqc9fm/comment/fyx5i8c/?utm_source=share&utm_medium=web2x&context=3][here]], which has a link to an older version [[http://muublog.blogspot.com/2015/12/evil-mode-hack-for-colorful-mode-line.html][here]].
 
-Also, your cursor changes from a block to a bar when you switch from normal to insert modes.
-
-If you want to change the behavior of highlight-line (=hl-line-mode=), start [[https://stackoverflow.com/questions/40567535/disable-highlight-line-when-in-visual-mode-evil-mode][here]].  And [[https://www.reddit.com/r/emacs/comments/t7doal/i_bet_you_use_hllinemode_do_you_know_how_it_works/][here's]] some really nerdy ramblings on =hl-line-mode= which I haven't read. And [[https://www.reddit.com/r/emacs/comments/4ugor6/how_to_change_highlight_line_color/][here]] is direction on how to change =hl-line-face=.
-(test)
+* mortal-mode
+https://github.com/emacsorphanage/god-mode/issues/77
 #+begin_src emacs-lisp
-(defface my-evil-state-emacs-face
-  '((t (:background "Green" :foreground "Blue")))
-  "Evil Mode Emacs State Face")
+; This mortal mode is designed to allow temporary departures from god mode
+; The idea is that within god-mode, you can hit shift-i, type in a few characters
+; and then hit enter to return to god-mode. To avoid clobbering the previous bindings,
+; we wrap up this behavior in a minor-mode.
+(define-minor-mode mortal-mode
+  "Allow temporary departures from god-mode."
+  :lighter " mortal"
+  :keymap '(([return] . (lambda ()
+                          "Exit mortal-mode and resume god mode." (interactive)
+                          (god-local-mode-resume)
+                          (mortal-mode 0))))
+  (when mortal-mode
+    (god-local-mode-pause))) 
 
-(defface my-evil-state-insert-face
-  '((t (:background "Red" :foreground "White")))
-  "Evil Mode Insert State Face")
-
-(defface my-evil-state-normal-face
-  '((t (:background "DodgerBlue1" :foreground "White")))
-  "Evil Mode Normal Stace Face")
-
-(defface my-evil-state-visual-face
-  '((t (:background "Purple" :foreground "White")))
-  "Evil Mode Normal Stace Face")
-
-;; Override defun from evil-core.el
-(defun evil-generate-mode-line-tag (&optional state)
-  "Generate the evil mode-line tag for STATE."
-  (let ((tag (evil-state-property state :tag t)))
-    ;; prepare mode-line: add tooltip
-    (when (functionp tag)
-(setq tag (funcall tag)))
-    (if (stringp tag)
-  (propertize tag
-	      'face (cond
-		     ((string= "normal" state)
-		      'my-evil-state-normal-face)
-		     ((string= "insert" state)
-		      'my-evil-state-insert-face)
-		     ((string= "visual" state)
-		      'my-evil-state-visual-face)
-		     ((string= "emacs" state)
-		      'my-evil-state-emacs-face))
-	      'help-echo (evil-state-property state :name)
-	      'mouse-face 'mode-line-highlight)
-tag)))
+(define-key god-local-mode-map (kbd "I") 'mortal-mode)
+(define-key god-local-mode-map (kbd "i") 'mortal-mode)
 
 #+end_src
+
 * markdown-mode
 #+BEGIN_SRC emacs-lisp
 (use-package markdown-mode
-  :ensure t
   :mode (("README\\.md\\'" . gfm-mode)
          ("\\.md\\'" . markdown-mode)
          ("\\.markdown\\'" . markdown-mode))
-  :init (setq markdown-command "multimarkdown")
+  :init
+        (cond
+         ((string-equal system-type "windows-nt") ; Microsoft Windows
+          (progn
+            (setq markdown-command "C:/Utils/Console/libMultiMarkdown6.6.0/bin/multimarkdown.exe")))
+         ((string-equal system-type "gnu/linux") ; linux
+          (progn
+            (setq markdown-command "multimarkdown"))))
   :custom
   (markdown-asymmetric-header t)
   (markdown-split-window-direction 'right)
   :config
   (unbind-key "<M-down>" markdown-mode-map)
   (unbind-key "<M-up>" markdown-mode-map)
-)
+  )  
+
+;; grip-mode for markdown preview (GitHub Readme Instant Preview)
+;; https://github.com/joeyespo/grip
+;; I had to add grip to my PATH in windows (C:\Users\ewhd\AppData\Local\Programs\Python\Python311\Lib\site-packages\grip)
+;; However, I can't get my access token to work -- nevermind, I just had to put the name and token in settings.py in single quotes
+(use-package grip-mode
+  :bind (:map markdown-mode-command-map
+              ("g" . grip-mode))
+  :init
+  ;; Path to the grip binary
+  ;;(setq grip-binary-path "C:/Users/ewhd/AppData/Local/Programs/Python/Python311/Lib/site-packages/grip")
+
+  ;; Use embedded webkit to preview
+  ;; This requires GNU/Emacs version higher than 26 and built with the `--with-xwidgets` option.
+					;(setq grip-preview-use-webkit t)
+  ;; When nil, update the preview after file saves only, instead of also
+  ;; after every text change
+  (setq grip-update-after-change nil)
+  
+  )
 #+END_SRC
 * olivetti
 "Distraction-free writing means that your computer screen is free of clutter and, just like an old typewriter, only shows the text you are working on. In the article about configuring Emacs, we already removed the menu bar and other on-screen distractions.
@@ -1317,130 +1318,13 @@ You activate Olivetti mode with M-x olivetti-mode. This minor mode reduces the w
 
 #+BEGIN_SRC emacs-lisp
 ;; Distraction-free screen
-(use-package olivetti
-    :ensure t
-;    :init
-;    (setq olivetti-body-width 80)
-)
+(use-package olivetti)
 
 (add-hook 'olivetti-mode-on-hook (lambda () (olivetti-set-width 80)))
 
 (add-hook 'text-mode-hook 'olivetti-mode)
 #+END_SRC
 ** 
-* meow-mode
-
-
-#+begin_src emacs-lisp
-
-
-(defun meow-setup ()
-  (setq meow-cheatsheet-layout meow-cheatsheet-layout-qwerty)
-  (meow-motion-overwrite-define-key
-   '("j" . meow-next)
-   '("k" . meow-prev)
-   '("<escape>" . ignore))
-  (meow-leader-define-key
-   ;; SPC j/k will run the original command in MOTION state.
-   '("j" . "H-j")
-   '("k" . "H-k")
-   ;; Use SPC (0-9) for digit arguments.
-   '("1" . meow-digit-argument)
-   '("2" . meow-digit-argument)
-   '("3" . meow-digit-argument)
-   '("4" . meow-digit-argument)
-   '("5" . meow-digit-argument)
-   '("6" . meow-digit-argument)
-   '("7" . meow-digit-argument)
-   '("8" . meow-digit-argument)
-   '("9" . meow-digit-argument)
-   '("0" . meow-digit-argument)
-   '("/" . meow-keypad-describe-key)
-   '("?" . meow-cheatsheet))
-  (meow-define-keys
-   'insert
-   '("C-i" . meow-insert-exit))
-  (meow-normal-define-key
-   '("0" . meow-expand-0)
-   '("9" . meow-expand-9)
-   '("8" . meow-expand-8)
-   '("7" . meow-expand-7)
-   '("6" . meow-expand-6)
-   '("5" . meow-expand-5)
-   '("4" . meow-expand-4)
-   '("3" . meow-expand-3)
-   '("2" . meow-expand-2)
-   '("1" . meow-expand-1)
-   '("-" . negative-argument)
-   '(";" . meow-reverse)
-   '("," . meow-inner-of-thing)
-   '("." . meow-bounds-of-thing)
-   '("[" . meow-beginning-of-thing)
-   '("]" . meow-end-of-thing)
-   '("a" . meow-append)
-   '("A" . meow-open-below)
-   '("b" . meow-back-word)
-   '("B" . meow-back-symbol)
-   '("c" . meow-change)
-   '("d" . meow-delete)
-   '("D" . meow-backward-delete)
-   '("e" . meow-next-word)
-   '("E" . meow-next-symbol)
-   '("f" . meow-find)
-   '("g" . meow-cancel-selection)
-   '("G" . meow-grab)
-   '("h" . meow-left)
-   '("H" . meow-left-expand)
-   '("i" . meow-insert)
-   '("I" . meow-open-above)
-   '("j" . meow-next)
-   '("J" . meow-next-expand)
-   '("k" . meow-prev)
-   '("K" . meow-prev-expand)
-   '("l" . meow-right)
-   '("L" . meow-right-expand)
-   '("m" . meow-join)
-   '("n" . meow-search)
-   '("o" . meow-block)
-   '("O" . meow-to-block)
-   '("p" . meow-yank)
-   '("q" . meow-quit)
-   '("Q" . meow-goto-line)
-   '("r" . meow-replace)
-   '("R" . meow-swap-grab)
-   '("s" . meow-kill)
-   '("t" . meow-till)
-   '("u" . meow-undo)
-   '("U" . meow-undo-in-selection)
-   '("v" . meow-visit)
-   '("w" . meow-mark-word)
-   '("W" . meow-mark-symbol)
-   '("x" . meow-line)
-   '("X" . meow-goto-line)
-   '("y" . meow-save)
-   '("Y" . meow-sync-grab)
-   '("z" . meow-pop-selection)
-   '("'" . repeat)
-   '("M-r" . undo-tree-redo)
-   '("<escape>" . ignore)))
-(require 'meow)
-(meow-setup)
-(meow-global-mode nil)
-#+end_src
-* boon-mode
-
-
-#+begin_src emacs-lisp
-;(define-key boon-command-map (kbd "i") 'next-line)
-;(define-key boon-command-map (kbd "o") 'previous-line)
-;(define-key boon-command-map (kbd "I") 'forward-paragraph)
-;(define-key boon-command-map (kbd "O") 'backward-paragraph)
-;(define-key boon-command-map (kbd "K") 'boon-smarter-downward)
-;(define-key boon-command-map (kbd "L") 'boon-smarter-upward)
-;(define-key boon-command-map (kbd "C-k") 'scroll-up-line)
-;(define-key boon-command-map (kbd "C-l") 'scroll-down-line)
-
-#+end_src
 * Backups, Auto-Save, and Version Control
 You do in fact still want to use emacs' backups alongside a VC like git, for reasons stated in [[https://stackoverflow.com/a/151946][the comments to this stackoverflow answer]]:
     "The backups are for when you are editing something not under version control - like a config file or something quick and dirty that you haven't gotten around to putting into version control yet. Then, when you haven't been doing what you ought to, the editor saves your neck."
@@ -1449,29 +1333,8 @@ You do in fact still want to use emacs' backups alongside a VC like git, for rea
 sflsdflkjh
 #+begin_src emacs-lisp
 (let ((dir "emacs-backups"))
-  (setq backup-directory-alist `((".*" . ,dir)))
-
-;  (setq auto-save-file-name-transforms `((".*" "emacs-autosaves" t)))  
-;; The previous line fails to move auto-saves to a different folder.
-;; It also causes auto-save to fail with the following error:
-;; Error (auto-save): Auto-saving gtd.org: Opening output file: Permission denied, c:/#!Users!Ethan!Dropbox!gtd!gtd.org#
-;; If you're getting that error you will need to reset the var's value AND close and re-open the other buffer
-;; (it seems to effect this buffer fine) 
-
-
-;  (setq auto-save-file-name-transforms 
-;        `(("\\`/[^/]*:\\([^/]*/\\)*\\([^/]*\\)\\'"
-;           ,(concat temporary-file-directory "\\2") t)))
-;; The previous line just resets the var to the default value
+(setq backup-directory-alist `((".*" . ,dir)))
 )
-
-
-
-; from https://stackoverflow.com/questions/151945/how-do-i-control-how-emacs-makes-backup-files
-;(defvar --backup-subdir "emacs-backups")
-;(if (not (file-exists-p --backup-subdir))
-;        (make-directory --backup-subdir t))
-;(setq backup-directory-alist `(("." . ,--backup-subdir)))
 
 (setq make-backup-files t               ; backup of a file the first time it is saved.
       backup-by-copying t               ; don't clobber symlinks
@@ -1491,7 +1354,6 @@ See [[https://emacs.stackexchange.com/questions/293/what-should-shouldnt-i-do-wh
 test change
 #+begin_src emacs-lisp
 (use-package magit
-  :ensure t
   :bind (("C-x g" . magit)))
 
 #+end_src
@@ -1500,15 +1362,13 @@ Config pulled from [[https://sachachua.com/dotemacs/index.html#orgc32cd3c][Sacha
 
 #+begin_src emacs-lisp
 (use-package undo-tree
-  :ensure t
-  :after evil
-  :diminish undo-tree-mode
+  :delight undo-tree-mode
   :config
   (progn
-    (evil-set-undo-system 'undo-tree)
     (global-undo-tree-mode t)
     (setq undo-tree-visualizer-timestamps t)
-    (setq undo-tree-visualizer-diff t)))
+    (setq undo-tree-visualizer-diff t))
+  )
 #+end_src
 * xah-check-parens-balance
 - [2021-11-03 Wed]
@@ -1519,10 +1379,10 @@ Config pulled from [[https://sachachua.com/dotemacs/index.html#orgc32cd3c][Sacha
 #+begin_src emacs-lisp
 (defun xah-check-parens-balance ()
   "Check if there are unbalanced parentheses/brackets/quotes in current bufffer or selection.
-If so, place cursor there, print error to message buffer.
+  If so, place cursor there, print error to message buffer.
 
-URL `http://ergoemacs.org/emacs/emacs_check_parens_balance.html'
-Version 2018-07-03"
+  URL `http://ergoemacs.org/emacs/emacs_check_parens_balance.html'
+  Version 2018-07-03"
   (interactive)
   (let* (
          ($bracket-alist

@@ -1,10 +1,15 @@
 ;; See: https://xvrdm.github.io/2017/05/29/a-minimal-emacs-setup-with-orgmode/
 
-;; add MELPA package server
-(require 'package)
+;; reduce garbage collector activity during startup
+;; The default is 800 kilobytes.  Measured in bytes.
+(setq gc-cons-threshold (* 50 1000 1000))
 
-(add-to-list 'package-archives 
-  '("melpa" . "http://melpa.org/packages/"))
+
+
+;; help emacs find the right key files
+;; https://www.reddit.com/r/emacs/comments/y7rvom/fix_for_failed_to_verify_signature/
+(setq package-gnupghome-dir "elpa/gnupg")
+
 
 ;; The purpose of this file is to redirect emacs to look for its 'init' file 
 ;; under the Home folder of a Windows 10 machine and to recognize its org-mode 
@@ -22,29 +27,50 @@
 ;; Then emacs is instructed to load "~/.emacs.d/emacs-config.org" as its 'init' 
 ;; file.
 ;; The rest is for internal use.
-;; 
-;; test
 
-(unless package-archive-contents
-  (package-refresh-contents))
+
+
+;; https://ianyepan.github.io/posts/setting-up-use-package/
+(require 'package)
+(add-to-list 'package-archives '("gnu"   . "https://elpa.gnu.org/packages/"))
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives '("elpa" . "https://elpa.gnu.org/packages/"))
 
 (package-initialize)
+(unless package-archive-contents
+  (package-refresh-contents))
 
 ;; if not yet installed, install package use-package
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
+(eval-and-compile
+  (setq use-package-always-ensure nil
+	use-package-always-defer nil
+        use-package-expand-minimally t))
+;; N.B. setting always-ensure to nil drops load time from ~18 to ~12 seconds
+;; further setting always-defer to true drops it below 5 seconds, but causes
+;; some packages not to load as normal (mostly cosmetic ones, from what I,
+;; but I didn't probe deeply)
 
+
+;; load and start benchmark-init
+(use-package benchmark-init
+  :config
+  ;; To disable collection of benchmark data after init is done.
+  (add-hook 'after-init-hook 'benchmark-init/deactivate))
 
 
 ;; Set the working directory to home regardless of where Emacs was started from
 ;;(cd "~/")
 
 
-
 ;; load org package and our emacs-config.org file
 (require 'org)
 (org-babel-load-file "~/.emacs.d/emacs-config.org") 
 
+;; (load-file "~/.emacs.d/emacs-config.el")
+
+;; (load-file "~/.emacs.d/emacs-config.elc")
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
@@ -59,7 +85,7 @@
  '(org-global-properties
    '(("Effort_ALL" . "0:00 0:07 0:15 0:30 0:45 1:00 1:30 2:00 2:30 3:00")))
  '(package-selected-packages
-   '(eglot corfu minimap which-key transpose-frame simple-modeline boon god-mode meow undo-tree doom-themes org-tree-slide adaptive-wrap highlight-parentheses magit olivetti org-superstar org-appear company-posframe mixed-pitch org-beautify-theme evil markdown-mode helm-org-rifle use-package)))
+   '(benchmark-init delight eglot corfu minimap which-key transpose-frame simple-modeline boon god-mode meow undo-tree doom-themes org-tree-slide adaptive-wrap highlight-parentheses magit olivetti org-superstar org-appear mixed-pitch org-beautify-theme evil markdown-mode helm-org-rifle use-package)))
 (put 'narrow-to-region 'disabled nil)
 (put 'narrow-to-page 'disabled nil)
 
@@ -69,8 +95,12 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "FiraCode Nerd Font" :height 150 :weight thin))))
- '(fixed-pitch ((t (:family "FiraCode Nerd Font" :height 1.0 :weight thin))))
- '(variable-pitch ((t (:family "DejaVu Sans" :height 1.5 :weight thin)))))
+ )
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
+
+
+
+;; Reset garbage collection at end of init
+;; Make gc pauses faster by decreasing the threshold.
+(setq gc-cons-threshold (* 2 1000 1000))
