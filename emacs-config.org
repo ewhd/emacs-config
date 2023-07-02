@@ -699,7 +699,15 @@ Org-agenda commands can be found [[https://orgmode.org/manual/Agenda-Commands.ht
     - I leave the defective code block here, with it's content commented out, for posterity/curiosity's sake.
 
 #+begin_src emacs-lisp
-(setq org-agenda-files (list "~/Dropbox/org/gtd/gtd.org"    "~/Dropbox/org/gtd/people.org" "~/Dropbox/org/gtd/cfgtd.org"))
+(setq org-agenda-files (list
+			"~/Dropbox/org/gtd/gtd.org"    "~/Dropbox/org/gtd/people.org" "~/Dropbox/org/gtd/cf-gtd.org"
+			"~/Dropbox/org/gtd/career-gtd.org"
+			"~/Dropbox/org/gtd/finance-gtd.org"
+			"~/Dropbox/org/gtd/fun-gtd.org"
+			"~/Dropbox/org/gtd/family-gtd.org"
+			"~/Dropbox/org/gtd/health-gtd.org"
+			"~/Dropbox/org/gtd/romance-gtd.org"
+			"~/Dropbox/org/gtd/spirit-gtd.org"))
 #+end_src
 
 **** Word wrapping in agenda buffers
