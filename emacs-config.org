@@ -1543,7 +1543,6 @@ The yank-increment needs to be changed to use the increment functions
 (global-set-key (kbd "C-c C-y") 'my-yank-increment)
 
 #+end_src
-
 * FINAL Open ~/.emacs.d/emacs-config.org on startup
 #+BEGIN_SRC emacs-lisp
 (find-file "~/.emacs.d/emacs-config.org")
