@@ -1534,6 +1534,61 @@ Version 2020-06-26"
 
 (global-set-key (kbd "M-c") 'xah-toggle-letter-case)
 #+end_src
+* Functions
+** Increment number
+https://www.emacswiki.org/emacs/IncrementNumber
+
+#+begin_src emacs-lisp
+;; (defun increment-number-at-point ()
+;;       (interactive)
+;;       (skip-chars-backward "0-9")
+;;       (or (looking-at "[0-9]+")
+;;           (error "No number at point"))
+;;       (replace-match (number-to-string (1+ (string-to-number (match-string 0))))))
+
+(defun my-increment-number-decimal (&optional arg)
+  "Increment the number forward from point by 'arg'."
+  (interactive "p*")
+  (save-excursion
+    (save-match-data
+      (let (inc-by field-width answer)
+        (setq inc-by (if arg arg 1))
+        (skip-chars-backward "0123456789")
+        (when (re-search-forward "[0-9]+" nil t)
+          (setq field-width (- (match-end 0) (match-beginning 0)))
+          (setq answer (+ (string-to-number (match-string 0) 10) inc-by))
+          (when (< answer 0)
+            (setq answer (+ (expt 10 field-width) answer)))
+          (replace-match (format (concat "%0" (int-to-string field-width) "d")
+                                 answer)))))))
+
+(defun my-decrement-number-decimal (&optional arg)
+  (interactive "p*")
+  (my-increment-number-decimal (if arg (- arg) -1)))
+
+(global-set-key (kbd "C-c C-=") 'my-increment-number-decimal)
+(global-set-key (kbd "C-c C--") 'my-decrement-number-decimal)
+
+(defun dlh-increment-string (string)
+  (setq start (string-match "\\([0-9]+\\)" string))
+  (setq end (match-end 0))
+  (setq number (string-to-number (substring string start end)))
+  (setq new-num-string (number-to-string (+ 1 number)))
+  (concat
+   (substring string 0 start)
+   new-num-string
+   (substring string end)))
+
+(defun dlh-yank-increment ()
+  "Yank text, incrementing the first integer found in it."
+  (interactive "*")
+  (setq new-text (dlh-increment-string (current-kill 0)))
+  (insert-for-yank new-text)
+  (kill-new new-text t))
+
+(global-set-key (kbd "C-c C-y") 'dlh-yank-increment)
+
+#+end_src
 * FINAL Open ~/.emacs.d/emacs-config.org on startup
 #+BEGIN_SRC emacs-lisp
 (find-file "~/.emacs.d/emacs-config.org")
