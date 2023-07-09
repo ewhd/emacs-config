@@ -1538,6 +1538,8 @@ Version 2020-06-26"
 ** Increment number
 https://www.emacswiki.org/emacs/IncrementNumber
 
+The yank-increment needs to be changed to use the increment functions
+
 #+begin_src emacs-lisp
 ;; (defun increment-number-at-point ()
 ;;       (interactive)
@@ -1569,24 +1571,22 @@ https://www.emacswiki.org/emacs/IncrementNumber
 (global-set-key (kbd "C-c C-=") 'my-increment-number-decimal)
 (global-set-key (kbd "C-c C--") 'my-decrement-number-decimal)
 
-(defun dlh-increment-string (string)
+(defun my-increment-string (string)
+  (interactive "*")
   (setq start (string-match "\\([0-9]+\\)" string))
   (setq end (match-end 0))
   (setq number (string-to-number (substring string start end)))
   (setq new-num-string (number-to-string (+ 1 number)))
-  (concat
-   (substring string 0 start)
-   new-num-string
-   (substring string end)))
+  (concat (substring string 0 start) new-num-string (substring string end)))
 
-(defun dlh-yank-increment ()
+(defun my-yank-increment ()
   "Yank text, incrementing the first integer found in it."
   (interactive "*")
-  (setq new-text (dlh-increment-string (current-kill 0)))
+  (setq new-text (my-increment-string (current-kill 0)))
   (insert-for-yank new-text)
   (kill-new new-text t))
 
-(global-set-key (kbd "C-c C-y") 'dlh-yank-increment)
+(global-set-key (kbd "C-c C-y") 'my-yank-increment)
 
 #+end_src
 * FINAL Open ~/.emacs.d/emacs-config.org on startup
