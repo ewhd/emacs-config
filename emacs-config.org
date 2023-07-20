@@ -370,8 +370,6 @@ I ended up adding all three of these to PATH cause the first one alone didn't wo
 - =C:\msys64\mingw64\lib\=
 - =C:\msys64\mingw64\lib\aspell-0.60=
 
-N.B.: currently (next day) the two =.../lib/= directories are not showing up in the path, even though they're added, and I'm running into an issue where changes to the path aren't updating throughout the system immediately. I suspect that when adding =.../bin/= to the path wasn't solving the problem initially, that was why.
-
 Oh yeah, and I did the whole thing through =msys32= as laid out in the stack exchange article linked above, mostly because that's the only way to get the version 0.60 build and emacs 26+ doesn't accept the 0.50 build available online, which is the most recent one available for Windows (from 2002).
 
 For a little more about how aspell is called into emacs, see [[https://emacs.stackexchange.com/a/60722][here]].
