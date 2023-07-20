@@ -1090,7 +1090,22 @@ hello
 
 (setq org-roam-dailies-capture-templates
       '(("d" "default" plain "%?"
-         :if-new (file+head "%<%Y-%m-%d>.org" "#+title:    %<%Y-%m-%d>\n%[~/Dropbox/org/templates/org-roam-header-template.org]\n%[~/Dropbox/org/templates/org-roam-dailies-template.org]"))))
+         :if-new (file+head "%<%Y-%m-%d>.org" "#+title:    %<%Y-%m-%d>\n%[~/Dropbox/org/templates/org-roam-header-template.org]\n%[~/Dropbox/org/templates/org-roam-dailies-template.org]"))
+
+	     ("C" "CF datetree" entry
+	      "* %?"
+	      :target (file+datetree "CF-journal.org" week)
+	      :function org-reverse-datetree-goto-date-in-file)
+
+	     ("q" "quarter-test" entry "* %?"
+         :target (file+head "%<%Y-q%q>.org" "#+TITLE: %<%Y-q%q>\n"))
+
+	     ("w" "weekly-test" entry "* %?"
+         :target (file+head "%<%Y-w%W>.org" "#+TITLE: %<%Y-w%W>\n"))
+
+	     ("t" "weekly dateTree" entry "* %<%Y-%m-%d %A>\n %?"
+	      :target (file "%<%Y-w%W>.org")))
+      )
 #+end_src
              "%[~/Dropbox/org/templates/org-roam-dailies-template.org]"
 *** org-roam-node-display-template
@@ -1200,6 +1215,14 @@ https://github.com/takaxp/org-tree-slide
 
 #+begin_src emacs-lisp
 (use-package org-tree-slide
+  :after org
+)
+#+end_src
+** org-reverse-datetree
+https://github.com/akirak/org-reverse-datetree
+
+#+begin_src emacs-lisp
+(use-package org-reverse-datetree
   :after org
 )
 #+end_src
