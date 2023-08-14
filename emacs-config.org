@@ -90,7 +90,6 @@ https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-fo
                 treemacs-mode-hook
                 eshell-mode-hook
                 help-mode-hook
-		    markdown-mode-hook
                 org-agenda-mode-hook
 		))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
@@ -299,6 +298,9 @@ eglot is a language service provider. It gives information on things like syntax
 (global-set-key (kbd "C-h n") nil)
 (global-set-key (kbd "C-h C-n") nil)
 ;(global-set-key (kbd "C-x 4-s") 'window-swap-states) ; not working
+(global-set-key (kbd "M-z") 'zap-up-to-char)
+(global-set-key (kbd "<mouse-3>") 'mouse-major-mode-menu)
+(global-set-key (kbd "<C-mouse-3>") 'mouse-popup-menubar)
 
 #+end_src
 * Completion Tools
@@ -372,6 +374,12 @@ This really only works with code, and I don't really edit code in emacs yet, so 
 
 #+end_src
 
+* regex stuff
+https://www.masteringemacs.org/article/re-builder-interactive-regexp-builder
+https://karthinks.com/software/bridging-islands-in-emacs-1/
+https://github.com/joddie/pcre2el
+
+
 * Spelling
 ** aspell
 aspell is the spell-check engine which ispell or flyspell use in their backend.
@@ -432,6 +440,7 @@ The [[https://github.com/d12frosted/flyspell-correct][github page]] for flyspell
          ("C-<" . mc/mark-previous-like-this)
          ("C-c C->" . mc/mark-all-like-this)
          ("C-c C-SPC" . mc/edit-lines)
+	   ("C-S-<mouse-1>" . 'mc/add-cursor-on-click)
          ))
 #+end_src
 
