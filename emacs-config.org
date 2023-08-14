@@ -270,13 +270,19 @@ For some reasons, this does not work in an org document.
 Which is very sad, but I'm keeping it here anyway.
 
 [2023-08-01 Tue] - Solved it. See [[https://stackoverflow.com/a/29441574][here]].
-- Also, check out [[https://github.com/zk-phi/sublimity][sublimity]] sometime for a possible alternative.
+- Yeah, this is really messy and not working how I want, so...
+
+Also, check out [[https://github.com/zk-phi/sublimity][sublimity]] sometime for a possible alternative.
 
 #+begin_src emacs-lisp
-(use-package minimap)
-
-(setq minimap-major-modes '(prog-mode markdown-mode org-mode))
-
+(use-package minimap
+  :config
+  ;; (setq minimap-major-modes '(prog-mode))
+  ;; (setq minimap-window-location 'right)
+  ;; (setq minimap-automatically-delete-window nil)
+  ;; (setq minimap-recreate-window 't)
+  
+)
 #+end_src
 ** eglot
 eglot is a language service provider. It gives information on things like syntax.
