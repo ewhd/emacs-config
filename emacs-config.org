@@ -413,6 +413,8 @@ I've been getting weird results with too many suggestions including a bunch on n
 ** flyspell-correct
 The [[https://github.com/d12frosted/flyspell-correct][github page]] for flyspell-correct covers the install just fine.
 
+Check out [[https://stackoverflow.com/a/60034059][this stack overflow]] for some stuff turning the right version on in the right modes. In particular, I borrowed a bunch from [[https://stackoverflow.com/a/60034059][this answer]].
+
 #+begin_src emacs-lisp
 (use-package flyspell-correct
   :ensure t
@@ -424,7 +426,15 @@ The [[https://github.com/d12frosted/flyspell-correct][github page]] for flyspell
 
 (use-package flyspell-correct-helm
   :ensure t
-  :after flyspell-correct) 
+  :after flyspell-correct
+  :config
+  (defun flyspell-most-modes() 
+     (add-hook 'text-mode-hook 'flyspell-mode) 
+     (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+     (dolist (hook '(change-log-mode-hook log-edit-mode-hook)) 
+       (add-hook hook (lambda () 
+                        (flyspell-mode -1)))))
+  (flyspell-most-modes))
 #+end_src
 
 * multiple-cursors
