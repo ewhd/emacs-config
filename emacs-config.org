@@ -1235,6 +1235,49 @@ https://github.com/takaxp/org-tree-slide
   :after org
 )
 #+end_src
+** org-download
+The functionality I really want is the ability to take screen-grabs and then paste them directly into an org file, as close to my workflow when using google-docs as possible. As much as possible I want to avoid working needing to manage file and links while in the flow of working and documenting.
+- [[https://emacs.stackexchange.com/questions/71100/pasting-images-from-clipboard-into-orgmode][Relevant stackexchange]]
+- [[https://github.com/abo-abo/org-download][org-download on GitHub]]
+  - This should have all the functionality I need
+  - There appears to be a built-in =org-download-clipboard= command
+- Maybe unnescessary, but [[https://www.reddit.com/r/emacs/comments/52q70g/paste_an_image_on_clipboard_to_emacs_org_mode/][here]] is an old reddit thread on accomplishing the same thing
+- [[https://www.reddit.com/r/emacs/comments/ky0wop/comment/gjgjfda/?utm_source=share&utm_medium=web2x&context=3][This]] person couldn't get org-download to work on Windows, and had to implement another solution
+- [[https://www.reddit.com/r/emacs/comments/jczcv0/paste_an_image_into_an_org_file_windows/][Another]] Windows solution, this time using some PS magic
+- [[https://github.com/abo-abo/org-download/issues/75][This Issue]] discusses the problem I'm having where I can drag-and-drop images but not paste them (Windows specific)
+
+Now how about some config examples?
+- [[https://www.reddit.com/r/emacs/comments/d28915/comment/ezvudn8/?utm_source=share&utm_medium=web2x&context=3][Here]] is someone using use-package and enabling drag-and-drop from other programs -- this didn't work
+- And [[https://baty.net/2022/configuring-the-org-download-save-directory/][here]] is someone configuring the org-download save directory
+- A [[https://github.com/zzamboni/dot-emacs/blob/master/init.org][config]] which include org-download
+- [[https://coldnew.github.io/hexo-org-example/2018/05/22/use-org-download-to-drag-image-to-emacs/][Another]] potential resource for configuring org-download
+
+
+#+begin_src emacs-lisp
+(use-package org-download
+  :after org
+  :defer nil
+  :custom
+  (org-download-method 'directory)
+  (org-download-image-dir "images")
+  (org-download-heading-lvl nil)
+  (org-download-timestamp "%Y%m%d-%H%M%S_")
+  (org-image-actual-width 300)
+  :bind
+  ("C-M-y" .
+   (lambda (&optional noask)
+     (interactive "P")
+     (let ((file
+            (if (not noask)
+                (read-string (format "Filename [%s]: " org-download-screenshot-basename)
+                             nil nil org-download-screenshot-basename)
+              nil)))
+       (org-download-clipboard file))))
+  :config
+  (require 'org-download))
+
+
+#+end_src
 * dired-sidebar
 #+BEGIN_SRC emacs-lisp
 (use-package dired-sidebar
