@@ -1244,7 +1244,7 @@ The functionality I really want is the ability to take screen-grabs and then pas
 - Maybe unnescessary, but [[https://www.reddit.com/r/emacs/comments/52q70g/paste_an_image_on_clipboard_to_emacs_org_mode/][here]] is an old reddit thread on accomplishing the same thing
 - [[https://www.reddit.com/r/emacs/comments/ky0wop/comment/gjgjfda/?utm_source=share&utm_medium=web2x&context=3][This]] person couldn't get org-download to work on Windows, and had to implement another solution
 - [[https://www.reddit.com/r/emacs/comments/jczcv0/paste_an_image_into_an_org_file_windows/][Another]] Windows solution, this time using some PS magic
-- [[https://github.com/abo-abo/org-download/issues/75][This Issue]] discusses the problem I'm having where I can drag-and-drop images but not paste them (Windows specific)
+- [[https://github.com/abo-abo/org-download/issues/75][This Issue]] discusses the problem I'm having where I can drag-and-drop images from files but not paste them or drag-and-drop from a web-page (Windows specific)
 
 Now how about some config examples?
 - [[https://www.reddit.com/r/emacs/comments/d28915/comment/ezvudn8/?utm_source=share&utm_medium=web2x&context=3][Here]] is someone using use-package and enabling drag-and-drop from other programs -- this didn't work
@@ -1252,6 +1252,10 @@ Now how about some config examples?
 - A [[https://github.com/zzamboni/dot-emacs/blob/master/init.org][config]] which include org-download
 - [[https://coldnew.github.io/hexo-org-example/2018/05/22/use-org-download-to-drag-image-to-emacs/][Another]] potential resource for configuring org-download
 
+I suspect I need [[https://imagemagick.org/index.php][ImageMagick]] to make this work on Windows, and specifically its 'convert' feature -- I had to check a box during install to include this "legacy feature".
+- See [[https://github.com/abo-abo/org-download/issues/75#issuecomment-652690439][here]].
+- Supposedly you can use PS instead of ImageMagick (see [[https://github.com/abo-abo/org-download/issues/75#issuecomment-1397370997][here]])
+  - That got =org-download-screenshot= to work! Though =org-download-clipboard= doesn't
 
 #+begin_src emacs-lisp
 (use-package org-download
@@ -1260,6 +1264,9 @@ Now how about some config examples?
   :custom
   (org-download-method 'directory)
   (org-download-image-dir "images")
+  ;; on Windows it is possible to use org-download-screenshot without using imagemagick convert, but by using powershell:
+  (org-download-screenshot-method "powershell -c Add-Type -AssemblyName System.Windows.Forms;$image = [Windows.Forms.Clipboard]::GetImage();$image.Save('%s', [System.Drawing.Imaging.ImageFormat]::Png)")
+  (org-download-method '+org/org-download-method)
   (org-download-heading-lvl nil)
   (org-download-timestamp "%Y%m%d-%H%M%S_")
   (org-image-actual-width 300)
@@ -1272,10 +1279,10 @@ Now how about some config examples?
                 (read-string (format "Filename [%s]: " org-download-screenshot-basename)
                              nil nil org-download-screenshot-basename)
               nil)))
-       (org-download-clipboard file))))
+       (org-download-screenshot file))))
   :config
-  (require 'org-download))
-
+  (require 'org-download)
+)
 
 #+end_src
 * dired-sidebar
