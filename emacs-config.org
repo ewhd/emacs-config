@@ -1262,11 +1262,11 @@ I suspect I need [[https://imagemagick.org/index.php][ImageMagick]] to make this
   :after org
   :defer nil
   :custom
-  (org-download-method 'directory)
-  (org-download-image-dir "images")
+  (org-download-method 'attach)
+  (org-download-image-dir nil)
   ;; on Windows it is possible to use org-download-screenshot without using imagemagick convert, but by using powershell:
   (org-download-screenshot-method "powershell -c Add-Type -AssemblyName System.Windows.Forms;$image = [Windows.Forms.Clipboard]::GetImage();$image.Save('%s', [System.Drawing.Imaging.ImageFormat]::Png)")
-  (org-download-method '+org/org-download-method)
+  ;; (org-download-method '+org/org-download-method)
   (org-download-heading-lvl nil)
   (org-download-timestamp "%Y%m%d-%H%M%S_")
   (org-image-actual-width 300)
@@ -1284,6 +1284,35 @@ I suspect I need [[https://imagemagick.org/index.php][ImageMagick]] to make this
   (require 'org-download)
 )
 
+#+end_src
+** org-attach config
+I encountered this while configuring org-download.
+- [[https://emacs.stackexchange.com/questions/2162/when-are-org-mode-attachments-preferable-to-file-hyperlinks][When are org-mode attachments preferable to file hyperlinks?]]
+- [[https://www.reddit.com/r/orgmode/comments/6x5ulb/longterm_use_of_orgattach_and_orgdownload/][Use of Attach vs Links with org-download]]
+- [[https://www.reddit.com/r/orgmode/comments/p9i2og/does_anyone_use_org_attach_a_lot/][Another]] reddit thread
+  - Sounds like a number of folks use it stock
+- [[https://www.reddit.com/r/orgmode/comments/v0k495/do_you_use_orgattach_for_your_filesystem/][This]] thread describes the directory organization pattern of org-attach
+  - This goes deep, and is really good!
+- [[https://www.reddit.com/r/orgmode/comments/p9i2og/does_anyone_use_org_attach_a_lot/][Another]] reddit thread
+- [[https://www.reddit.com/r/orgmode/comments/th114q/org_id_org_attach_better_folder_names/][Org ID, Org Attach & Better Folder Names]]
+  - [[https://taonaw-blog.netlify.app/2022-03-13/][Linked blog post]] -- this is gold!
+- [[https://www.reddit.com/r/emacs/comments/ohj516/orgattach_id_directory_creation_behavior/][This]] is a reddit thread about org id directory creation behavior.
+
+N.B. I define org-id-method in my org-roam configuration above.
+
+#+begin_src emacs-lisp
+(defun ewhd-org-attach-id-folder-format (id)
+  "Translate an UUID ID into a folder-path.
+Custom format for how Org translates ID properties to a path for
+attachments.  Useful if ID is generated with custom timestamp."
+  (format "%s/%s"
+	  (substring id 0 7)
+	  (substring id 2)))
+
+(setq org-attach-id-to-path-function-list
+  '(ewhd-org-attach-id-folder-format
+    org-attach-id-ts-folder-format
+    org-attach-id-uuid-folder-format))
 #+end_src
 * dired-sidebar
 #+BEGIN_SRC emacs-lisp
