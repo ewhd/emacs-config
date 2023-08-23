@@ -878,7 +878,16 @@ https://config.daviwil.com/workflow
 
 
 From [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org][here]] -- modified
+
+[2023-08-23 Wed]
+- See [[https://emacs.stackexchange.com/questions/38183/how-to-exclude-a-file-from-agenda][here]] for inspiration to create agenda focusing on or excluding my work GTD
+- [[https://orgmode.org/manual/Storing-searches.html][Relevant manual page]]
+- Seems like super-agenda is conflicting with the basic agenda tag filtering
+  - Just [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org#books-to-read][RTFM]] next time
+
+
 #+begin_src emacs-lisp
+
 (use-package org-super-agenda
     :after org
     :config
@@ -912,12 +921,6 @@ From [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org][h
                                      :deadline today
 				     :scheduled today
                                      :order 3)
-			      ;; (:name "Approaching Deadline"
-                              ;;        :deadline future
-			      ;; 	     :order 4)
-			      ;; (:name "Scheduled soon"
-			      ;; 	     :scheduled future
-			      ;; 	     :order 5)
 			      (:name "Next"
                                      :todo "NEXT"
                                      :order 6)
@@ -945,8 +948,116 @@ From [[https://github.com/alphapapa/org-super-agenda/blob/master/examples.org][h
                                      :todo "PROJECT - OPEN"
                                      :order 25)
 			      ;(:discard (:tag "PROJECT"))
-                              ))))))))
-          )
+                              ))))))
+	    ("w" "Work niew"
+             ((agenda "" ((org-agenda-span 'day)
+                          (org-super-agenda-groups
+                           '((:name "Today"
+                                    :time-grid t
+                                    :date today
+                                    :todo "TODAY"
+                                    :scheduled today
+                                    :order 1)))))
+              (alltodo "" ((org-agenda-overriding-header "")
+                           (org-super-agenda-groups
+                            '(
+			      (:discard (:not (:tag "CF")))
+                              (:name "On Hold"
+                                      :tag "HOLD"
+                                      :order 30)
+			      (:name "Review"
+				     :tag "REVIEW"
+				     :order 8)
+                              (:name "Overdue"
+                                     :deadline past
+                                     :order 1)
+			      (:name "Behind Schedule"
+				     :scheduled past
+				     :order 2)
+                              (:name "Today"
+                                     :deadline today
+				     :scheduled today
+                                     :order 3)
+			      (:name "Next"
+                                     :todo "NEXT"
+                                     :order 6)
+			      (:name "Started"
+				     :todo "STARTED"
+			             :order 7)
+                              (:name "Other Items"
+                                     :todo "TODO"
+                                     :priority nil
+                                     :order 8)
+                              (:name "Waiting"
+                                     :tag "WAITING"
+                                     :order 9)
+                              (:name "Due Soon"
+                                     :deadline future
+                                     :order 10)
+                              (:name "Someday"
+                                     :priority "C"
+                                     :order 20)
+                              (:name "Projects"
+                                     :todo "PROJECT - OPEN"
+                                     :order 25)
+                              ))))
+	      ))
+	    ("b" "everything But work"
+             ((agenda "" ((org-agenda-span 'day)
+                          (org-super-agenda-groups
+                           '((:name "Today"
+                                    :time-grid t
+                                    :date today
+                                    :todo "TODAY"
+                                    :scheduled today
+                                    :order 1)))))
+              (alltodo "" ((org-agenda-overriding-header "")
+                           (org-super-agenda-groups
+                            '(
+			      (:discard (:tag "CF"))
+                              (:name "On Hold"
+                                      :tag "HOLD"
+                                      :order 30)
+			      (:name "Review"
+				     :tag "REVIEW"
+				     :order 8)
+                              (:name "Overdue"
+                                     :deadline past
+                                     :order 1)
+			      (:name "Behind Schedule"
+				     :scheduled past
+				     :order 2)
+                              (:name "Today"
+                                     :deadline today
+				     :scheduled today
+                                     :order 3)
+			      (:name "Next"
+                                     :todo "NEXT"
+                                     :order 6)
+			      (:name "Started"
+				     :todo "STARTED"
+			             :order 7)
+                              (:name "Other Items"
+                                     :todo "TODO"
+                                     :priority nil
+                                     :order 8)
+                              (:name "Waiting"
+                                     :tag "WAITING"
+                                     :order 9)
+                              (:name "Due Soon"
+                                     :deadline future
+                                     :order 10)
+                              (:name "Someday"
+                                     :priority "C"
+                                     :order 20)
+                              (:name "Projects"
+                                     :todo "PROJECT - OPEN"
+                                     :order 25)
+                              ))))
+	      ))
+           )
+    )
+)
 #+end_src
 
 #+RESULTS:
