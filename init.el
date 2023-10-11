@@ -44,13 +44,26 @@
 (unless (package-installed-p 'use-package)
   (package-install 'use-package))
 (eval-and-compile
-  (setq use-package-always-ensure nil
-	use-package-always-defer nil
-        use-package-expand-minimally t))
+  (setq 
+	use-package-always-defer nil	;; I'm pretty sure this is fine all the time
+
+	;; When you are running for the first time and want everything to install:
+	use-package-always-ensure t
+        use-package-expand-minimally nil
+
+	;; Good for normal operations (keeps load time down):
+;	use-package-always-ensure nil
+;       use-package-expand-minimally t
+
+	))
 ;; N.B. setting always-ensure to nil drops load time from ~18 to ~12 seconds
 ;; further setting always-defer to true drops it below 5 seconds, but causes
 ;; some packages not to load as normal (mostly cosmetic ones, from what I,
 ;; but I didn't probe deeply)
+;; btw, the origin of eval-and-compile appears to be here: https://ianyepan.github.io/posts/setting-up-use-package/
+;; When you are setting up a fresh install, comment/uncomment the appropriate sections
+;; Then for some reason it still has problems with some packages, but a combination of repeated 
+;; package-refresh-contents and retrying the use-package/package-install command seems to work
 
 
 ;; load and start benchmark-init
@@ -85,7 +98,7 @@
  '(org-global-properties
    '(("Effort_ALL" . "0:00 0:07 0:15 0:30 0:45 1:00 1:30 2:00 2:30 3:00")))
  '(package-selected-packages
-   '(org-download treemacs org-reverse-datetree flyspell-correct-helm flyspell-correct benchmark-init delight eglot corfu minimap which-key transpose-frame simple-modeline boon god-mode meow undo-tree doom-themes org-tree-slide adaptive-wrap highlight-parentheses magit olivetti org-superstar org-appear mixed-pitch org-beautify-theme evil markdown-mode helm-org-rifle use-package)))
+   '(orderless marginalia org-download treemacs org-reverse-datetree flyspell-correct-helm flyspell-correct benchmark-init delight eglot corfu minimap which-key transpose-frame simple-modeline boon god-mode meow undo-tree doom-themes org-tree-slide adaptive-wrap highlight-parentheses magit olivetti org-superstar org-appear mixed-pitch org-beautify-theme evil markdown-mode helm-org-rifle use-package)))
 (put 'narrow-to-region 'disabled nil)
 (put 'narrow-to-page 'disabled nil)
 

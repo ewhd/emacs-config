@@ -306,29 +306,29 @@ eglot is a language service provider. It gives information on things like syntax
 * Completion Tools
 See [[https://www.youtube.com/watch?v=Vx0bSKF4y78&t=6s][this video]].
 And [[https://lucidmanager.org/productivity/emacs-completion-system/][this page]].
-** helm-org-rifle
-#+BEGIN_SRC emacs-lisp
-(use-package helm-org-rifle)
-#+END_SRC
-
 ** helm
 #+BEGIN_SRC emacs-lisp
 (use-package helm
   :delight helm-mode
-  :config
-  (require 'helm-config)
-
-  :init
-  (helm-mode 1)
-  :bind
-  (("M-x"     . helm-M-x) ;; Evaluate functions
-   ("C-x C-f" . helm-find-files) ;; Open or create files
-   ("C-x b"   . helm-mini) ;; Select buffers
-   ("C-x C-r" . helm-recentf) ;; Select recently saved files
-   ("C-c i"   . helm-imenu) ;; Select document heading
-   ("M-y"     . helm-show-kill-ring) ;; Show the kill ring
+  :bind (
+	 ("M-x"     . helm-M-x) ;; Evaluate functions
+	 ("C-x C-f" . helm-find-files) ;; Open or create files
+	 ("C-x b"   . helm-mini) ;; Select buffers
+	 ("C-x C-r" . helm-recentf) ;; Select recently saved files
+	 ("C-c i"   . helm-imenu) ;; Select document heading
+	 ("M-y"     . helm-show-kill-ring) ;; Show the kill ring
    )
+  :config
+  (helm-mode 1)
+  (setq helm-M-x-fuzzy-match        t)
+  (setq helm-buffers-fuzzy-matching t)
+  (setq helm-recentf-fuzzy-match    t)
   )
+#+END_SRC
+
+** helm-org-rifle
+#+BEGIN_SRC emacs-lisp
+(use-package helm-org-rifle)
 #+END_SRC
 
 ** corfu
