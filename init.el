@@ -98,7 +98,7 @@
  '(org-global-properties
    '(("Effort_ALL" . "0:00 0:07 0:15 0:30 0:45 1:00 1:30 2:00 2:30 3:00")))
  '(package-selected-packages
-   '(orderless marginalia org-download treemacs org-reverse-datetree flyspell-correct-helm flyspell-correct benchmark-init delight eglot corfu minimap which-key transpose-frame simple-modeline boon god-mode meow undo-tree doom-themes org-tree-slide adaptive-wrap highlight-parentheses magit olivetti org-superstar org-appear mixed-pitch org-beautify-theme evil markdown-mode helm-org-rifle use-package)))
+   '(embark orderless marginalia org-download treemacs org-reverse-datetree flyspell-correct-helm flyspell-correct benchmark-init delight eglot corfu minimap which-key transpose-frame simple-modeline boon god-mode meow undo-tree doom-themes org-tree-slide adaptive-wrap highlight-parentheses magit olivetti org-superstar org-appear mixed-pitch org-beautify-theme evil markdown-mode helm-org-rifle use-package)))
 (put 'narrow-to-region 'disabled nil)
 (put 'narrow-to-page 'disabled nil)
 

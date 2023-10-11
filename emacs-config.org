@@ -308,27 +308,28 @@ See [[https://www.youtube.com/watch?v=Vx0bSKF4y78&t=6s][this video]].
 And [[https://lucidmanager.org/productivity/emacs-completion-system/][this page]].
 ** helm
 #+BEGIN_SRC emacs-lisp
-(use-package helm
-  :delight helm-mode
-  :bind (
-	 ("M-x"     . helm-M-x) ;; Evaluate functions
-	 ("C-x C-f" . helm-find-files) ;; Open or create files
-	 ("C-x b"   . helm-mini) ;; Select buffers
-	 ("C-x C-r" . helm-recentf) ;; Select recently saved files
-	 ("C-c i"   . helm-imenu) ;; Select document heading
-	 ("M-y"     . helm-show-kill-ring) ;; Show the kill ring
-   )
-  :config
-  (helm-mode 1)
-  (setq helm-M-x-fuzzy-match        t)
-  (setq helm-buffers-fuzzy-matching t)
-  (setq helm-recentf-fuzzy-match    t)
-  )
+;; (use-package helm
+;;   :delight helm-mode
+;;   :bind (
+;; 	 ("M-x"     . helm-M-x) ;; Evaluate functions
+;; 	 ("C-x C-f" . helm-find-files) ;; Open or create files
+;; 	 ("C-x b"   . helm-mini) ;; Select buffers
+;; 	 ("C-x C-r" . helm-recentf) ;; Select recently saved files
+;; 	 ("C-c i"   . helm-imenu) ;; Select document heading
+;; 	 ("M-y"     . helm-show-kill-ring) ;; Show the kill ring
+;;    )
+;;   :config
+;;   (helm-mode 1)
+;;   (setq helm-M-x-fuzzy-match        t)
+;;   (setq helm-buffers-fuzzy-matching t)
+;;   (setq helm-recentf-fuzzy-match    t)
+;;   )	
+					;
 #+END_SRC
 
 ** helm-org-rifle
 #+BEGIN_SRC emacs-lisp
-(use-package helm-org-rifle)
+;; (use-package helm-org-rifle)		;
 #+END_SRC
 
 ** corfu
@@ -372,6 +373,61 @@ This really only works with code, and I don't really edit code in emacs yet, so 
 ;                              corfu-auto nil)
 ;              (corfu-mode))))
 
+#+end_src
+
+** Vertico
+#+begin_src emacs-lisp
+(use-package vertico
+  :ensure t
+  :init
+  (vertico-mode)
+  )
+#+end_src
+
+** Marginalia
+#+begin_src emacs-lisp
+(use-package marginalia
+  :ensure t
+  :config
+  (marginalia-mode))
+#+end_src
+
+** Embark
+#+begin_src emacs-lisp
+(use-package embark
+  :ensure t
+
+  :bind
+  (("C-." . embark-act)         ;; pick some comfortable binding
+   ("C-;" . embark-dwim)        ;; good alternative: M-.
+   ("C-h B" . embark-bindings)) ;; alternative for `describe-bindings'
+
+  :init
+
+  ;; Optionally replace the key help with a completing-read interface
+  (setq prefix-help-command #'embark-prefix-help-command)
+
+  ;; Show the Embark target at point via Eldoc.  You may adjust the Eldoc
+  ;; strategy, if you want to see the documentation from multiple providers.
+  (add-hook 'eldoc-documentation-functions #'embark-eldoc-first-target)
+  ;; (setq eldoc-documentation-strategy #'eldoc-documentation-compose-eagerly)
+
+  :config
+
+  ;; Hide the mode line of the Embark live/completions buffers
+  (add-to-list 'display-buffer-alist
+               '("\\`\\*Embark Collect \\(Live\\|Completions\\)\\*"
+                 nil
+                 (window-parameters (mode-line-format . none)))))
+#+end_src
+
+** Orderless
+#+begin_src emacs-lisp
+(use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
 #+end_src
 
 * regex stuff
@@ -424,17 +480,17 @@ Check out [[https://stackoverflow.com/a/60034059][this stack overflow]] for some
 	      )
   )
 
-(use-package flyspell-correct-helm
-  :ensure t
-  :after flyspell-correct
-  :config
-  (defun flyspell-most-modes() 
-     (add-hook 'text-mode-hook 'flyspell-mode) 
-     (add-hook 'prog-mode-hook 'flyspell-prog-mode)
-     (dolist (hook '(change-log-mode-hook log-edit-mode-hook)) 
-       (add-hook hook (lambda () 
-                        (flyspell-mode -1)))))
-  (flyspell-most-modes))
+;; (use-package flyspell-correct-helm
+;;   :ensure t
+;;   :after flyspell-correct
+;;   :config
+;;   (defun flyspell-most-modes() 
+;;      (add-hook 'text-mode-hook 'flyspell-mode) 
+;;      (add-hook 'prog-mode-hook 'flyspell-prog-mode)
+;;      (dolist (hook '(change-log-mode-hook log-edit-mode-hook)) 
+;;        (add-hook hook (lambda () 
+;;                         (flyspell-mode -1)))))
+;;   (flyspell-most-modes))
 #+end_src
 
 * multiple-cursors
@@ -1475,7 +1531,7 @@ https://github.com/emacsorphanage/god-mode
   ;(define-key god-local-mode-map (kbd ".") #'repeat)
   (define-key god-local-mode-map (kbd "[") #'backward-paragraph)
   (define-key god-local-mode-map (kbd "]") #'forward-paragraph)
-  (define-key god-local-mode-map (kbd "C-x C-b") #'helm-mini)
+  ;; (define-key god-local-mode-map (kbd "C-x C-b") #'helm-mini)
   (define-key god-local-mode-map (kbd "C-x C-r C-t") #'string-rectangle)
   (define-key god-local-mode-map (kbd "C-x C-r C-d") #'delete-rectangle)
   (define-key god-local-mode-map (kbd "C-x C-r C-k") #'kill-rectangle)
