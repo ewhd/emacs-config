@@ -96,6 +96,11 @@ https://apple.stackexchange.com/questions/399187/how-to-set-default-directory-fo
 
 ;; reduce scroll speed with two finger movement on touchpad
 (setq mouse-wheel-scroll-amount '(1))
+
+;; Do not allow the cursor in the minibuffer prompt
+(setq minibuffer-prompt-properties
+      '(read-only t cursor-intangible t face minibuffer-prompt))
+(add-hook 'minibuffer-setup-hook #'cursor-intangible-mode)
 #+END_SRC
 
 
